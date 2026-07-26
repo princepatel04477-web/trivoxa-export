@@ -130,14 +130,10 @@
   opacity: 0.8;
 }
 
+/* Placement only. The lockup's height comes from --logo-h-footer and its
+   colour from the footer tone — see styles/logo.css. */
 .footer .footer-content .logo {
-  max-width: 200px;
   margin-bottom: 22px;
-}
-
-.footer .footer-content .logo img {
-  max-width: 100%;
-  opacity: 0.9;
 }
 
 .footer .tagline {

@@ -59,6 +59,7 @@ next-env.d.ts
 /.opencode
 /.tokensave
 /.windsurf
+/.github/skills
 
 .vercel
 .env*

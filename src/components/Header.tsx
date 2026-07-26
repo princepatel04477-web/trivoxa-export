@@ -7,6 +7,8 @@ import { on } from "@/lib/site-events";
 import { getLenis } from "@/components/providers/LenisProvider";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { Logo } from "@/components/brand/Logo";
+import { HEADER_CONDENSE_AT, navLogoTone } from "@/lib/logo";
 
 /** External URL of the dedicated Trivoxa Digital site. */
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
@@ -96,12 +98,17 @@ export default function Header() {
   // Lenis is the scroll driver on this site, so we subscribe to its scroll
   // event (fires every frame with the real position). window's native scroll
   // is kept as a fallback for the reduced-motion path where Lenis is disabled.
+  //
+  // `condensed` mirrors the same threshold into React state so the logo can
+  // take its tone from it. It flips once per crossing, not per frame.
   const rootRef = useRef<HTMLDivElement>(null);
+  const [condensed, setCondensed] = useState(false);
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
     let lastY = window.scrollY;
     let hidden = false;
+    let isCondensed = false;
     const REVEAL_ZONE = 120; // always show near the very top
     const DELTA = 6; // ignore sub-pixel jitter
     const setHidden = (next: boolean) => {
@@ -111,7 +118,12 @@ export default function Header() {
       gsap.to(el, { yPercent: next ? -130 : 0, duration: 0.4, ease: "power2.out", overwrite: "auto" });
     };
     const apply = (y: number) => {
-      el.classList.toggle("header--scrolled", y > 40);
+      const nextCondensed = y > HEADER_CONDENSE_AT;
+      el.classList.toggle("header--scrolled", nextCondensed);
+      if (nextCondensed !== isCondensed) {
+        isCondensed = nextCondensed;
+        setCondensed(nextCondensed);
+      }
       if (y <= REVEAL_ZONE) setHidden(false);
       else if (y > lastY + DELTA) setHidden(true); // scrolling down
       else if (y < lastY - DELTA) setHidden(false); // scrolling up
@@ -220,10 +232,11 @@ export default function Header() {
           </ul>
         </div>
 
-        {/* Centered logo. */}
+        {/* Centered logo. Always the full lockup, at the navbar height token —
+            scrolling changes the tone, never the variant or the size. */}
         <div className="logo">
           <Link href="/" aria-label="Trivoxa Group — home">
-            <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
+            <Logo variant="full" slot="nav" tone={navLogoTone(condensed)} decorative />
           </Link>
         </div>
 

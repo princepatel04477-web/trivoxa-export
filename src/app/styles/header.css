@@ -48,14 +48,17 @@
   min-width: 0;
 }
 
+/* Size and colour come from the logo's own tokens (styles/logo.css) — this
+   only places the box. Nothing here may set a width, or the bar drifts out of
+   step with the footer again. */
 .header .header-wrapper > .logo {
   justify-self: center;
-  width: 150px;
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
 }
 
-.header .header-wrapper > .logo img {
-  width: 100%;
+.header .header-wrapper > .logo a {
   display: block;
 }
 
@@ -423,9 +426,6 @@
 }
 
 @media (max-width: 1199px) {
-  .header .header-wrapper > .logo {
-    width: 132px;
-  }
   .header .header-wrapper .header-links li:not(:last-child) {
     margin-right: 20px;
   }
@@ -507,11 +507,6 @@
   }
 }
 
-@media (max-width: 399px) {
-  .header .header-wrapper > .logo {
-    width: 118px;
-  }
-}
 
 /* ---------- Language switcher ---------- */
 /* Logical properties throughout (inline-start/end) so the dropdown mirrors

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { Logo } from "@/components/brand/Logo";
 
 export type CraneVariant = "loader" | "hero" | "success" | "subtle";
 
@@ -196,12 +197,14 @@ export default function Crane({
         {variant === "loader" && (
           <g ref={logoRef} className="crane__logo-plate">
             <rect className="crane__stroke crane__container" x="8" y="0" width="70" height="30" rx="3" />
-            <image
-              href="/images/trivoxa-logo.png"
-              x="14"
-              y="6"
-              width="58"
-              height="18"
+            <Logo
+              variant="full"
+              tone="dark"
+              decorative
+              x={14}
+              y={6}
+              width={58}
+              height={18}
               preserveAspectRatio="xMidYMid meet"
             />
           </g>

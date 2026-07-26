@@ -252,7 +252,9 @@
   align-items: center;
   justify-content: center;
 }
-.tvx-split--media img {
+/* Covers both a caller-supplied image and the default — the logo's mark. */
+.tvx-split--media img,
+.tvx-split--media .tvx-logo {
   width: 62%;
   max-width: 320px;
   opacity: 0.9;
@@ -347,8 +349,11 @@
   padding: 110px 0 120px;
   position: relative;
 }
+/* Watermark behind the CTA copy — the logo's mark variant, dimmed. Colour
+   still comes from the mark's own tone, so only the opacity is set here. */
 .tvx-cta__eagle {
   width: 220px;
+  height: auto;
   max-width: 60%;
   opacity: 0.1;
   margin: 0 auto 26px;

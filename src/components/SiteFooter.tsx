@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { Link } from "@/i18n/navigation";
+import { Logo } from "@/components/brand/Logo";
+import { FOOTER_TONE } from "@/lib/logo";
 
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
 const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL;
@@ -97,7 +99,7 @@ export default function SiteFooter() {
           {/* Brand column */}
           <div className="col footer-brand">
             <div className="logo">
-              <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
+              <Logo variant="full" slot="footer" tone={FOOTER_TONE} />
             </div>
             <p className="tagline">Building the Future of Global Commerce — One Partnership at a Time.</p>
 

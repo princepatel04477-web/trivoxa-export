@@ -189,6 +189,11 @@ export interface SceneConfig {
    */
   linkEnvelope?: { drawFrom: number; drawTo: number; fadeFrom: number; fadeTo: number };
   /**
+   * Envelope for link channel 1 (see Shape.linkGroups). Falls back to
+   * `linkEnvelope` when omitted, so single-channel pages need not set it.
+   */
+  linkEnvelopeB?: { drawFrom: number; drawTo: number; fadeFrom: number; fadeTo: number };
+  /**
    * Per-particle shimmer phase. The default is random per particle, which reads
    * as fine grain twinkling. Supply this to make particles that share a cluster
    * share a phase, so the CLUSTERS pulse as units instead — the difference between
@@ -263,6 +268,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     buildStages,
     stageBindings = [],
     linkEnvelope,
+    linkEnvelopeB,
     buildPhase,
     buildGeoField,
     geoStages,
@@ -767,6 +773,11 @@ ${
   const uDraw = { value: 0 };
   const uLinkAlpha = { value: 0 };
   let linkTargetAlpha = 0;
+  // Channel 1 — an independent draw/fade pair, so one form can send lines inward
+  // early and outward later without the two sharing a clock.
+  const uDrawB = { value: 0 };
+  const uLinkAlphaB = { value: 0 };
+  let linkTargetAlphaB = 0;
   // Orbital camera dolly progress, 0..1 across the page (scrubbed).
   const orbit = { value: 0 };
   const CAMERA_Z = camera.position.z;

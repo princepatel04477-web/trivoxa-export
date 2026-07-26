@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import ActionButtons, { type Action } from "@/components/trivoxa/ActionButtons";
 import SectionGrain from "@/components/patterns/SectionGrain";
+import { Logo } from "@/components/brand/Logo";
 
 export type { Action };
 
@@ -145,7 +146,7 @@ export function CtaBand({
   return (
     <section className="tvx-cta">
       <div className="container">
-        {eagle && <img className="tvx-cta__eagle" src="/images/trivoxa-eagle.png" alt="" />}
+        {eagle && <Logo variant="mark" className="tvx-cta__eagle" decorative />}
         <h2>{title}</h2>
         {description && <p>{description}</p>}
         <ActionButtons actions={actions} />
@@ -158,7 +159,7 @@ export function Split({ children, media }: { children: ReactNode; media?: ReactN
   return (
     <div className="tvx-split">
       <div>{children}</div>
-      <div className="tvx-split--media">{media ?? <img src="/images/trivoxa-eagle.png" alt="" />}</div>
+      <div className="tvx-split--media">{media ?? <Logo variant="mark" decorative />}</div>
     </div>
   );
 }

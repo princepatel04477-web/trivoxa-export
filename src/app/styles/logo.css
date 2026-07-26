@@ -1,0 +1,69 @@
+/* ============================================================
+   Logo — the only place the mark's size and colour are decided.
+
+   Two rules keep the lockup identical on all eight routes:
+
+   1. SIZE comes from a slot token, never from a page. Both logo viewBoxes are
+      traced tight to the ink (no baked padding), so fixing the height also
+      fixes the width, the left edge and the optical baseline. There is nothing
+      left for a page to drift on, and no page-level override exists.
+
+   2. COLOUR is never set on the mark. Its paths fill with `currentColor`; the
+      tone classes below point `currentColor` at an existing theme token, chosen
+      by the tone of the surface the logo sits on. No colour is named here.
+   ============================================================ */
+
+:root {
+  /* Masthead lockup height. The lockup is 2.048:1, so this reproduces the
+     150px width the three-zone header grid was built around — the bar's
+     optical centring is unchanged. */
+  --logo-h-nav: 73px;
+
+  /* Footer lockup height — one token, matching the brand column's previous
+     200px footprint. */
+  --logo-h-footer: 98px;
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --logo-h-nav: 64px;
+  }
+}
+
+@media (max-width: 399px) {
+  :root {
+    --logo-h-nav: 58px;
+  }
+}
+
+.tvx-logo {
+  display: block;
+  flex-shrink: 0;
+  /* Unsized placements follow the viewBox ratio off whichever axis their own
+     CSS pins, so no caller can stretch the mark by setting one dimension. */
+  height: auto;
+}
+
+/* ---------- Tone ----------
+   A tone names the SURFACE, not the ink: `on-dark` is a logo standing on a
+   dark section, which resolves to the light text token. */
+.tvx-logo--on-dark {
+  color: var(--text);
+}
+
+.tvx-logo--on-light {
+  color: var(--bg);
+}
+
+/* ---------- Slots ----------
+   Height-driven so every variant shares one baseline; width follows the
+   viewBox's intrinsic ratio. */
+.tvx-logo--nav {
+  height: var(--logo-h-nav);
+  width: auto;
+}
+
+.tvx-logo--footer {
+  height: var(--logo-h-footer);
+  width: auto;
+}
