@@ -388,6 +388,18 @@
   will-change: opacity, transform;
 }
 
+/* The hidden start state above is only safe because JS reveals it. Under
+   reduced motion nothing travels, so the element must be born visible —
+   otherwise an opted-out reader gets a page of blank sections. Marked
+   !important so it also beats the inline styles GSAP would write. */
+@media (prefers-reduced-motion: reduce) {
+  .home-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 991px) {
   .home-sec {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FC } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { TitleChars } from "@/lib/split-text";
 
 interface OdometerProps {
@@ -65,8 +66,15 @@ const Odometer: FC<OdometerProps> = ({ from, to, prefix, suffix, label, run }) =
 export default function StatisticsSection() {
   const triggered = useRef(false);
   const [run, setRun] = useState(false);
+  // Reduced motion: the figures are content, not choreography — they read at
+  // their final values with no scroll trigger, no roll and no scrubbed
+  // parallax. Derived during render (not set from an effect) so the odometer
+  // never renders the "from" value first and then jumps.
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (reduced) return;
+
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: ".hp-sec-3 .statistics",
@@ -101,7 +109,9 @@ export default function StatisticsSection() {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [reduced]);
+
+  const rolled = run || reduced;
 
   return (
     <section className="hp-sec-3">
@@ -120,9 +130,9 @@ export default function StatisticsSection() {
           </h2>
           <div className="line" />
           <div className="numbers d-flex">
-            <Odometer from="1" to="10" suffix=" +" label="INDUSTRIES SERVED" run={run} />
-            <Odometer from="020" to="200" suffix=" +" label="PRODUCTS & SERVICES" run={run} />
-            <Odometer from="1" to="6" suffix=" +" label="GLOBAL REGIONS" run={run} />
+            <Odometer from="1" to="10" suffix=" +" label="INDUSTRIES SERVED" run={rolled} />
+            <Odometer from="020" to="200" suffix=" +" label="PRODUCTS & SERVICES" run={rolled} />
+            <Odometer from="1" to="6" suffix=" +" label="GLOBAL REGIONS" run={rolled} />
           </div>
         </div>
       </div>

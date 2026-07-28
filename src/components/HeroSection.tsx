@@ -14,6 +14,7 @@ export default function HeroSection() {
   // use-isomorphic-layout-effect.ts for why pinning requires it).
   useIsomorphicLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const tl = gsap.timeline({ paused: true });
 
       tl.fromTo(".header", {}, { y: 0, duration: 2.4, ease: "power2.out" });
@@ -30,10 +31,18 @@ export default function HeroSection() {
       tl.fromTo(".hp-sec-1 .p_inner", {}, { opacity: 1, stagger: 0.025, ease: "power1.in" }, "<");
 
       const unsub = onPreloaderDone(() => {
-        tl.play();
+        // The hero's resting state lives at the END of this timeline (headline
+        // scale, scroll-cue width, wrapper opacity all animate INTO place), so
+        // reduced motion cannot simply skip it — the hero would stay blank.
+        // Jump straight to the resolved frame instead: same final composition,
+        // no travel.
+        if (reducedMotion) tl.progress(1);
+        else tl.play();
       });
 
-      if (window.innerWidth > 575) {
+      // Scroll-scrubbed cue fade — disabled outright under reduced motion, per
+      // the rule that no motion may be bound to the scroll position.
+      if (!reducedMotion && window.innerWidth > 575) {
         gsap.fromTo(
           ".hp-sec-1 .scroll-to",
           {},
@@ -48,7 +57,6 @@ export default function HeroSection() {
         );
       }
 
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!reducedMotion && window.innerWidth > 767) {
         gsap
           .timeline({

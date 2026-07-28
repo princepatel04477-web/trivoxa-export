@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 
 export interface Chapter {
   title: string;
@@ -22,9 +23,12 @@ export default function StickyChapterRail({ chapters }: { chapters: Chapter[] })
       gsap.set(titles, { opacity: 0.3 });
       gsap.set(titles[0], { opacity: 1 });
 
+      // The dim/undim is a position indicator, not decoration, so it survives
+      // reduced motion — it just stops crossfading and switches instantly.
+      const duration = prefersReducedMotion() ? 0 : 0.4;
       const setActive = (i: number) => {
         titles.forEach((t, j) => {
-          gsap.to(t, { opacity: j === i ? 1 : 0.3, duration: 0.4, ease: "power2.out" });
+          gsap.to(t, { opacity: j === i ? 1 : 0.3, duration, ease: "power2.out" });
         });
       };
 

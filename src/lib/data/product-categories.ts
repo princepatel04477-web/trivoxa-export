@@ -67,7 +67,7 @@ export const exportCategories: ExportCategory[] = [
     name: "Textile & Apparel",
     description:
       "Supporting manufacturers, brands, wholesalers, and sourcing companies with fabrics, home textiles, apparel accessories, and customized sourcing solutions.",
-    image: "/images/industries/textile-editorial.png",
+    image: "/images/industries/textile-editorial.webp",
     subCategories: [
       {
         slug: "fabrics",
@@ -127,21 +127,21 @@ export const exportCategories: ExportCategory[] = [
     name: "Healthcare & Pharmaceuticals",
     description:
       "Providing access to trusted pharmaceutical products and healthcare solutions through responsible sourcing and quality-focused manufacturing partnerships.",
-    image: "/images/industries/healthcare-editorial.png",
+    image: "/images/industries/healthcare-editorial.webp",
   },
   {
     slug: "building-materials",
     name: "Building Materials",
     description:
       "Supplying natural stone, marble, granite, ceramic products, and construction materials for residential, commercial, and infrastructure projects.",
-    image: "/images/industries/building-editorial.png",
+    image: "/images/industries/building-editorial.webp",
   },
   {
     slug: "furniture-interiors",
     name: "Furniture & Interiors",
     description:
       "Connecting businesses with quality furniture and interior solutions for residential, commercial, and hospitality environments.",
-    image: "/images/industries/furniture-editorial.png",
+    image: "/images/industries/furniture-editorial.webp",
   },
   {
     slug: "agriculture-food",
@@ -155,14 +155,14 @@ export const exportCategories: ExportCategory[] = [
     name: "Engineering & Industrial",
     description:
       "Delivering industrial products, engineering components, and manufacturing solutions that support industrial growth and infrastructure development.",
-    image: "/images/industries/jewellery-editorial.png",
+    image: "/images/industries/engineering.jpg",
   },
   {
     slug: "jewellery-precious-products",
     name: "Jewellery & Precious Products",
     description:
       "Connecting global buyers with carefully sourced jewellery and precious products through trusted manufacturing partnerships.",
-    image: "/images/industries/engineering.jpg",
+    image: "/images/industries/jewellery-editorial.webp",
   },
 ];
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { gsap } from "@/lib/gsap";
 import { revealBody } from "@/hooks/useScrollAnimations";
 import { Eyebrow } from "@/components/trivoxa/ui";
@@ -56,7 +57,14 @@ export default function LeadershipPanel({ eyebrow, name, role, email, photoSrc, 
     >
       {photoSrc && (
         <div ref={portraitRef} className="leadership-panel__portrait">
-          <img src={photoSrc} alt={name ?? "Leadership portrait"} />
+          {/* .leadership-panel__portrait is a fixed 90vh box, so fill holds
+              the layout regardless of when the portrait decodes. */}
+          <Image
+            src={photoSrc}
+            alt={name ?? "Leadership portrait"}
+            fill
+            sizes="(max-width: 900px) 100vw, 50vw"
+          />
         </div>
       )}
       <div className="leadership-panel__text">

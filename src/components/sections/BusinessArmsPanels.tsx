@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { TitleChars, PChars } from "@/lib/split-text";
@@ -33,7 +34,7 @@ export default function BusinessArmsPanels() {
       categories: [t("cat1"), t("cat2"), t("cat3"), t("cat4"), t("cat5")],
       href: "/businesses/product-exports/",
       cta: t("arm1Cta"),
-      image: "/images/businesses/product-exports-editorial.png",
+      image: "/images/businesses/product-exports-editorial.webp",
       imageAlt: "Cargo containers and export logistics at a port terminal",
     },
     {
@@ -45,7 +46,7 @@ export default function BusinessArmsPanels() {
       categories: [t("cat6"), t("cat7"), t("cat8"), t("cat9")],
       href: "/businesses/service-exports/",
       cta: t("arm2Cta"),
-      image: "/images/businesses/service-exports-editorial.png",
+      image: "/images/businesses/service-exports-editorial.webp",
       imageAlt: "Technology team collaborating in a modern studio",
     },
   ];
@@ -80,7 +81,15 @@ export default function BusinessArmsPanels() {
         {ARMS.map((arm) => (
           <article className="biz-arm" key={arm.id}>
             <div className="biz-arm__media">
-              <img src={arm.image} alt={arm.imageAlt} loading="lazy" />
+              {/* fill, not width/height: .biz-arm__media already reserves a
+                  16/9 box, so the browser has the layout before the bytes
+                  arrive and the image contributes no shift. */}
+              <Image
+                src={arm.image}
+                alt={arm.imageAlt}
+                fill
+                sizes="(max-width: 900px) 100vw, 50vw"
+              />
               <span className="biz-arm__media-label">{arm.index} / 02</span>
             </div>
             <div className="biz-arm__head">

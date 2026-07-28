@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
@@ -103,7 +104,9 @@ export default function CareersPage() {
         <div className="careers-photo-essay">
           {culturePhotos.map((p) => (
             <figure key={p.src}>
-              <img src={p.src} alt={p.caption} loading="lazy" />
+              {/* Intrinsic 1200x900; the stylesheet still drives the rendered
+                  size (width:100%, aspect-ratio 4/3, object-fit cover). */}
+              <Image src={p.src} alt={p.caption} width={1200} height={900} sizes="(max-width: 700px) 100vw, 33vw" />
               <figcaption>{p.caption}</figcaption>
             </figure>
           ))}

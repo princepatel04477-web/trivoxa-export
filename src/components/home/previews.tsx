@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { emit } from "@/lib/site-events";
 import { Link } from "@/i18n/navigation";
 
@@ -11,6 +12,10 @@ function useReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   useEffect(() => {
     if (!ref.current) return;
+    // Reduced motion: the stylesheet already resolves `.home-reveal` to its
+    // visible state, so the tween is not merely shortened — it is never
+    // created, and no ScrollTrigger is registered for it.
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       gsap.to(".home-reveal", {
         opacity: 1,

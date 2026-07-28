@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { Link } from "@/i18n/navigation";
 
 const PILLAR_KEYS = ["p1", "p2", "p3", "p4"] as const;
@@ -17,6 +18,9 @@ export default function WhyBuyersTrust() {
 
   useEffect(() => {
     if (!ref.current) return;
+    // See previews.tsx — `.home-reveal` resolves visible in CSS under reduced
+    // motion, so no tween and no trigger are created here.
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       gsap.to(".home-reveal", {
         opacity: 1,

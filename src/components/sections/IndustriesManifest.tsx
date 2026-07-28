@@ -3,14 +3,15 @@
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 
 // Industry names reuse the megaMenu keys so the nav and this section always
 // agree; only the descriptions are unique to the home page.
 const INDUSTRY_DEFS = [
-  { nameKey: "textileApparel", descKey: "descTextile", image: "/images/industries/textile-editorial.png" },
-  { nameKey: "healthcarePharma", descKey: "descHealthcare", image: "/images/industries/healthcare-editorial.png" },
-  { nameKey: "buildingMaterials", descKey: "descBuilding", image: "/images/industries/building-editorial.png" },
+  { nameKey: "textileApparel", descKey: "descTextile", image: "/images/industries/textile-editorial.webp" },
+  { nameKey: "healthcarePharma", descKey: "descHealthcare", image: "/images/industries/healthcare-editorial.webp" },
+  { nameKey: "buildingMaterials", descKey: "descBuilding", image: "/images/industries/building-editorial.webp" },
   { nameKey: "agricultureFood", descKey: "descAgri", image: "/images/industries/agriculture.jpg" },
   { nameKey: "engineeringIndustrial", descKey: "descEngineering", image: "/images/industries/engineering.jpg" },
   { nameKey: null, descKey: "descTechnology", image: "/images/industries/technology.jpg" },
@@ -35,17 +36,29 @@ export default function IndustriesManifest() {
   useIsomorphicLayoutEffect(() => {
     if (!sectionRef.current || !trackRef.current) return;
 
-    const ctx = gsap.context(() => {
-      gsap.to(".industries-folio__eyebrow, .industries-folio__title", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        stagger: 0.06,
-        scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
-      });
+    const reduced = prefersReducedMotion();
 
-      if (window.innerWidth > 767) {
+    const ctx = gsap.context(() => {
+      const head = ".industries-folio__eyebrow, .industries-folio__title";
+      if (reduced) {
+        gsap.set(head, { opacity: 1, y: 0 });
+      } else {
+        gsap.to(head, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.06,
+          scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
+        });
+      }
+
+      // Under reduced motion the whole horizontal act is skipped: no pin, no
+      // scrub, no snap. The stylesheet stacks the track vertically at the same
+      // media condition, so all six panels are reachable by ordinary scrolling
+      // — without this the carousel simply pinned and the reader could never
+      // reach panels 2-6 without the scrubbed motion they opted out of.
+      if (!reduced && window.innerWidth > 767) {
         const track = trackRef.current!;
         const panels = gsap.utils.toArray<HTMLElement>(".industries-folio__panel", track);
 

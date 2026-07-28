@@ -22,8 +22,8 @@ export default function ThankYouPage() {
       <Section eyebrow="What Happens Next" title="Here's What to Expect.">
         <ol className="thank-you-steps">
           <li>Our team reviews your message and routes it to the right specialist.</li>
-          <li>You'll hear back by email within one business day.</li>
-          <li>If your inquiry involves sourcing, we'll follow up with next steps to formalize an RFQ.</li>
+          <li>You&rsquo;ll hear back by email within one business day.</li>
+          <li>If your inquiry involves sourcing, we&rsquo;ll follow up with next steps to formalize an RFQ.</li>
         </ol>
       </Section>
 

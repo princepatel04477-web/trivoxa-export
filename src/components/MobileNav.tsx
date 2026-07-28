@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useNavActive, closeNavOverlay } from "@/hooks/useNavActive";
+import { getLenis } from "@/components/providers/LenisProvider";
 
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
 
@@ -40,10 +42,14 @@ type Accordion = "group" | "biz" | null;
 
 export default function MobileNav() {
   const navRef = useRef<HTMLDivElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
   const [openSection, setOpenSection] = useState<Accordion>(null);
   const pathname = usePathname();
+  const open = useNavActive();
 
+  // The timeline is built ONCE and kept in a ref. Rebuilding it per toggle
+  // would make every close snap shut — a fresh timeline has nothing to reverse
+  // through, so the 1.5s clip-path retraction would be replaced by a jump.
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
   useEffect(() => {
     if (!navRef.current) return;
     const nav = navRef.current;
@@ -54,20 +60,81 @@ export default function MobileNav() {
     tl.fromTo(items, {}, { opacity: 1, y: 0, delay: 1, stagger: 0.07, duration: 1 }, "<");
     tlRef.current = tl;
 
-    const observer = new MutationObserver(() => {
-      if (document.body.classList.contains("nav-active")) {
-        tl.play();
-      } else {
-        tl.reverse();
-      }
-    });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
     return () => {
-      observer.disconnect();
       tl.kill();
+      tlRef.current = null;
     };
   }, []);
+
+  // Drive that one timeline from the open state — play forward, reverse back.
+  // Replaces the MutationObserver this component used to run: `useNavActive`
+  // already observes the class, so the observer was a second subscription to
+  // the same fact.
+  useEffect(() => {
+    const tl = tlRef.current;
+    if (!tl) return;
+    if (open) tl.play();
+    else tl.reverse();
+  }, [open]);
+
+  // Lenis is a virtual scroller: it moves the page from its own RAF loop, so
+  // `body { overflow: hidden }` alone does not stop a wheel gesture from
+  // scrolling the document underneath the open overlay. Freeze it explicitly,
+  // the same way the contact modal does.
+  useEffect(() => {
+    if (!open) return;
+    const lenis = getLenis();
+    lenis?.stop();
+    return () => lenis?.start();
+  }, [open]);
+
+  // Escape closes, and focus is kept inside the overlay while it is open —
+  // without the trap, tabbing walks straight out into the page behind it,
+  // which for a sighted keyboard user means the focus ring simply vanishes.
+  // On close, focus returns to the control that opened the overlay.
+  useEffect(() => {
+    if (!open) return;
+    const nav = navRef.current;
+    if (!nav) return;
+    const opener = document.activeElement as HTMLElement | null;
+
+    // querySelectorAll still descends into inert subtrees, so collapsed
+    // accordions are filtered out explicitly — otherwise the trap would cycle
+    // through links the browser itself refuses to focus and the wrap stalls.
+    const focusable = () =>
+      Array.from(
+        nav.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+      ).filter((el) => !el.closest("[inert]"));
+
+    focusable()[0]?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeNavOverlay();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = focusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      // Wrap at both ends. Also catches the case where focus has already
+      // escaped the overlay (activeElement outside it) and pulls it back.
+      if (e.shiftKey && (document.activeElement === first || !nav.contains(document.activeElement))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !nav.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      opener?.focus?.();
+    };
+  }, [open]);
 
   // Any navigation collapses accordions — derived reset during render (the
   // React-sanctioned pattern; avoids a cascading setState-in-effect)…
@@ -79,11 +146,11 @@ export default function MobileNav() {
 
   // …while closing the overlay is a DOM side effect, so it stays an effect.
   useEffect(() => {
-    document.body.classList.remove("nav-active");
+    closeNavOverlay();
   }, [pathname]);
 
   const closeNav = useCallback(() => {
-    document.body.classList.remove("nav-active");
+    closeNavOverlay();
   }, []);
 
   const toggle = (section: Exclude<Accordion, null>) =>
@@ -105,7 +172,19 @@ export default function MobileNav() {
   );
 
   return (
-    <div ref={navRef} className="mobile-nav">
+    /* The closed overlay is hidden by clip-path and translate — it is still in
+       the layout, so without `inert` every one of its ~25 links stays in the
+       tab order. Tabbing off the header dropped a keyboard user into a stack
+       of invisible destinations with no visible focus ring anywhere on screen.
+       `inert` removes it from focus, hit-testing and the accessibility tree in
+       one move; aria-hidden is kept alongside for older engines. */
+    <div
+      ref={navRef}
+      className="mobile-nav"
+      id="mobile-nav"
+      inert={!open}
+      aria-hidden={!open}
+    >
       <div className="nav__content">
         <ul>
           <li>
@@ -127,7 +206,13 @@ export default function MobileNav() {
                 ▾
               </span>
             </button>
-            <div className={`mobile-nav__acc${openSection === "group" ? " is-open" : ""}`}>
+            {/* Collapsed via grid-template-rows: 0fr — zero height, but its
+                links stay focusable without this, so Tab walked into a closed
+                accordion and the focus ring disappeared off-panel. */}
+            <div
+              className={`mobile-nav__acc${openSection === "group" ? " is-open" : ""}`}
+              inert={openSection !== "group"}
+            >
               <ul className="sub-menu">
                 <li>
                   <Link href="/group/" onClick={closeNav}>
@@ -158,7 +243,10 @@ export default function MobileNav() {
                 ▾
               </span>
             </button>
-            <div className={`mobile-nav__acc${openSection === "biz" ? " is-open" : ""}`}>
+            <div
+              className={`mobile-nav__acc${openSection === "biz" ? " is-open" : ""}`}
+              inert={openSection !== "biz"}
+            >
               <div className="mobile-nav__division">
                 <Link href="/businesses/product-exports/" className="mobile-nav__division-title" onClick={closeNav}>
                   {tm("productExports")}

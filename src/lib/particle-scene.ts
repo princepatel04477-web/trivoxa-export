@@ -189,11 +189,6 @@ export interface SceneConfig {
    */
   linkEnvelope?: { drawFrom: number; drawTo: number; fadeFrom: number; fadeTo: number };
   /**
-   * Envelope for link channel 1 (see Shape.linkGroups). Falls back to
-   * `linkEnvelope` when omitted, so single-channel pages need not set it.
-   */
-  linkEnvelopeB?: { drawFrom: number; drawTo: number; fadeFrom: number; fadeTo: number };
-  /**
    * Per-particle shimmer phase. The default is random per particle, which reads
    * as fine grain twinkling. Supply this to make particles that share a cluster
    * share a phase, so the CLUSTERS pulse as units instead — the difference between
@@ -268,7 +263,6 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     buildStages,
     stageBindings = [],
     linkEnvelope,
-    linkEnvelopeB,
     buildPhase,
     buildGeoField,
     geoStages,
@@ -761,6 +755,11 @@ ${
   let paused = false;
   let currentFlat = false; // hero starts on the spinning globe
   let currentIsGlobe = true; // drives axial tilt, parallax and depth cueing
+  // Name of the shape the field is currently on (or travelling toward). Makes
+  // morphTo idempotent, so re-applying the state already on screen — which
+  // happens constantly now that beats restore each other on scroll-up — never
+  // restarts the 4s elastic mid-flight.
+  let currentShapeName: string | null = null;
   // Ambient drift target, eased toward in the render loop (see uDrift).
   let driftTarget = 0;
   // Per-stage Y rotation (Shape.spinY), accumulated so easing the rate to zero
@@ -773,11 +772,6 @@ ${
   const uDraw = { value: 0 };
   const uLinkAlpha = { value: 0 };
   let linkTargetAlpha = 0;
-  // Channel 1 — an independent draw/fade pair, so one form can send lines inward
-  // early and outward later without the two sharing a clock.
-  const uDrawB = { value: 0 };
-  const uLinkAlphaB = { value: 0 };
-  let linkTargetAlphaB = 0;
   // Orbital camera dolly progress, 0..1 across the page (scrubbed).
   const orbit = { value: 0 };
   const CAMERA_Z = camera.position.z;
@@ -1324,6 +1318,8 @@ ${
   };
 
   function morphTo(shape: Shape, onProgress?: (eased: number) => void) {
+    if (shape.name === currentShapeName && !onProgress) return;
+    currentShapeName = shape.name;
     currentFlat = !!shape.flat;
     currentIsGlobe = shape.name === "globe";
 
@@ -1552,6 +1548,7 @@ ${
   // On Careers this convergence *is* the beat — the motion carries the idea, so
   // it survives the mobile particle budget better than any silhouette.
   function assembleInto(shape: Shape) {
+    currentShapeName = shape.name;
     currentFlat = !!shape.flat;
     currentIsGlobe = shape.name === "globe";
     if (reducedMotion) {
@@ -1655,10 +1652,19 @@ ${
   // ScrollTriggers created by this scene instance, so dispose() can kill only
   // its own — a blanket ScrollTrigger.getAll() kill would also wipe out
   // triggers owned by other parts of the app.
+  let disposed = false;
   const instanceScrollTriggers: ScrollTrigger[] = [];
+  // The tweens those triggers drive. Killing a ScrollTrigger leaves its tween
+  // alive and still holding the scene's objects, so both sides are tracked and
+  // both are killed on teardown — otherwise a route change leaves a scrubbed
+  // tween pointing at a disposed scene's THREE objects.
+  const instanceTweens: gsap.core.Tween[] = [];
 
-  // Defer ScrollTrigger creation so the DOM exists.
-  requestAnimationFrame(() => {
+  // Defer ScrollTrigger creation so the DOM exists. Cancelled on dispose, so a
+  // scene torn down in the same frame it was created (React Strict Mode's
+  // double-mount, or a fast route change) never binds triggers at all.
+  const bindFrame = requestAnimationFrame(() => {
+    if (disposed) return;
     // Scrubbed stage sequence. Every morph is bound to real section boundaries
     // and driven by scroll position, so the reader is scrubbing the animation
     // rather than triggering it. Under prefers-reduced-motion none of this is
@@ -1688,6 +1694,7 @@ ${
           },
           onUpdate: () => settle(proxy.t),
         });
+        instanceTweens.push(tween);
         if (tween.scrollTrigger) instanceScrollTriggers.push(tween.scrollTrigger);
       });
 
@@ -1703,6 +1710,7 @@ ${
             scrub: true,
           },
         });
+        instanceTweens.push(orbitTween);
         if (orbitTween.scrollTrigger) instanceScrollTriggers.push(orbitTween.scrollTrigger);
       }
 
@@ -1753,6 +1761,7 @@ ${
         x: to,
         scrollTrigger: { trigger, scrub: true, start: "top bottom", end: "top center" },
       });
+      instanceTweens.push(tween);
       if (tween.scrollTrigger) instanceScrollTriggers.push(tween.scrollTrigger);
       return tween;
     };
@@ -1782,9 +1791,33 @@ ${
       return st;
     };
 
-    // Drive the page's beat list. Each beat is idempotent — the same handler
-    // runs on scroll-down (onEnter) and scroll-up (onEnterBack) so the field
-    // lands in the same state whichever direction the reader arrives from.
+    // Drive the page's beat list.
+    //
+    // Beat state is DERIVED, never latched. Each beat resolves to a COMPLETE
+    // field state — shape + opacity + ports — inheriting anything it doesn't
+    // name from the beat before it, with the hero shape as the base. Then:
+    //
+    //   onEnter / onEnterBack → this beat's state
+    //   onLeaveBack           → the PREVIOUS beat's state (hero for beat 0)
+    //
+    // which makes the whole sequence reversible by construction. The earlier
+    // version only ever applied a beat forward and had no way to undo the
+    // shape it replaced, so the home hero morphed globe→vessel on the way down
+    // and then stayed a vessel forever on the way back up. `onLeaveBack` on a
+    // beat is now an OVERRIDE layered on that restored state, not the only
+    // thing that happens on the way out.
+    interface BeatState {
+      shape?: Shape;
+      opacity: number;
+      ports: boolean;
+      fadeDuration?: number;
+    }
+
+    // The state the field is in before any beat has fired: the hero shape, at
+    // full field opacity, ports down (portsMode starts false).
+    const baseState: BeatState = { shape: heroShape, opacity: fieldOpacity, ports: false };
+
+    const states: BeatState[] = [];
     for (const beat of beats) {
       const shape = beat.shape ? shapes.get(beat.shape) : undefined;
       if (beat.shape && !shape) {
@@ -1792,29 +1825,44 @@ ${
         // the previous formation — loud enough to catch in dev, harmless live.
         console.warn(`particle-scene: beat "${beat.trigger}" wants unbuilt shape "${beat.shape}"`);
       }
-
-      if (beat.sweep !== undefined) sweep(beat.trigger, side * beat.sweep);
-
-      const apply = () => {
-        if (beat.ports) showPorts();
-        else hidePorts();
-        fade(capOpacity(beat.opacity ?? 1), beat.fadeDuration);
-        if (shape) morphTo(shape);
-      };
-
-      const leaveBack = beat.onLeaveBack;
-      on(beat.trigger, {
-        start: beat.start,
-        onEnter: apply,
-        onEnterBack: apply,
-        ...(leaveBack && {
-          onLeaveBack: () => {
-            if (!leaveBack.ports) hidePorts();
-            fade(capOpacity(leaveBack.opacity ?? 0), leaveBack.fadeDuration);
-          },
-        }),
+      const prev = states[states.length - 1] ?? baseState;
+      states.push({
+        // A beat with no `shape` holds whatever the last one formed.
+        shape: shape ?? prev.shape,
+        opacity: beat.opacity ?? 1,
+        ports: !!beat.ports,
+        fadeDuration: beat.fadeDuration,
       });
     }
+
+    const applyState = (state: BeatState) => {
+      if (state.ports) showPorts();
+      else hidePorts();
+      fade(capOpacity(state.opacity), state.fadeDuration);
+      if (state.shape) morphTo(state.shape);
+    };
+
+    beats.forEach((beat, i) => {
+      if (beat.sweep !== undefined) sweep(beat.trigger, side * beat.sweep);
+
+      const back = states[i - 1] ?? baseState;
+      const override = beat.onLeaveBack;
+      const backState: BeatState = override
+        ? {
+            shape: back.shape,
+            opacity: override.opacity ?? back.opacity,
+            ports: override.ports ?? back.ports,
+            fadeDuration: override.fadeDuration ?? back.fadeDuration,
+          }
+        : back;
+
+      on(beat.trigger, {
+        start: beat.start,
+        onEnter: () => applyState(states[i]),
+        onEnterBack: () => applyState(states[i]),
+        onLeaveBack: () => applyState(backState),
+      });
+    });
 
     ScrollTrigger.refresh();
   });
@@ -1826,7 +1874,6 @@ ${
   // are stale on load — which is exactly why a manual window resize "fixed" the
   // globe. Replay that resize automatically at each moment the layout can still
   // change, so it lands correct on load at any display size, no interaction.
-  let disposed = false;
   const settleTimers: number[] = [];
   const resync = () => {
     if (disposed) return;
@@ -1888,7 +1935,13 @@ ${
       });
       texture.dispose();
       perfHud?.dispose();
-      gsap.killTweensOf(morphProgress);
+      // Every GSAP object this instance owns: the morph/fade/sweep tweens it
+      // fired imperatively (killed by target) and the scroll-driven ones it
+      // tracked. Left alive, these keep writing into a disposed scene's THREE
+      // objects after a route change.
+      cancelAnimationFrame(bindFrame);
+      gsap.killTweensOf([morphProgress, material, scene.position, orbit]);
+      instanceTweens.forEach((t) => t.kill());
       instanceScrollTriggers.forEach((st) => st.kill());
     },
   };

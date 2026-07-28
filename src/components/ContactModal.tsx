@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { on, emit } from "@/lib/site-events";
 import ContactForm from "@/components/ContactForm";
 

@@ -34,16 +34,6 @@ export interface Shape {
    */
   links?: Float32Array;
   /**
-   * Optional channel id per SEGMENT (0 or 1), length links.length/6.
-   *
-   * Two channels exist because a page can need line geometry to mean two
-   * different things at two different moments — threads drawing inward early,
-   * bearings radiating outward later. Each channel gets its own draw and fade
-   * envelope (see linkEnvelope / linkEnvelopeB), so they are independent in time
-   * as well as direction. Omit for a single-channel form.
-   */
-  linkGroups?: Float32Array;
-  /**
    * Ambient positional drift amplitude in world units (0 = still). Raised on a
    * deliberately loose stage so the form reads as dispersing.
    */

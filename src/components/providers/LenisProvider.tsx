@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
+import { MotionConfig } from "framer-motion";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { on, emit } from "@/lib/site-events";
 
@@ -29,6 +30,23 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     const id = window.setTimeout(() => ScrollTrigger.refresh(), 100);
     return () => window.clearTimeout(id);
   }, [pathname]);
+
+  // Webfonts land after first paint and reflow every block they touch, which
+  // moves every trigger boundary measured before they arrived — the symptom is
+  // an animation firing a few hundred pixels early or late on a cold load and
+  // being "fixed" by a resize. Re-measure once the font set is settled.
+  // Runs unconditionally: triggers exist under reduced motion too (pinned
+  // sections, sticky rails), so this must not sit behind the Lenis guard.
+  useEffect(() => {
+    if (!("fonts" in document)) return;
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (!cancelled) ScrollTrigger.refresh();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -62,5 +80,19 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <>{children}</>;
+  // Framer Motion (used by the job board, product drawer, category tables,
+  // RFQ form, world map and values list) defaults to `reducedMotion: "never"`
+  // — it ignores the OS setting unless told otherwise. Those seven components
+  // were therefore the one part of the site still animating for a reader who
+  // had opted out. "user" makes Framer honour the media query itself, so
+  // transform and layout animations resolve to their end state while opacity
+  // fades are kept (the accessible behaviour Framer documents).
+  //
+  // This configures the animation library already in the codebase; it does not
+  // introduce one, and nothing here touches the GSAP/Lenis stack above.
+  return (
+    <MotionConfig reducedMotion="user">
+      {children}
+    </MotionConfig>
+  );
 }

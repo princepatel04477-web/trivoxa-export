@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { Eyebrow, Section, CtaBand } from "@/components/trivoxa/ui";
@@ -186,7 +187,14 @@ export default function GroupPage() {
               {foundationPhotos.map((photo) => (
                 <figure key={photo.src} className="foundation-photo">
                   <div className="foundation-photo__frame">
-                    <img src={photo.src} alt={`Shiveshwar Textiles — ${photo.caption}`} loading="lazy" />
+                    {/* .foundation-photo__frame already holds a 4/3 box, so
+                        fill reserves the layout with no shift on load. */}
+                    <Image
+                      src={photo.src}
+                      alt={`Shiveshwar Textiles — ${photo.caption}`}
+                      fill
+                      sizes="(max-width: 700px) 100vw, 33vw"
+                    />
                   </div>
                   <figcaption className="foundation-photo__caption">Shiveshwar Textiles — {photo.caption}</figcaption>
                 </figure>

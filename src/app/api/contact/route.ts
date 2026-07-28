@@ -6,6 +6,16 @@ import { contactSchema } from "@/lib/validation/contact";
 
 const SALES_EMAIL = "sales@trivoxagroup.com";
 
+/** Buyer-supplied text goes into an HTML email body, so it is escaped at the
+ * boundary — the same treatment the newsletter route already gives topic votes. */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -37,12 +47,23 @@ export async function POST(request: Request) {
 
   const resend = getResend();
   if (resend) {
-    await resend.emails.send({
-      from: "Trivoxa Group <no-reply@trivoxagroup.com>",
-      to: SALES_EMAIL,
-      subject: `New contact form message — ${reference}`,
-      html: `<p><strong>${data.fullName}</strong> (${data.email})${data.companyName ? ` — ${data.companyName}` : ""}</p><p>${data.message}</p>`,
-    });
+    // The message is already persisted above, so a mail-transport failure must
+    // not turn a received message into a 500 the buyer reads as "lost". Matches
+    // how the RFQ and newsletter routes already handle Resend.
+    try {
+      await resend.emails.send({
+        from: "Trivoxa Group <no-reply@trivoxagroup.com>",
+        to: SALES_EMAIL,
+        subject: `New contact form message — ${reference}`,
+        html: `<p><strong>${escapeHtml(data.fullName)}</strong> (${escapeHtml(data.email)})${
+          data.companyName ? ` — ${escapeHtml(data.companyName)}` : ""
+        }</p><p>${escapeHtml(data.message)}</p>`,
+      });
+    } catch (err) {
+      console.error("Resend email failed for contact message", reference, err);
+    }
+  } else {
+    console.warn(`RESEND_API_KEY not configured — contact message ${reference} was not emailed.`);
   }
 
   return NextResponse.json({ reference });

@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { emit } from "@/lib/site-events";
 
-export interface Action {
-  label: string;
-  href?: string;
-  modal?: boolean;
-  variant?: "primary" | "ghost";
-}
+/**
+ * A CTA either routes somewhere or opens the quote modal — never neither.
+ *
+ * Modelled as a union rather than two optional fields so an action with no
+ * destination is a compile error. It used to fall back to `href="#"`, which is
+ * exactly the dead anchor a buyer must never be handed.
+ */
+export type Action =
+  | { label: string; href: string; modal?: false; variant?: "primary" | "ghost" }
+  | { label: string; href?: never; modal: true; variant?: "primary" | "ghost" };
 
 export default function ActionButtons({ actions }: { actions: Action[] }) {
   return (
@@ -23,7 +27,7 @@ export default function ActionButtons({ actions }: { actions: Action[] }) {
           );
         }
         return (
-          <Link key={i} href={a.href ?? "#"} className={cls}>
+          <Link key={i} href={a.href} className={cls}>
             {a.label}
           </Link>
         );

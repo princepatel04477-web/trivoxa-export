@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { gsap } from "@/lib/gsap";
 import { initSectionReveals } from "@/hooks/useScrollAnimations";
 

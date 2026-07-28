@@ -27,6 +27,10 @@ export function markPreloaderDone(): void {
   preloaderDone = true;
   emit("preloader:done");
 }
+/** Whether the preloader has already been released this session. */
+export function isPreloaderDone(): boolean {
+  return preloaderDone;
+}
 export function onPreloaderDone(fn: Handler): () => void {
   if (preloaderDone) {
     fn();

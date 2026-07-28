@@ -15,9 +15,19 @@ function releaseReveal(el: HTMLElement, attr: string) {
   gsap.set(el, { clearProps: "opacity,transform,clipPath" });
 }
 
-function prefersReducedMotion(): boolean {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+/**
+ * Single source of truth for the reduced-motion decision.
+ *
+ * Exported because every animated section needs the same answer, and each one
+ * re-deriving it from `window.matchMedia` was how sections quietly shipped
+ * without a fallback — the check is easy to forget when it lives nowhere.
+ * SSR-safe: returns false on the server, where nothing animates anyway.
+ */
+export function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && window.matchMedia(REDUCED_MOTION_QUERY).matches;
 }
+
+export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 /** Headings: clipPath masked reveal, inset 0 0 100% 0 -> 0 0 0 0, 0.9s, triggered at 80% viewport. */
 export function revealHeadings(scope: Element, selector = "[data-reveal-heading]") {

@@ -137,7 +137,10 @@
   letter-spacing: 0.05em;
   color: var(--color-ink-2);
 }
-@media (max-width: 767px) {
+/* Two routes to the same stacked layout: the mobile breakpoint, and any width
+   under reduced motion — where the pinned horizontal scrub is not created at
+   all (see IndustriesManifest.tsx), so the track must lay itself out. */
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
   .industries-folio {
     height: auto;
     overflow: visible;

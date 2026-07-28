@@ -65,17 +65,22 @@ export default function ContactForm({
 
   return (
     <form className={`contact-form ${className ?? ""}`} onSubmit={handleSubmit}>
+      {/* The design carries no visible labels, and a <label> wrapping only an
+          input contributes no text — so each control had no accessible name at
+          all ("edit, blank" to a screen reader). A placeholder is not a label:
+          it disappears on first keystroke. aria-label supplies the name without
+          changing a pixel. */}
       <label className="form-field">
-        <input type="text" name="fullName" placeholder="Full Name" required minLength={2} />
+        <input type="text" name="fullName" aria-label="Full name" placeholder="Full Name" required minLength={2} autoComplete="name" />
       </label>
       <label className="form-field">
-        <input type="text" name="companyName" placeholder="Company Name" />
+        <input type="text" name="companyName" aria-label="Company name" placeholder="Company Name" autoComplete="organization" />
       </label>
       <label className="form-field">
-        <input type="email" name="email" placeholder="Your email address" required />
+        <input type="email" name="email" aria-label="Your email address" placeholder="Your email address" required autoComplete="email" />
       </label>
       <label className="form-field">
-        <textarea name="message" placeholder="How could we help you?" rows={4} required minLength={5} />
+        <textarea name="message" aria-label="How could we help you?" placeholder="How could we help you?" rows={4} required minLength={5} />
       </label>
       {status === "error" && error && (
         <p className="form-status form-status--error" role="alert">

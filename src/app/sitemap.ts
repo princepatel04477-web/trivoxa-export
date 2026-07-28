@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { locales, defaultLocale } from "@/i18n/routing";
 import { exportCategories } from "@/lib/data/product-categories";
 import { industries } from "@/lib/data/industries";
+import { serviceCategories } from "@/lib/data/services";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://trivoxa-group.vercel.app";
 
@@ -14,6 +15,9 @@ const STATIC_PATHS = [
   "",
   "/about",
   "/group",
+  // The divisions landing page — a top-level nav destination, so its absence
+  // here left a linked, indexable page out of the sitemap entirely.
+  "/businesses",
   "/businesses/product-exports",
   "/businesses/product-exports/textile-apparel",
   "/businesses/product-exports/textile-apparel/fabrics",
@@ -37,6 +41,11 @@ function localizedPath(path: string, locale: string): string {
 export default function sitemap(): MetadataRoute.Sitemap {
   const dynamicPaths = [
     ...exportCategories.filter((c) => !WITHHELD_SLUGS.has(c.slug) && c.slug !== "textile-apparel").map((c) => `/businesses/product-exports/${c.slug}`),
+    // All six service-export categories are real pages carrying real copy and
+    // are linked from both the desktop mega-menu and the mobile nav — they were
+    // simply never enumerated here, so the entire services arm was invisible to
+    // crawlers that trust the sitemap.
+    ...serviceCategories.map((s) => `/businesses/service-exports/${s.slug}`),
     ...industries.map((i) => `/industries/${i.slug}`),
   ];
 

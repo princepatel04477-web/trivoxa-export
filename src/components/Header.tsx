@@ -9,6 +9,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Logo } from "@/components/brand/Logo";
 import { HEADER_CONDENSE_AT, navLogoTone } from "@/lib/logo";
+import { useNavActive, toggleNavOverlay } from "@/hooks/useNavActive";
 
 /** External URL of the dedicated Trivoxa Digital site. */
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
@@ -49,6 +50,9 @@ export default function Header() {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
   const closeTimer = useRef<number | null>(null);
+  // Read from the same body class the overlay and stylesheet already use, so
+  // the hamburger's reported state can never disagree with the visible one.
+  const navOpen = useNavActive();
 
   // Hover intent: a short grace period before closing so the pointer can
   // travel from the trigger into the panel without the menu snapping shut.
@@ -268,10 +272,12 @@ export default function Header() {
             className="hamburger d-flex"
             type="button"
             aria-label={t("menu")}
-            aria-expanded={undefined}
-            onClick={() => {
-              document.body.classList.toggle("nav-active");
-            }}
+            // Was hardcoded `undefined`, so the control never reported its own
+            // state — a screen reader announced "menu, button" whether the
+            // overlay was open or closed.
+            aria-expanded={navOpen}
+            aria-controls="mobile-nav"
+            onClick={toggleNavOverlay}
           >
             <div />
             <div />

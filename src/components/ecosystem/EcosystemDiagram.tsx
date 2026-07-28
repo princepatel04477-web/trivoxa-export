@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 
 export interface EcosystemNode {
   label: string;
@@ -34,6 +35,11 @@ export default function EcosystemDiagram({
 
   useEffect(() => {
     if (!svgRef.current) return;
+    // The diagram's resting state IS the finished drawing — full-length
+    // connectors, full-size dots — which is what the markup already renders.
+    // Under reduced motion we simply never scale the dots to 0 or dash the
+    // lines, so the reader gets the completed figure with no draw-on.
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       const connectors = gsap.utils.toArray<SVGLineElement>(".ecosystem-diagram__connector");
       const dots = gsap.utils.toArray<SVGCircleElement>(".ecosystem-diagram__node-dot");

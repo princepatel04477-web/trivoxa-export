@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { ScrollTrigger } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 
 type CertState = "active" | "in-application" | "target";
 
@@ -67,6 +68,10 @@ export default function CertificationsStrip() {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    // Compliance marks are the page's substance, not decoration — under reduced
+    // motion they are simply present. No fromTo, so they are never driven to
+    // opacity 0 in the first place.
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".cert-mark",

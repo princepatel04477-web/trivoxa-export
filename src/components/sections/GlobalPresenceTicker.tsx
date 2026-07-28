@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { Link } from "@/i18n/navigation";
-import { revealHeadings, revealBody } from "@/hooks/useScrollAnimations";
+import { revealHeadings, revealBody, prefersReducedMotion } from "@/hooks/useScrollAnimations";
 
 // Ticker reads as destination-market coverage, not named Indian port pairs —
 // the brand no longer anchors to specific origin ports on the homepage.
@@ -23,6 +23,13 @@ export default function GlobalPresenceTicker() {
       revealHeadings(sectionRef.current!);
       revealBody(sectionRef.current!);
       // Opacity only — the marquee (CSS animation) owns the track's transform.
+      // `.ticker-track` is opacity:0 in CSS, so under reduced motion it still
+      // has to be brought up; it is set rather than tweened, and no trigger is
+      // registered, so the corridor list is simply there on arrival.
+      if (prefersReducedMotion()) {
+        gsap.set(".ticker-track", { opacity: 1 });
+        return;
+      }
       gsap.to(".ticker-track", {
         opacity: 1,
         duration: 0.8,
