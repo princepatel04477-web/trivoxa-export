@@ -369,16 +369,84 @@
   color: var(--gold-bright, var(--gold));
 }
 
+/* ---------- Map embed ----------
+   Presentation only. The iframe keeps its own src, controls, click behaviour
+   and navigation; everything here is the frame around it. Nothing overlays the
+   embed, so no rule below can intercept a pan, zoom or marker click. */
+
+.rfq-map {
+  margin-top: var(--space-md);
+}
+
+.rfq-map__frame {
+  position: relative;
+  /* Clips the iframe's square corners to the panel radius. The iframe alone
+     could round itself, but only a container can also carry the ring and the
+     shadow without them being cut off by the embed's own edge. */
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--hairline);
+  background: var(--bg-elev);
+  /* Two-part depth: an inset hairline that reads as a bevel against the navy,
+     and a soft drop shadow that lifts the panel off the page ground. */
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--text) 5%, transparent),
+    0 18px 44px color-mix(in srgb, var(--bg) 70%, transparent);
+  transition:
+    border-color 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out);
+}
+
+/* Warms the hairline to gold on approach — the same accent every other
+   interactive surface on the site uses. Purely a border/shadow change, so it
+   cannot affect what the map does. */
+.rfq-map__frame:hover,
+.rfq-map__frame:focus-within {
+  border-color: var(--hairline-gold);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--gold) 12%, transparent),
+    0 22px 56px color-mix(in srgb, var(--bg) 78%, transparent);
+}
+
 .rfq-map iframe {
+  display: block;
   width: 100%;
-  height: 380px;
-  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  border-radius: 14px;
+  /* Was a hard 380px. Scales with the viewport between a usable floor and a
+     ceiling that stops it dominating the page on tall desktop displays. */
+  height: clamp(320px, 44vh, 520px);
+  border: 0;
+  /* Desaturated to sit inside the navy palette rather than fighting it;
+     resolves toward full colour on hover so the map is legible when it is
+     actually being read. */
   filter: grayscale(0.85) contrast(0.9);
+  transition: filter 0.45s var(--ease-out);
+}
+
+.rfq-map__frame:hover iframe,
+.rfq-map__frame:focus-within iframe {
+  filter: grayscale(0.3) contrast(0.96);
+}
+
+@media (max-width: 700px) {
+  .rfq-map__frame {
+    border-radius: var(--radius-lg);
+  }
+  .rfq-map iframe {
+    height: clamp(260px, 52vh, 380px);
+  }
+}
+
+/* The colour resolve and the frame lift are decorative easing, not information.
+   Under reduced motion the map simply renders at its resting state. */
+@media (prefers-reduced-motion: reduce) {
+  .rfq-map__frame,
+  .rfq-map iframe {
+    transition: none;
+  }
 }
 
 .rfq-map__note {
-  margin-top: 16px;
+  margin-top: var(--space-md);
   font-size: 14px;
   line-height: 1.7;
   color: color-mix(in srgb, var(--text) 55%, transparent);

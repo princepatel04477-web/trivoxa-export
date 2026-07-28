@@ -73,13 +73,20 @@ export default function RfqPage() {
       {/* Where we are */}
       <Section eyebrow="Where We Are" title="Surat, Gujarat — India's Export Corridor.">
         <div className="rfq-map">
-          <iframe
-            title="Trivoxa Group — Surat, Gujarat, India"
-            src="https://www.google.com/maps?q=Surat,+Gujarat,+India&output=embed"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+          {/* Presentational frame only — it carries the radius, hairline, ring
+              and shadow so the embed reads as a deliberate panel rather than a
+              raw iframe. The iframe inside is untouched: same src, same
+              controls, same click and navigation behaviour. Nothing is layered
+              over it, so Google's own UI stays fully interactive. */}
+          <div className="rfq-map__frame">
+            <iframe
+              title="Trivoxa Group — Surat, Gujarat, India"
+              src="https://www.google.com/maps?q=Surat,+Gujarat,+India&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
           <p className="rfq-map__note">
             Headquartered in Surat with access to Mundra, Kandla, and Nhava Sheva ports — response window 24 business
             hours, IST.
