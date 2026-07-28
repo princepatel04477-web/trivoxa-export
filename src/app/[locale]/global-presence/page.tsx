@@ -97,9 +97,9 @@ export default function GlobalPresencePage() {
   return (
     <TrivoxaShell>
       {/* Signature animation: one persistent canvas behind every section. The
-          particle globe in the hero unwraps into the flat world map across
-          Overview → Network, then holds flat while the regions illuminate and the
-          trade routes draw. */}
+          particle globe holds its spherical form for the whole page — spinning,
+          tilted and draggable — while the regions illuminate and the trade
+          routes draw as arcs across it, before it converges on the eagle. */}
       <div className="gp-canvas" aria-hidden="true">
         <PresenceGlobe />
       </div>
@@ -121,24 +121,24 @@ export default function GlobalPresencePage() {
         }
       />
 
-      {/* Interactive Global Network — the section the unwrap resolves into. It is
-          deliberately sparse and tall (see .presence-network in signature-canvas.css): the
-          particle field flattening from globe to world map behind it IS the
-          content, and the unwrap needs the scroll distance to breathe.
+      {/* Interactive Global Network — deliberately sparse and tall (see
+          .presence-network in signature-canvas.css): the live particle globe
+          behind it IS the content, and it needs the scroll distance to breathe.
 
-          This replaces the inline <WorldMap> SVG that used to sit in the Regions
-          section below. Two world maps on one page — a small static one inside a
-          full-viewport live one — read as a mistake, and the live field is the map
-          the rest of the page's choreography depends on. */}
+          The copy here used to describe the globe unwrapping into a flat world
+          map and told the reader to "keep scrolling to lay it flat". The flat
+          map has been removed, so that instruction now describes something that
+          never happens — it is replaced below with the affordance that is still
+          real: the globe is draggable. */}
       <section className="tvx-section presence-network" id="global-network">
         <div className="container">
           <span className="tvx-eyebrow">Interactive Global Network</span>
-          <h2>The Network, Unfolded.</h2>
+          <h2>One Connected World.</h2>
           <div className="tvx-lead">
             <p>
-              The same network, seen two ways — a connected world, and the flat map
-              of the lanes that hold it together. Drag the globe above to turn it;
-              keep scrolling to lay it flat.
+              Every partner, port, and buyer we work with sits somewhere on this
+              globe — one network, turning. Drag it to look around; keep scrolling
+              to see the regions light up and the trade lanes draw between them.
             </p>
           </div>
         </div>

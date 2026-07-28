@@ -144,50 +144,54 @@ export const GROUP: Omit<SceneConfig, "onDegrade"> = {
 };
 
 /**
- * Global Presence — the globe unwraps into the world map.
+ * Global Presence — the globe, held spherical the whole way down.
  *
  * This page runs the engine's GEO mode rather than its stage-buffer mode: every
  * stage is the same points at the same lat/lon, and a single `bend` uniform turns
- * them into a sphere (1) or a flat equirectangular map (0). So the signature
- * unwrap ships no position buffers and costs one float per frame — which is what
- * makes holding 60fps THROUGH the unwrap a property of the design rather than
- * something to tune afterwards.
+ * them into a sphere (1) or a flat equirectangular map (0). Costs one float per
+ * frame and ships no position buffers, which is what keeps 60fps a property of
+ * the design rather than something to tune afterwards.
  *
  *   globe (hero, Global Overview)
- *     → UNWRAP to the flat map (Interactive Global Network) — the signature moment
- *     → held flat while the regional clusters illuminate in sequence (Regions)
- *     → held flat while the trade-route arcs draw between hubs (Trade & Operations)
- *     → routes settle, particles relax to drift (Growing Across Borders → CTA)
+ *     → the regional clusters illuminate in sequence (Regions)
+ *     → the trade-route arcs draw between hubs (Trade & Operations)
+ *     → routes settle, particles relax to drift, then converge on the eagle
  *
- * The globe hero is locked: stage 0 is spherical, slow-spinning and draggable, and
- * nothing here flattens it before the reader reaches the Network section.
+ * The flat world map was REMOVED: `bend` is pinned at 1 for every stage, so the
+ * field never unwraps. Everything on this page already rode that one uniform —
+ * idle spin, axial tilt, parallax, drag (disabled below bend 0.6) and the route
+ * overlay's own sphere↔flat blend — so holding it at 1 keeps the globe
+ * spinning and draggable through the entire page instead of going inert and
+ * flat halfway down. The stages remain distinct because they still switch
+ * region illumination, routes and the eagle finale on and off.
  */
 export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
   buildGeoField: ({ count }) => buildPresenceGeo(count),
+  // Every stage holds bend: 1. The stage list is what switches regions, routes
+  // and the finale on — it is no longer what flattens the globe.
   geoStages: [
-    // Hero + Global Overview — the globe, spherical and spinning.
+    // Hero + Global Overview + Network — the globe, spherical and spinning.
     { name: "globe", bend: 1 },
-    // THE unwrap. Everything after this is the map.
-    { name: "map", bend: 0 },
-    // Regions: held flat. The illumination is driven by regionCues, not by bend.
-    { name: "map-regions", bend: 0 },
-    // Trade & Operations: still flat, routes drawn.
-    { name: "map-routes", bend: 0, routes: true },
-    // Close: routes settle out and the flat map converges into the shared eagle.
-    // `eagle: true` blends the analytic unwrap toward the sampled mark (see the
+    // Regions: illumination is driven by regionCues, never by bend.
+    { name: "globe-regions", bend: 1 },
+    // Trade & Operations: route arcs drawn between hubs, on the sphere.
+    { name: "globe-routes", bend: 1, routes: true },
+    // Close: routes settle out and the globe converges into the shared eagle.
+    // `eagle: true` blends the analytic form toward the sampled mark (see the
     // uEagleBlend path in particle-scene) — geo mode has no position buffers of
     // its own, so this is how the finale reaches it.
-    { name: "eagle", bend: 0, drift: 0.2, eagle: true },
+    { name: "eagle", bend: 1, drift: 0.2, eagle: true },
   ],
+  // One binding per transition, so this list is always geoStages.length - 1.
+  // The old first binding scrubbed the unwrap across Overview→Network; with no
+  // unwrap left to drive there is nothing for it to do, so it is gone and the
+  // globe simply holds through the hero, Overview and Network sections.
   stageBindings: [
-    // → unwrap, scrubbed across the Overview→Network span. The longest binding on
-    //   the page on purpose: this is the moment worth giving room to.
-    { trigger: "#global-overview", start: "top center", endTrigger: "#global-network", end: "bottom center" },
-    // → hold flat into the Regions section
+    // → regional illumination
     { trigger: "#regions", start: "top bottom", end: "top center" },
-    // → hold flat into Trade & Operations
+    // → routes draw
     { trigger: "#trade-operations", start: "top bottom", end: "top center" },
-    // → relax
+    // → relax into the eagle
     { trigger: "#growing", start: "top center", endTrigger: ".tvx-cta", end: "top center" },
   ],
   // One cue per region row, fired as each scrolls up into view.

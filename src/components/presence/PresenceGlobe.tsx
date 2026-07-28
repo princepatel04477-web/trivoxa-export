@@ -8,8 +8,8 @@ import { GLOBAL_PRESENCE } from "@/lib/choreography";
 const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ssr: false });
 
 /**
- * The Global Presence signature animation: the particle globe that unwraps into
- * the world map.
+ * The Global Presence signature animation: the particle globe, held spherical
+ * for the length of the page while regions illuminate and trade routes draw.
  *
  * Owns the GLOBAL_PRESENCE config rather than receiving it as a prop — the config
  * carries `buildGeoField`, and functions can't cross the server→client boundary.
