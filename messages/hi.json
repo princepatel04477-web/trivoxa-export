@@ -14,7 +14,8 @@
     "theGroup": "समूह",
     "businesses": "व्यवसाय",
     "globalPresence": "वैश्विक उपस्थिति",
-    "requestQuote": "कोटेशन का अनुरोध करें"
+    "requestQuote": "कोटेशन का अनुरोध करें",
+    "dismissQuotePrompt": "कोटेशन सूचना बंद करें"
   },
   "megaMenu": {
     "productExports": "उत्पाद निर्यात",

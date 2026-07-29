@@ -159,6 +159,33 @@ export default function RfqForm() {
     update("attachments", current);
   }
 
+  /**
+   * §7.4 — "Inline validation on blur, not on every keystroke."
+   *
+   * Validating per keystroke tells someone their email is invalid while they
+   * are still on the second character, which is a form arguing with its user.
+   * Blur is the moment they have said they are finished with the field.
+   *
+   * The step's own schema is reused and everything except this field's issues
+   * is discarded, so there is exactly one definition of what valid means. An
+   * error already on screen is cleared the moment the field becomes valid —
+   * waiting for another blur to withdraw a complaint the user has already
+   * fixed is the other half of the same rudeness.
+   */
+  function validateField(index: number, key: string) {
+    const parsed = STEP_SCHEMAS[index].safeParse(form);
+    const issue = parsed.success
+      ? undefined
+      : parsed.error.issues.find((i) => String(i.path[0]) === key);
+    setErrors((e) => {
+      if (issue?.message === e[key]) return e;
+      const next = { ...e };
+      if (issue) next[key] = issue.message;
+      else delete next[key];
+      return next;
+    });
+  }
+
   function validateStep(index: number): boolean {
     const parsed = STEP_SCHEMAS[index].safeParse(form);
     if (!parsed.success) {
@@ -303,20 +330,64 @@ export default function RfqForm() {
         >
           {step === 0 && (
             <div className="rfq-grid">
+              {/* §7.4 — correct `autocomplete` and `inputmode` on every field.
+                  autocomplete is what lets a phone fill four of these from the
+                  keychain in one tap; inputmode is what decides which keyboard
+                  appears. `type="email"` alone already implies the email
+                  keyboard, so inputMode is only stated where the type does not
+                  carry it. Both are pure ergonomics on desktop and the
+                  difference between a 30-second form and a 3-minute one on a
+                  phone. */}
               <Field label="Company Name" error={errors.companyName}>
-                <input value={form.companyName} onChange={(e) => update("companyName", e.target.value)} />
+                <input
+                  autoComplete="organization"
+                  value={form.companyName}
+                  onChange={(e) => update("companyName", e.target.value)}
+                  onBlur={() => validateField(0, "companyName")}
+                  aria-invalid={!!errors.companyName}
+                />
               </Field>
               <Field label="Contact Name" error={errors.contactName}>
-                <input value={form.contactName} onChange={(e) => update("contactName", e.target.value)} />
+                <input
+                  autoComplete="name"
+                  value={form.contactName}
+                  onChange={(e) => update("contactName", e.target.value)}
+                  onBlur={() => validateField(0, "contactName")}
+                  aria-invalid={!!errors.contactName}
+                />
               </Field>
               <Field label="Business Email" error={errors.email}>
-                <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} />
+                <input
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                  onBlur={() => validateField(0, "email")}
+                  aria-invalid={!!errors.email}
+                />
               </Field>
               <Field label="WhatsApp Number" error={errors.whatsapp}>
-                <PhoneInput international defaultCountry="IN" value={form.whatsapp} onChange={(v) => update("whatsapp", v ?? "")} />
+                <PhoneInput
+                  international
+                  defaultCountry="IN"
+                  autoComplete="tel"
+                  value={form.whatsapp}
+                  onChange={(v) => update("whatsapp", v ?? "")}
+                  onBlur={() => validateField(0, "whatsapp")}
+                  aria-invalid={!!errors.whatsapp}
+                />
               </Field>
               <Field label="Country of Import" error={errors.importCountry}>
-                <input value={form.importCountry} onChange={(e) => update("importCountry", e.target.value)} />
+                <input
+                  autoComplete="country-name"
+                  value={form.importCountry}
+                  onChange={(e) => update("importCountry", e.target.value)}
+                  onBlur={() => validateField(0, "importCountry")}
+                  aria-invalid={!!errors.importCountry}
+                />
               </Field>
             </div>
           )}
@@ -331,7 +402,13 @@ export default function RfqForm() {
               )}
               <div className="rfq-grid">
                 <Field label="Destination Port" error={errors.destinationPort}>
-                  <input value={form.destinationPort} onChange={(e) => update("destinationPort", e.target.value)} />
+                  <input
+                    autoComplete="off"
+                    value={form.destinationPort}
+                    onChange={(e) => update("destinationPort", e.target.value)}
+                    onBlur={() => validateField(1, "destinationPort")}
+                    aria-invalid={!!errors.destinationPort}
+                  />
                 </Field>
                 <Field label="Product Category" error={errors.categoryKey}>
                   <select value={form.categoryKey} onChange={(e) => onCategoryChange(e.target.value)}>
@@ -343,10 +420,30 @@ export default function RfqForm() {
                   </select>
                 </Field>
                 <Field label="HS Code" error={errors.hsCode}>
-                  <input value={form.hsCode} onChange={(e) => update("hsCode", e.target.value)} />
+                  {/* Numeric keypad, but `type="text"`: an HS code is a
+                      digit-grouped identifier, not a quantity, and type=number
+                      would let a phone offer to spin it and would strip a
+                      leading zero. */}
+                  <input
+                    inputMode="numeric"
+                    autoComplete="off"
+                    value={form.hsCode}
+                    onChange={(e) => update("hsCode", e.target.value)}
+                    onBlur={() => validateField(1, "hsCode")}
+                    aria-invalid={!!errors.hsCode}
+                  />
                 </Field>
                 <Field label="Quantity" error={errors.quantity}>
-                  <input type="number" min="0" step="any" value={form.quantity} onChange={(e) => update("quantity", e.target.value)} />
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    inputMode="decimal"
+                    value={form.quantity}
+                    onChange={(e) => update("quantity", e.target.value)}
+                    onBlur={() => validateField(1, "quantity")}
+                    aria-invalid={!!errors.quantity}
+                  />
                 </Field>
                 <Field label="Unit">
                   <select value={form.unit} onChange={(e) => update("unit", e.target.value as FormState["unit"])}>
@@ -459,8 +556,17 @@ export default function RfqForm() {
             Continue
           </button>
         )}
+        {/* aria-busy is the pending indicator for anyone not looking at the
+            label — a screen reader announces the control as busy rather than
+            going silent for the length of the request. */}
         {step === STEPS.length - 1 && (
-          <button type="button" className="tvx-btn tvx-btn--primary" disabled={submitting} onClick={handleSubmit}>
+          <button
+            type="button"
+            className="tvx-btn tvx-btn--primary"
+            disabled={submitting}
+            aria-busy={submitting}
+            onClick={handleSubmit}
+          >
             {submitting ? "Submitting…" : "Submit RFQ"}
           </button>
         )}

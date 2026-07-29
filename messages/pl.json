@@ -14,7 +14,8 @@
     "theGroup": "Grupa",
     "businesses": "Działalność",
     "globalPresence": "Globalna obecność",
-    "requestQuote": "Poproś o wycenę"
+    "requestQuote": "Poproś o wycenę",
+    "dismissQuotePrompt": "Zamknij monit o wycenę"
   },
   "megaMenu": {
     "productExports": "Eksport produktów",

@@ -167,6 +167,38 @@
   gap: 14px;
   margin-top: 36px;
 }
+
+/* §7.4 / §6.3 — "Submit button full-width, 52px tall." On a 390px screen a
+   right-aligned pair of pill buttons puts the primary action in the top-right
+   of the thumb's reach and leaves the Back button competing with it for
+   attention. Stacked and full-width, the forward path is unmissable and lands
+   in the bottom 55% where the thumb already is; Back sits beneath it, still
+   present, visibly secondary.
+
+   `column-reverse` rather than reordering the markup: the DOM order is
+   Back-then-Continue, which is the correct tab order, and only the visual
+   order changes. */
+@media (max-width: 767px) {
+  .rfq-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .rfq-actions .tvx-btn {
+    width: 100%;
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* A disabled submit must look disabled — without this the button is fully
+   lit while the request is in flight, so the only signal that anything is
+   happening is the label change, and a second tap feels reasonable. */
+.rfq-actions .tvx-btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
 .rfq-error {
   margin-top: 20px;
   color: var(--destructive);

@@ -14,7 +14,8 @@
     "theGroup": "O Grupo",
     "businesses": "Negócios",
     "globalPresence": "Presença global",
-    "requestQuote": "Solicitar cotação"
+    "requestQuote": "Solicitar cotação",
+    "dismissQuotePrompt": "Dispensar o aviso de orçamento"
   },
   "megaMenu": {
     "productExports": "Exportação de produtos",

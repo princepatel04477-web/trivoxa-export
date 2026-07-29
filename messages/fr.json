@@ -14,7 +14,8 @@
     "theGroup": "Le Groupe",
     "businesses": "Activités",
     "globalPresence": "Présence mondiale",
-    "requestQuote": "Demander un devis"
+    "requestQuote": "Demander un devis",
+    "dismissQuotePrompt": "Masquer l'invitation à demander un devis"
   },
   "megaMenu": {
     "productExports": "Exportations de produits",

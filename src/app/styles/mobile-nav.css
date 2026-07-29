@@ -1,3 +1,7 @@
+/* The scroll lock itself is applied from MobileNav (position:fixed plus a
+   captured offset — see §7.1 there). `overflow: hidden` is kept only as the
+   belt to that braces: it is what non-iOS engines honour, and it costs
+   nothing where the JS lock is already doing the work. */
 body.nav-active {
   overflow: hidden;
 }
@@ -72,12 +76,18 @@ body.nav-active .hamburger > div:nth-child(2) {
   margin-bottom: 25px;
 }
 
+/* §7.1 — "Rows: 48px minimum." The type was already 30px, but a 32px line box
+   with no padding made the actual target 32px: generous letters in a cramped
+   row. min-height plus centring gives the row real height without moving the
+   text off its own baseline. */
 .mobile-nav .nav__content > ul > li > a,
 .mobile-nav .nav__content > ul > li > .mobile-nav__acc-trigger {
   font-size: 30px;
   line-height: 32px;
   letter-spacing: 1px;
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
   font-family: var(--font-body);
   font-weight: 400;
   color: var(--text);
@@ -127,8 +137,13 @@ li.opened .mobile-nav__caret {
   padding: 18px 0 6px 15px;
 }
 
+/* §7.1 — the 48px row minimum applies to the nested levels too. These are
+   the deepest destinations in the tree and the easiest to mis-tap, because by
+   the time a reader is three levels down they are moving quickly. */
 .mobile-nav__acc .sub-menu > li a {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
   padding: 8px 0;
   font-size: 19px;
   line-height: 26px;
@@ -157,14 +172,18 @@ li.opened .mobile-nav__caret {
 }
 
 .mobile-nav__division ul a {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
   padding: 7px 0;
   font-size: 18px;
   line-height: 26px;
 }
 
 .mobile-nav__external {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
   margin-top: 8px;
   padding: 7px 0;
   font-family: var(--font-mono);

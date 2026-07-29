@@ -107,15 +107,70 @@ export default function MobileNav() {
     else tl.reverse();
   }, [open]);
 
-  // Lenis is a virtual scroller: it moves the page from its own RAF loop, so
-  // `body { overflow: hidden }` alone does not stop a wheel gesture from
-  // scrolling the document underneath the open overlay. Freeze it explicitly,
-  // the same way the contact modal does.
+  // §7.1 — "Background scroll locked while open — lock via `position: fixed` on
+  // body with scroll-position restoration, not `overflow: hidden`, which iOS
+  // ignores."
+  //
+  // Two separate scrollers have to be stopped, and neither substitutes for the
+  // other:
+  //
+  //   - Lenis moves the document from its own RAF loop, so no CSS property on
+  //     body stops it. It is frozen explicitly.
+  //   - Native touch scrolling on iOS Safari ignores `overflow: hidden` on
+  //     body outright. Only taking the body out of flow stops it, which means
+  //     capturing the scroll offset first and pinning the body at negative
+  //     that, or the page jumps to the top the instant the drawer opens and
+  //     the reader loses their place.
+  //
+  // On close the offset is restored to BOTH the window and Lenis: Lenis caches
+  // its own `animatedScroll`, and a window.scrollTo it did not initiate leaves
+  // the two disagreeing until the next gesture snaps the page back.
   useEffect(() => {
     if (!open) return;
     const lenis = getLenis();
     lenis?.stop();
-    return () => lenis?.start();
+
+    const y = window.scrollY;
+    const body = document.body;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${y}px`;
+    // Fixed positioning drops the body out of flow, so it no longer inherits
+    // the viewport width — without this the whole page reflows narrower behind
+    // the overlay and every trigger boundary moves.
+    body.style.width = "100%";
+
+    return () => {
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      window.scrollTo(0, y);
+      lenis?.scrollTo(y, { immediate: true, force: true });
+      lenis?.start();
+    };
+  }, [open]);
+
+  // §7.1 — "Close on … hardware back (push a history state on open)."
+  // Without this the Android back button leaves the drawer open and navigates
+  // the page underneath it, which reads as the button being broken. A state is
+  // pushed on open and popped on close, so back closes the drawer and the
+  // second back leaves the page as it always did.
+  useEffect(() => {
+    if (!open) return;
+    history.pushState({ trivoxaNav: true }, "");
+    const onPop = () => closeNavOverlay();
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      // Closing by any other route (X, backdrop, Escape, a link) must also
+      // retire the state we pushed, or back would then be a no-op that only
+      // undoes an already-closed drawer.
+      if (history.state?.trivoxaNav) history.back();
+    };
   }, [open]);
 
   // Escape closes, and focus is kept inside the overlay while it is open —

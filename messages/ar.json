@@ -14,7 +14,8 @@
     "theGroup": "المجموعة",
     "businesses": "الأعمال",
     "globalPresence": "الحضور العالمي",
-    "requestQuote": "اطلب عرض سعر"
+    "requestQuote": "اطلب عرض سعر",
+    "dismissQuotePrompt": "إغلاق دعوة طلب عرض السعر"
   },
   "megaMenu": {
     "productExports": "صادرات المنتجات",
