@@ -467,7 +467,7 @@
   margin: 0 0 12px;
 }
 .hp-trust .trust-card__body {
-  font-size: clamp(14px, 1.1vw, 16px);
+  font-size: max(clamp(14px, 1.1vw, 16px), var(--floor-caption));
   line-height: 1.7;
   font-weight: 300;
   color: color-mix(in srgb, var(--text) 68%, transparent);

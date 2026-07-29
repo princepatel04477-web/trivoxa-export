@@ -189,7 +189,7 @@
 .tvx-section .tvx-lead {
   margin-top: 26px;
   max-width: 760px;
-  font-size: clamp(15px, 1.15vw, 18px);
+  font-size: max(clamp(15px, 1.15vw, 18px), var(--floor-body));
   line-height: 1.8;
   color: var(--muted);
 }

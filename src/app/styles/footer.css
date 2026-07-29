@@ -108,6 +108,14 @@
   color: var(--color-accent, var(--gold));
 }
 
+/* §6.2 — stacked at a 33px pitch, so real height rather than overlays.
+   The column's 10px gap already exceeds the 8px separation minimum. */
+@media (pointer: coarse) {
+  .footer-social a {
+    min-height: 44px;
+  }
+}
+
 .footer-social__digital {
   font-family: var(--font-mono);
   font-size: max(13px, var(--floor-label)) !important;
@@ -223,6 +231,19 @@
   margin-bottom: 8px;
 }
 
+/* §6.2 — the sitemap is 24 stacked links measuring 29px tall on a 37px
+   pitch. An overlay would make each one 44px and therefore make every
+   one of them overlap both neighbours, so the rows take real height
+   instead. 44px + the existing 8px margin puts adjacent targets exactly
+   at the 8px separation the section asks for. */
+@media (pointer: coarse) {
+  .footer .footer-content ul li a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
 /* Newsletter */
 .footer-newsletter__copy {
   font-size: max(14px, var(--floor-caption));
@@ -273,6 +294,28 @@
   transform: translateX(4px);
 }
 
+/* §6.2 / §7.4 — the newsletter row: a 36px-tall input and a 31x26 submit.
+   The input takes real height (it is a form control, and a taller target
+   is also easier to place a caret in); the submit takes an overlay so the
+   arrow glyph stays optically aligned with the rule beneath it. */
+@media (pointer: coarse) {
+  .footer-newsletter__form input {
+    min-height: 44px;
+  }
+  .footer-newsletter__form button {
+    position: relative;
+  }
+  .footer-newsletter__form button::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .footer-newsletter__thanks {
   font-size: max(14px, var(--floor-caption));
   color: var(--color-accent, var(--gold));
@@ -299,6 +342,26 @@
 .footer-bottom a {
   color: color-mix(in srgb, var(--text) 40%, transparent);
   transition: color 0.3s ease;
+}
+
+/* §6.2 — legal links sit in a wrapping flex row with a 24px gap, so the
+   overlay mechanism applies here: 44px of target, no change to the line
+   they sit on. The gap is wide enough that neighbouring overlays (10.5px
+   of reach each side) never meet. */
+@media (pointer: coarse) {
+  .footer-bottom a {
+    position: relative;
+    display: inline-block;
+  }
+  .footer-bottom a::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: 44px;
+  }
 }
 
 .footer-bottom a:hover {

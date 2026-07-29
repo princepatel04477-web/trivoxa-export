@@ -406,6 +406,102 @@ html[lang="ru"] {
   }
 }
 
+/* ============================================================
+   TOUCH ERGONOMICS (§6.2) — 44px, and the pressed state.
+
+   Scoped to `pointer: coarse` rather than to a width, because this
+   is a property of the INPUT DEVICE, not of the viewport: a narrow
+   desktop window still has a mouse and needs nothing here, and a
+   1024px tablet has a thumb and does. Nothing in this block paints,
+   so it cannot regress the approved desktop composition.
+
+   Two mechanisms, chosen per case:
+
+   1. `.tap-44` — a transparent ::after that centres a 44x44 hit
+      area over the element WITHOUT changing its box. §6.2's rule
+      exactly: the visual treatment does not change, the target
+      does. Correct for isolated controls and for links sitting in
+      a row with real gaps.
+
+   2. Real height (`min-height` + centring). Correct wherever
+      targets STACK, because overlays on a 37px pitch would overlap
+      each other and turn a near-miss into a mis-tap on the
+      neighbour — worse than the small target it set out to fix.
+      Where this is used, spacing is set to >=8px per §6.2.
+   ============================================================ */
+@media (pointer: coarse) {
+  .tap-44 {
+    position: relative;
+  }
+  .tap-44::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    /* Invisible, and never a paint or hit-test cost for anything else. */
+    pointer-events: auto;
+  }
+
+  /* Mechanism 1 applied. These are all inline links and inline buttons
+     whose underline or baseline IS the affordance, sitting in rows with
+     real gaps — so they get target without their composition moving.
+     Listed here rather than repeated across seven stylesheets so the
+     policy has one place to be read and audited. */
+  .tvx-crumb a,
+  .tvx-info-row a,
+  .leadership-panel__email,
+  .arm-panel__link,
+  .pgrid__spec-btn {
+    position: relative;
+  }
+  .tvx-crumb a::after,
+  .tvx-info-row a::after,
+  .leadership-panel__email::after,
+  .arm-panel__link::after,
+  .pgrid__spec-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: 44px;
+  }
+
+  /* Mechanism 2. A checkbox is tappable across its whole label, so the
+     LABEL carries the target — the box itself stays 16px and the control
+     keeps its native look. */
+  .pgrid__add,
+  .insights-teaser__vote {
+    min-height: 44px;
+  }
+
+  /* On touch there is no hover, so the pressed state is the ONLY
+     acknowledgement a tap receives. A site that does not answer a
+     tap feels broken however fast it actually is. Opacity only —
+     it is compositor-only and cannot shift layout (§5.3). */
+  a:active,
+  button:active,
+  [role="button"]:active,
+  summary:active {
+    opacity: 0.62;
+  }
+  /* The transition above (globals `a, button`) animates colour, not
+     opacity, so the press reads instantly and the release eases. */
+  a,
+  button,
+  [role="button"],
+  summary {
+    transition: opacity 0.18s ease-out, color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

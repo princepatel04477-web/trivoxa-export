@@ -227,6 +227,28 @@
   margin-bottom: 7px;
 }
 
+/* §7.1 — the drawer trigger is the single most important control on a
+   phone and it measured 28x11: two rules and the air between them, with
+   no box of its own. It gets a real 48x48 (§7.1's own figure, above the
+   44px floor), centred so the glyph does not move a pixel. The contact
+   circle beside it goes to 44x44 the same way. */
+@media (pointer: coarse) {
+  .header .header-wrapper .h-right .hamburger {
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    /* Pull the box outward so the glyph keeps its optical position
+       against the gutter instead of being pushed inboard by the
+       new padding. */
+    margin-right: -10px;
+  }
+  .header .header-wrapper .h-right .mobile-contact > div {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .header .mega-menu {
   width: 100%;
   position: absolute;
