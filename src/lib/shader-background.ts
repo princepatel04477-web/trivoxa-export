@@ -2,13 +2,18 @@ import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 import { VERTEX } from "@/shaders/prelude";
 import { getFragment } from "@/shaders";
+import { isMobileDevice, pixelRatio, suspendWhenOffscreen } from "@/lib/device";
 
 export interface ShaderBackground {
   dispose(): void;
 }
 
-const MAX_DPR = 1.5;
-const RENDER_SCALE = 0.7; // render below CSS res, upsampled — ambient blur hides it
+// Render below CSS resolution and upsample — this is an out-of-focus ambient
+// field, so the loss is invisible and the saving is quadratic. Mobile takes the
+// harder cut: at 0.5 a 430×932 phone at DPR 3 renders 0.30 MP per frame instead
+// of the 3.6 MP an uncapped surface would.
+const RENDER_SCALE_DESKTOP = 0.7;
+const RENDER_SCALE_MOBILE = 0.5;
 const WARMUP_FRAMES = 30; // skip shader-compile / first-paint jank
 const SLOW_MS = 45; // a frame slower than this counts against the budget
 const SLOW_LIMIT = 90; // sustained slow frames -> degrade to CSS fallback
@@ -52,12 +57,31 @@ export function createShaderBackground(
   });
   scene.add(new THREE.Mesh(geometry, material));
 
+  const renderScale = isMobileDevice() ? RENDER_SCALE_MOBILE : RENDER_SCALE_DESKTOP;
+
+  // iOS Safari fires `resize` every time the address bar collapses or expands,
+  // which on a long page is continuously during a scroll. Reallocating the
+  // renderer's backing store on each of those is pure thrash for a height
+  // change the shader does not read. Only a real width change (rotation, a
+  // desktop window drag) rebuilds the target; height alone updates the
+  // resolution uniform, which is free.
+  // The 200px height tolerance is comfortably above any address-bar delta
+  // (~60-120px) and comfortably below a rotation, so a genuine viewport change
+  // still rebuilds the target.
+  const HEIGHT_TOLERANCE = 200;
+  let lastWidth = 0;
+  let lastHeight = 0;
+
   const resize = () => {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR) * RENDER_SCALE;
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(w, h, false);
+    const dpr = pixelRatio(renderScale);
+    if (w !== lastWidth || Math.abs(h - lastHeight) > HEIGHT_TOLERANCE) {
+      lastWidth = w;
+      lastHeight = h;
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(w, h, false);
+    }
     uniforms.uResolution.value.set(w * dpr, h * dpr);
   };
   resize();
@@ -99,8 +123,18 @@ export function createShaderBackground(
     render();
   });
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    gsap.ticker.add(update);
-    return () => gsap.ticker.remove(update);
+    // Detached from the ticker entirely when off-screen or backgrounded, rather
+    // than left attached and early-returning: an attached callback still costs
+    // a call and keeps GSAP's ticker awake.
+    const release = suspendWhenOffscreen(
+      canvas,
+      () => gsap.ticker.add(update),
+      () => gsap.ticker.remove(update)
+    );
+    return () => {
+      release();
+      gsap.ticker.remove(update);
+    };
   });
 
   return {

@@ -92,7 +92,10 @@
 .container {
   max-width: 1684px;
   margin: 0 auto;
-  padding: 0 32px;
+  /* Gutters resolve through --gutter-left/right (globals.css), which fold the
+     landscape safe-area insets in via max(). Identical to the previous flat
+     32px anywhere without insets, which is every desktop. */
+  padding: 0 var(--gutter-right) 0 var(--gutter-left);
 }
 
 /* Section transition polish — subtle fade gradient between sections */
@@ -172,7 +175,8 @@ section {
     left: 0;
     width: 100%;
     z-index: 9998; /* under the nav overlay + grain, above content */
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    padding: 10px max(16px, var(--safe-right)) calc(10px + var(--safe-bottom))
+      max(16px, var(--safe-left));
     background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg) 92%, transparent) 40%);
     pointer-events: none;
   }
@@ -199,8 +203,8 @@ section {
 /* ---------- WhatsApp floating action button ---------- */
 .wa-fab {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: max(22px, var(--safe-right));
+  bottom: max(22px, var(--safe-bottom));
   z-index: 9998;
   display: flex;
   align-items: center;
@@ -233,7 +237,7 @@ section {
 @media (max-width: 767px) {
   /* Ride above the sticky RFQ bar. */
   .wa-fab {
-    bottom: calc(78px + env(safe-area-inset-bottom));
+    bottom: calc(78px + var(--safe-bottom));
   }
 }
 

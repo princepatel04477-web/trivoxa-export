@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { isMobileDevice, pixelRatio, suspendWhenOffscreen } from "@/lib/device";
 
 const TILE_SIZE = 96;
 const POOL_SIZE = 6;
-const MAX_DPR = 2;
+
+/**
+ * Grain is a texture cue, not a detail element — it is stochastic noise, so
+ * there is nothing in it for extra device pixels to resolve. Rendering it at
+ * half resolution on a phone and letting the browser upscale halves both the
+ * bitmap memory and the per-tick fill cost, and is not detectable.
+ */
+function grainRatio(): number {
+  return pixelRatio(isMobileDevice() ? 0.5 : 1);
+}
 
 function buildNoiseTile(): HTMLCanvasElement {
   const tile = document.createElement("canvas");
@@ -50,7 +60,7 @@ export default function GrainOverlay({ frameSkip, reducedMotion }: GrainOverlayP
     let width = 0;
     let height = 0;
     let poolIndex = 0;
-    let dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    let dpr = grainRatio();
 
     const draw = (index: number) => {
       const pattern = patterns[index];
@@ -64,7 +74,7 @@ export default function GrainOverlay({ frameSkip, reducedMotion }: GrainOverlayP
     };
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      dpr = grainRatio();
       const rect = container.getBoundingClientRect();
       width = Math.max(1, Math.round(rect.width * dpr));
       height = Math.max(1, Math.round(rect.height * dpr));
@@ -94,23 +104,24 @@ export default function GrainOverlay({ frameSkip, reducedMotion }: GrainOverlayP
       animId = requestAnimationFrame(tick);
     };
 
-    const visibilityObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && animId === null) {
-          animId = requestAnimationFrame(tick);
-        } else if (!entry.isIntersecting && animId !== null) {
-          cancelAnimationFrame(animId);
-          animId = null;
-        }
+    // Suspended both when the hero scrolls away AND when the tab is hidden —
+    // a backgrounded tab that keeps a grain loop alive is a battery cost with
+    // no viewer.
+    const releaseSuspend = suspendWhenOffscreen(
+      container,
+      () => {
+        if (animId === null) animId = requestAnimationFrame(tick);
       },
-      { threshold: 0 }
+      () => {
+        if (animId !== null) cancelAnimationFrame(animId);
+        animId = null;
+      }
     );
-    visibilityObserver.observe(container);
 
     return () => {
       if (animId !== null) cancelAnimationFrame(animId);
       resizeObserver.disconnect();
-      visibilityObserver.disconnect();
+      releaseSuspend();
     };
   }, [frameSkip, reducedMotion]);
 

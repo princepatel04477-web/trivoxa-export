@@ -1,5 +1,14 @@
 .hp-sec-1 {
+  /* svh, not vh: on iOS `100vh` resolves to the LARGE viewport (address bar
+     hidden), so at load the hero is taller than the visible area and settles
+     downward the moment the reader scrolls — the single most recognisable
+     amateur tell on mobile. `svh` is the small viewport and is CONSTANT, so
+     the hero never resizes under the thumb. `dvh` would fix the initial
+     overshoot but reflow live during the bar transition, which is the same
+     defect in slow motion. The plain-vh line is the fallback for engines that
+     do not know the keyword. */
   min-height: 100vh;
+  min-height: 100svh;
   position: relative;
   display: flex;
   align-items: center;

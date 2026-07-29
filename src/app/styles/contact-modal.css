@@ -1,7 +1,11 @@
 .contact-modal {
   position: fixed;
   width: 100%;
+  /* An overlay should cover exactly what the reader can see right now, so this
+     one genuinely wants the DYNAMIC unit — it tracks the address bar instead of
+     leaving a strip of page visible beneath it. */
   height: 100vh;
+  height: 100dvh;
   top: 0;
   left: 0;
   opacity: 0;
