@@ -841,6 +841,14 @@ a, button {
     radial-gradient(ellipse at 72% 38%, color-mix(in srgb, var(--gold) 7%, transparent), transparent 55%),
     var(--bg);
 }
+/* The poster frame (§4.3), generated from the live scene's own geometry by
+   scripts/mobile/export-posters.mjs.
+
+   Applied as a MASK, not as an <img>: an externally-referenced SVG cannot read
+   this page's custom properties, so a coloured file would have to bake gold in
+   and break §0.1's no-hardcoded-colour rule. The mask carries shape and depth
+   only; every pixel of colour below comes from --gold-particle, the same token
+   the live field's points are drawn with. */
 .particle-fallback__globe {
   position: absolute;
   top: 50%;
@@ -848,10 +856,10 @@ a, button {
   width: min(46vw, 520px);
   height: min(46vw, 520px);
   transform: translateY(-50%);
-  fill: none;
-  stroke: var(--gold-particle);
-  stroke-width: 0.6;
-  opacity: 0.28;
+  background: var(--gold-particle);
+  opacity: 0.5;
+  -webkit-mask: url("/images/posters/particle-globe.svg") center / contain no-repeat;
+  mask: url("/images/posters/particle-globe.svg") center / contain no-repeat;
 }
 @media (max-width: 767px) {
   .particle-fallback__globe {

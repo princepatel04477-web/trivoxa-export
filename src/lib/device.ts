@@ -83,6 +83,191 @@ export function isMobileDevice(): boolean {
   return deviceClass() === "mobile";
 }
 
+/* ============================================================================
+   RENDER TIER (§4.2)
+
+   `deviceClass()` above answers "what kind of hardware is this". The tier
+   answers the different question "how much work may a surface actually spend",
+   which is not the same thing: a mid-tier Android and a flagship are both
+   `mobile`, and one of them can carry three times the geometry of the other.
+
+   ONE resolver, exported from one module, consumed by every WebGL surface.
+   The directive is explicit that components must not each decide for
+   themselves — that is how the site previously ended up with three different
+   DPR policies.
+   ============================================================================ */
+
+export type RenderTier = "high" | "mid" | "low" | "static";
+
+/** Descending order, so demotion is `TIER_ORDER[index + 1]`. */
+const TIER_ORDER: RenderTier[] = ["high", "mid", "low", "static"];
+
+/** Where a session's runtime demotion is remembered. */
+const DEMOTION_KEY = "trivoxa:tier-demotions";
+
+/**
+ * §4.2's runtime probe: p95 frame time over the first 90 frames after mount.
+ * Above 20ms (the 50fps floor) the device is demoted one tier and STAYS
+ * demoted for the session — including across route changes, which is what the
+ * sessionStorage persistence is for. Re-running the penalty on every route
+ * would mean paying 90 frames of bad performance repeatedly to relearn a fact
+ * already established.
+ */
+const PROBE_FRAMES = 90;
+const PROBE_P95_BUDGET_MS = 20;
+
+function storedDemotions(): number {
+  if (typeof sessionStorage === "undefined") return 0;
+  try {
+    return Number(sessionStorage.getItem(DEMOTION_KEY)) || 0;
+  } catch {
+    // Private mode / disabled storage: run undemoted rather than throwing. The
+    // frame-budget monitor in particle-scene remains the hard safety net.
+    return 0;
+  }
+}
+
+function persistDemotion(count: number): void {
+  if (typeof sessionStorage === "undefined") return;
+  try {
+    sessionStorage.setItem(DEMOTION_KEY, String(count));
+  } catch {
+    /* nothing to do — see storedDemotions() */
+  }
+}
+
+/** True when the user has asked the OS or the browser to spend less data. */
+function saveData(): boolean {
+  const c = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return c?.saveData === true;
+}
+
+/**
+ * The base tier, before any runtime demotion — a pure function of the device's
+ * declared capability and the user's stated preferences.
+ */
+function baseTier(): RenderTier {
+  if (typeof window === "undefined") return "high"; // SSR: never gate on this
+
+  // STATIC is a user instruction, not a measurement, so it outranks everything
+  // and cannot be climbed out of by a fast GPU.
+  if (prefersReducedMotion() || saveData()) return "static";
+
+  const nav = navigator as Navigator & { deviceMemory?: number };
+  const cores = nav.hardwareConcurrency ?? 4;
+  // deviceMemory is Chromium-only. Safari and Firefox report undefined, and
+  // treating that as 0 would demote every iPhone on the site to LOW — so it
+  // reads as "unknown, assume the mid-tier floor" exactly as gpu-capability.ts
+  // already does.
+  const memory = nav.deviceMemory ?? 4;
+
+  if (deviceClass() === "desktop") return "high";
+
+  // §4.2's thresholds verbatim.
+  if (memory >= 8 && cores >= 8) return "high";
+  if (memory >= 4) return "mid";
+  return "low";
+}
+
+let tierCache: RenderTier | null = null;
+
+/**
+ * The tier this session renders at. Resolved once, then held: re-tiering
+ * mid-session would mean reallocating every renderer's backing store, and a
+ * device does not change what it is.
+ */
+export function renderTier(): RenderTier {
+  if (tierCache) return tierCache;
+  const base = baseTier();
+  // A demotion recorded earlier in the session applies immediately, so the
+  // second route does not have to rediscover it.
+  const index = Math.min(
+    TIER_ORDER.indexOf(base) + storedDemotions(),
+    TIER_ORDER.length - 1
+  );
+  tierCache = TIER_ORDER[index];
+  return tierCache;
+}
+
+/** Demote one tier and remember it for the rest of the session. */
+export function demoteTier(): RenderTier {
+  const current = renderTier();
+  // STATIC is the floor, and a session already there has nothing to give back.
+  if (current === "static") return current;
+  persistDemotion(storedDemotions() + 1);
+  tierCache = TIER_ORDER[Math.min(TIER_ORDER.indexOf(current) + 1, TIER_ORDER.length - 1)];
+  return tierCache;
+}
+
+/**
+ * §4.2's runtime probe. Feed it every frame's duration; it samples the first
+ * PROBE_FRAMES and then demotes once if the p95 missed the budget.
+ *
+ * p95 rather than a mean because the mean hides exactly the failure that
+ * matters — a scene holding 60fps with a 40ms hitch every twelfth frame reads
+ * as smooth on average and as stuttering to a person.
+ *
+ * Returns a `sample(ms)` function; calling it after the verdict is a no-op, so
+ * callers can hand it every frame without their own bookkeeping.
+ */
+export function createFrameProbe(onDemote?: (tier: RenderTier) => void): (ms: number) => void {
+  const samples: number[] = [];
+  let done = false;
+
+  return (ms: number) => {
+    if (done) return;
+    // A frame that took longer than a quarter second is a tab switch, a GC
+    // pause or a debugger break, not a rendering cost. Including it would let
+    // a single background moment demote a capable device for the session.
+    if (ms > 250) return;
+    samples.push(ms);
+    if (samples.length < PROBE_FRAMES) return;
+
+    done = true;
+    samples.sort((a, b) => a - b);
+    const p95 = samples[Math.floor(samples.length * 0.95)];
+    if (p95 > PROBE_P95_BUDGET_MS) {
+      const next = demoteTier();
+      onDemote?.(next);
+    }
+  };
+}
+
+/**
+ * §4.3's budget table, as a multiplier on the desktop instance count.
+ * LOW keeps 15% rather than dropping to the poster outright — the poster is
+ * what STATIC is for, and what the frame-budget monitor escalates to.
+ */
+export const TIER_PARTICLE_SCALE: Record<RenderTier, number> = {
+  high: 1,
+  mid: 0.35,
+  low: 0.15,
+  static: 0,
+};
+
+/** §4.3 — post-processing is off from MID down. */
+export function tierAllowsPostProcessing(tier: RenderTier = renderTier()): boolean {
+  return tier === "high";
+}
+
+/** §4.5 — simultaneous animated trade-route arcs. */
+export const TIER_MAX_ARCS: Record<RenderTier, number> = {
+  high: Infinity,
+  mid: 6,
+  low: 3,
+  static: 0,
+};
+
+/** §4.5 — "Disable auto-rotate on LOW; the user drags or it sits still." */
+export function tierAllowsAutoRotate(tier: RenderTier = renderTier()): boolean {
+  return tier === "high" || tier === "mid";
+}
+
+/** §4.3 — LOW and STATIC render the poster frame instead of a live scene. */
+export function tierRendersPoster(tier: RenderTier = renderTier()): boolean {
+  return tier === "static";
+}
+
 /** The DPR ceiling for this device, already intersected with its real DPR. */
 export function pixelRatio(scale = 1): number {
   if (typeof window === "undefined") return 1;
