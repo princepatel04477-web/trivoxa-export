@@ -102,7 +102,7 @@
   border-radius: 8px;
   padding: 18px 24px;
   color: var(--foreground);
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   font-family: var(--font-body);
   font-weight: 300;
   margin-bottom: 14px;
@@ -134,7 +134,7 @@
   border-radius: 40px;
   padding: 18px;
   color: var(--foreground);
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   font-family: var(--font-body);
   font-weight: 400;
   cursor: pointer;
@@ -177,7 +177,7 @@
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .brands .swiper .swiper-slide {
     padding: 28px 20px;
   }

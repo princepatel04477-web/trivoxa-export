@@ -59,7 +59,7 @@ body.contact-modal-open .contact-modal .container {
 }
 
 .contact-form .form-status {
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   line-height: 1.6;
   margin: 4px 0 0;
 }
@@ -77,7 +77,7 @@ body.contact-modal-open .contact-modal .container {
   cursor: not-allowed;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .contact-modal .container .contact-form {
     padding: 35px 45px;
   }
@@ -90,13 +90,13 @@ body.contact-modal-open .contact-modal .container {
   }
 }
 
-@media (max-width: 575px) {
+@media (max-width: 767px) {
   .contact-modal .container .contact-form {
     padding: 25px;
   }
 }
 
-@media (max-width: 399px) {
+@media (max-width: 389px) {
   .contact-modal .container .contact-form {
     padding: 15px;
   }

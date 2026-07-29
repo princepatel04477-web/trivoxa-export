@@ -4,6 +4,69 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   THE BREAKPOINT LADDER (§3.1) — the single responsive contract.
+
+     xs   —  up to 389px    small handsets
+     sm   —  390px – 429px  baseline handset, the design target
+     md   —  430px – 767px  large handsets, landscape phones
+     lg   —  768px – 1023px tablet portrait
+     xl   —  1024px+        desktop
+
+   Written as `min-width` here because that is the only form Tailwind
+   accepts; page CSS is authored mobile-last and therefore states the
+   rungs as their `max-width` complements:
+
+     xs   @media (max-width: 389px)
+     sm   @media (max-width: 429px)     xs + sm
+     md   @media (max-width: 767px)     xs + sm + md
+     lg   @media (max-width: 1023px)    everything below desktop
+     xl   @media (min-width: 1024px)
+
+   `--breakpoint-*: initial` clears Tailwind's own 40/48/64/80/96rem
+   scale. That scale was the second, contradictory system the audit
+   found (§1 finding 2): it reached the shipped CSS through the
+   `.container` utility, whose five rem-keyed max-widths were fighting
+   this project's own `.container` from a different chunk — so which
+   one won came down to stylesheet load order. There is now one scale.
+
+   Widths above 1024px (1080/1199/1399/1599/2000) are the pre-existing
+   desktop ramp and are deliberately untouched: §3.1 marks the xl rung
+   DO NOT TOUCH and §0 forbids regressing the approved desktop build.
+   Collapsing them would, by definition, change desktop rendering.
+   ============================================================ */
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 390px;
+  --breakpoint-md: 430px;
+  --breakpoint-lg: 768px;
+  --breakpoint-xl: 1024px;
+}
+
+/* The one container. Declared as a Tailwind utility rather than as a
+   plain rule in shared.css, which is what the audit's contradiction
+   actually was: two `.container` definitions of equal specificity
+   landing in DIFFERENT chunks, so which max-width applied depended on
+   stylesheet load order.
+
+   `@utility` extends the built-in container rather than replacing it,
+   so Tailwind still emits one `max-width` cap per breakpoint. Those
+   caps are now ladder-aligned (390/430/768/1024) instead of the old rem
+   scale, they sit in the same emitted file as this rule, and this rule
+   is unconditional and emitted last — so it wins at every width and the
+   caps are inert. That ordering is the load-bearing invariant, so it is
+   asserted directly against the built CSS in the Phase 6 gate rather
+   than left to trust.
+
+   Gutters resolve through --gutter-left/right, which fold the landscape
+   safe-area insets in via max(); identical to a flat 32px anywhere
+   without insets. */
+@utility container {
+  max-width: 1684px;
+  margin-inline: auto;
+  padding-inline: var(--gutter-left) var(--gutter-right);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -172,13 +235,24 @@ html[lang="ru"] {
   --gutter-left: max(var(--gutter), var(--safe-left));
   --gutter-right: max(var(--gutter), var(--safe-right));
 
+  /* Type floors (§6.1). Zero on desktop, so every existing font-size
+     computes to exactly what it computed to before; raised on the
+     mobile rungs, where each declaration reads them through
+     `max(<declared>, var(--floor-*))` and can only ever go UP.
+
+     One media query enforces the whole floor policy, and desktop is
+     provably untouched because max(x, 0px) === x. */
+  --floor-label: 0px;    /* eyebrow, index, label, utility */
+  --floor-caption: 0px;  /* secondary copy, captions */
+  --floor-body: 0px;     /* body copy, interactive text */
+
   /* ============================================================
      ESTABLISHMENT TYPE SCALE (Task 2) — the single strict scale.
      Page CSS should resolve type through these tokens instead of
      one-off px/rem. Fluid steps use clamp(min, vw, max). Longevity
      is a function of restraint: few sizes, used consistently.
      ============================================================ */
-  --fs-eyebrow: 0.75rem;                        /* 12px — mono eyebrow/label */
+  --fs-eyebrow: max(0.75rem, var(--floor-label));  /* 12px desktop, 13px floor on mobile */
   --fs-caption: 0.8125rem;                      /* 13px — captions, footnotes */
   --fs-meta: 0.875rem;                          /* 14px — meta, fine print */
   --fs-body-sm: 0.9375rem;                      /* 15px — dense body */
@@ -289,6 +363,47 @@ html[lang="ru"] {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ============================================================
+   THE MOBILE FLOOR (§6.1) — md rung and below.
+
+   Institutional confidence is communicated by generous, legible
+   type, not by small type. The audit measured indices at 11.52px
+   and list items at 12.16px; nothing on this site renders below
+   13px on a phone now.
+
+   Gutters come down from the desktop 32px because at 390px a 32px
+   pair spends 16% of the viewport on air. 24px at md and 20px at
+   sm are the §6.1 targets, and --gutter-left/right still fold the
+   landscape safe-area insets in over the top via max().
+   ============================================================ */
+@media (max-width: 767px) {
+  :root {
+    --gutter: 24px;
+    --floor-label: 13px;
+    --floor-caption: 14px;
+    --floor-body: 16px;
+    /* §6.1 asks for more letter-spacing to carry the eyebrow once it lifts
+       to 13px. Tracking is em-based, so it also has to widen in absolute
+       terms to keep reading as a spaced label rather than a small word. */
+    --tracking-eyebrow: 0.2em;
+  }
+
+  /* Safety net for controls that inherit their size rather than declaring
+     one: below 16px iOS zooms the viewport on focus and the layout breaks
+     (§7.4). Every control that DOES declare a size is already floored at
+     the declaration site, which outranks this. */
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1rem);
+  }
+}
+@media (max-width: 429px) {
+  :root {
+    --gutter: 20px;
+  }
 }
 
 @layer base {
@@ -624,7 +739,7 @@ a, button {
   stroke-width: 0.6;
   opacity: 0.28;
 }
-@media (max-width: 575px) {
+@media (max-width: 767px) {
   .particle-fallback__globe {
     right: 50%;
     transform: translate(50%, -50%);

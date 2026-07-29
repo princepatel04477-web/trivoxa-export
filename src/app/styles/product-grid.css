@@ -16,7 +16,7 @@
   border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
   background: color-mix(in srgb, var(--bg-card, var(--bg)) 60%, transparent);
   color: var(--text);
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   outline: none;
   transition: border-color 0.3s ease;
 }
@@ -31,7 +31,7 @@
   border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
   background: color-mix(in srgb, var(--bg-card, var(--bg)) 60%, transparent);
   color: var(--text);
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   outline: none;
   cursor: pointer;
 }
@@ -47,7 +47,7 @@
 .pgrid__count {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: max(12.5px, var(--floor-label));
   letter-spacing: 0.05em;
   color: color-mix(in srgb, var(--text) 45%, transparent);
 }
@@ -100,14 +100,14 @@
 
 .pgrid__hs {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   letter-spacing: 0.06em;
   color: var(--gold-bright, var(--gold));
   opacity: 0.85;
 }
 
 .pgrid__industry {
-  font-size: 11.5px;
+  font-size: max(11.5px, var(--floor-label));
   padding: 3px 10px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
@@ -133,7 +133,7 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: 13.5px;
+  font-size: max(13.5px, var(--floor-caption));
 }
 
 .pgrid__meta dt {
@@ -158,7 +158,7 @@
   background: none;
   border: none;
   padding: 0;
-  font-size: 13.5px;
+  font-size: max(13.5px, var(--floor-body));
   color: color-mix(in srgb, var(--text) 60%, transparent);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -174,7 +174,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13.5px;
+  font-size: max(13.5px, var(--floor-caption));
   color: color-mix(in srgb, var(--text) 70%, transparent);
   cursor: pointer;
   user-select: none;
@@ -202,7 +202,7 @@
   background: var(--bg-card, #101623);
   border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
   box-shadow: 0 18px 44px rgba(4, 9, 20, 0.6);
-  font-size: 14.5px;
+  font-size: max(14.5px, var(--floor-caption));
   white-space: nowrap;
 }
 
@@ -210,7 +210,7 @@
   background: none;
   border: none;
   color: color-mix(in srgb, var(--text) 45%, transparent);
-  font-size: 13px;
+  font-size: max(13px, var(--floor-label));
   text-decoration: underline;
   cursor: pointer;
 }
@@ -222,7 +222,7 @@
   border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
   color: var(--gold-bright, var(--gold));
   font-weight: 500;
-  font-size: 14px;
+  font-size: max(14px, var(--floor-body));
   transition: background 0.3s ease;
 }
 
@@ -289,7 +289,7 @@
 .pgrid__spec-table td {
   text-align: left;
   padding: 10px 12px;
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
 }
 
@@ -326,7 +326,7 @@
     background: var(--bg-card, #101623);
     border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
     color: var(--gold-bright, var(--gold));
-    font-size: 14.5px;
+    font-size: max(14.5px, var(--floor-body));
     font-weight: 500;
     box-shadow: 0 14px 36px rgba(4, 9, 20, 0.55);
     transition: transform 0.3s ease, background 0.3s ease;
@@ -337,7 +337,7 @@
   }
 }
 
-@media (max-width: 575px) {
+@media (max-width: 767px) {
   .pgrid__count {
     margin-left: 0;
     width: 100%;
@@ -386,7 +386,7 @@
   padding: 7px 16px;
   border-radius: 30px;
   border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
-  font-size: 13.5px;
+  font-size: max(13.5px, var(--floor-caption));
   color: color-mix(in srgb, var(--text) 65%, transparent);
 }
 

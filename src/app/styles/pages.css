@@ -157,7 +157,7 @@
   align-items: center;
   gap: 12px;
   text-transform: uppercase;
-  font-size: 12.5px;
+  font-size: max(12.5px, var(--floor-label));
   font-weight: 600;
   letter-spacing: 3.2px;
   color: var(--gold-bright);
@@ -210,7 +210,7 @@
   gap: 10px;
   padding: 15px 32px;
   border-radius: 40px;
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   font-weight: 500;
   letter-spacing: 0.2px;
   cursor: pointer;
@@ -271,7 +271,7 @@
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  font-size: 15.5px;
+  font-size: max(15.5px, var(--floor-body));
   line-height: 1.5;
 }
 .tvx-check::before {
@@ -306,7 +306,7 @@
 }
 .tvx-step__n {
   font-family: var(--font-heading, sans-serif);
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   font-weight: 600;
   color: var(--gold-bright);
   letter-spacing: 2px;
@@ -318,7 +318,7 @@
   margin: 12px 0 10px;
 }
 .tvx-step p {
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   line-height: 1.6;
   color: var(--muted);
 }
@@ -335,7 +335,7 @@
   border-radius: 30px;
   border: 1px solid var(--hair);
   background: var(--surface);
-  font-size: 13.5px;
+  font-size: max(13.5px, var(--floor-caption));
   color: var(--muted);
   transition: border-color 0.25s ease, color 0.25s ease;
 }
@@ -384,7 +384,7 @@
 .tvx-crumb {
   display: flex;
   gap: 8px;
-  font-size: 13px;
+  font-size: max(13px, var(--floor-label));
   color: var(--muted);
   margin-bottom: 8px;
 }
@@ -392,12 +392,12 @@
 .tvx-crumb span { color: color-mix(in srgb, var(--text) 30%, transparent); }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .tvx-grid--3, .tvx-grid--4 { grid-template-columns: repeat(2, 1fr); }
   .tvx-split { grid-template-columns: 1fr; gap: 36px; }
   .tvx-hero { padding: 170px 0 80px; }
 }
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   .tvx .container { padding: 0 22px; }
   .tvx-grid--2, .tvx-grid--3, .tvx-grid--4 { grid-template-columns: 1fr; }
   .tvx-section { padding: 64px 0; }
@@ -428,7 +428,7 @@
   padding: 16px 20px;
   color: var(--text);
   font: inherit;
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   transition: border-color 0.25s ease;
 }
 .tvx .contact-form input::placeholder,
@@ -443,7 +443,7 @@
   background: var(--gold);
   color: var(--bg);
   font-weight: 600;
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -455,7 +455,7 @@
 .tvx-info-row a { color: var(--gold-bright); }
 .tvx-info-label {
   text-transform: uppercase;
-  font-size: 11.5px;
+  font-size: max(11.5px, var(--floor-label));
   letter-spacing: 2.5px;
   color: color-mix(in srgb, var(--text) 45%, transparent);
   margin-bottom: 8px;
@@ -481,7 +481,7 @@
   margin-top: 22px;
   font-family: var(--font-mono);
   font-style: normal;
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -504,14 +504,14 @@
 }
 .tvx-founder-pending__label {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--gold-bright);
   margin-bottom: 8px;
 }
 .tvx-founder-pending__note {
-  font-size: 14.5px;
+  font-size: max(14.5px, var(--floor-caption));
   line-height: 1.7;
   color: var(--muted);
   max-width: 480px;
@@ -525,7 +525,7 @@
 .tvx-group__label {
   font-family: var(--font-heading, sans-serif);
   font-weight: 600;
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   letter-spacing: 0.4px;
   color: var(--gold-bright);
 }

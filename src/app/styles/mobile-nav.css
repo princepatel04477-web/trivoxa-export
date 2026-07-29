@@ -168,7 +168,7 @@ li.opened .mobile-nav__caret {
   margin-top: 8px;
   padding: 7px 0;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   letter-spacing: 0.05em;
   color: var(--gold-bright, var(--gold));
   opacity: 0.85;

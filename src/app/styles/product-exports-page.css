@@ -30,7 +30,7 @@
 
 .pxp-manifest__title {
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: max(12.5px, var(--floor-label));
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -57,7 +57,7 @@ a.pxp-manifest__entry:hover .pxp-manifest__arrow {
 }
 
 .pxp-manifest__desc {
-  font-size: 13.5px;
+  font-size: max(13.5px, var(--floor-caption));
   line-height: 1.6;
   color: var(--muted);
   max-width: 24ch;
@@ -65,13 +65,13 @@ a.pxp-manifest__entry:hover .pxp-manifest__arrow {
 
 .pxp-manifest__divider {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   color: var(--gold-bright);
   padding: 1px var(--space-md, 24px) 0 var(--space-md, 24px);
   user-select: none;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 767px) {
   .pxp-manifest {
     flex-direction: column;
   }

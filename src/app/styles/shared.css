@@ -51,8 +51,10 @@
 
 .scroll-to .text {
   text-transform: uppercase;
-  font-size: 12px;
-  line-height: 12px;
+  font-size: max(12px, var(--floor-label));
+  /* Unitless so it tracks the floored size — a fixed 12px leading is shorter
+     than the glyphs once the label lifts to 13px on a phone. */
+  line-height: 1;
   letter-spacing: 0.6px;
   opacity: 0;
 }
@@ -63,7 +65,7 @@
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1023px) {
   .scroll-to .line {
     width: 250px;
   }
@@ -78,7 +80,7 @@
   }
 }
 
-@media (max-width: 575px) {
+@media (max-width: 429px) {
   .scroll-to {
     display: none;
   }
@@ -89,14 +91,9 @@
   display: flex;
 }
 
-.container {
-  max-width: 1684px;
-  margin: 0 auto;
-  /* Gutters resolve through --gutter-left/right (globals.css), which fold the
-     landscape safe-area insets in via max(). Identical to the previous flat
-     32px anywhere without insets, which is every desktop. */
-  padding: 0 var(--gutter-right) 0 var(--gutter-left);
-}
+/* `.container` now lives in globals.css as `@utility container`, so there is
+   exactly one definition instead of this one racing Tailwind's built-in
+   across chunk boundaries. See the ladder comment there. */
 
 /* Section transition polish — subtle fade gradient between sections */
 section {
@@ -340,7 +337,7 @@ ul {
 .left-side-title {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   line-height: 20px;
   letter-spacing: 0.6px;
   display: block;

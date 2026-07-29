@@ -19,7 +19,7 @@
 
 .careers-value-row__index {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   letter-spacing: 0.04em;
   color: var(--color-accent);
   opacity: 0.6;
@@ -64,7 +64,7 @@
   opacity: 0.45;
 }
 
-@media (max-width: 780px) {
+@media (max-width: 767px) {
   .careers-value-row {
     flex-direction: column;
     gap: var(--space-2xs);
@@ -126,13 +126,13 @@
 
 .careers-dept__desc {
   font-family: var(--font-body);
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   line-height: 1.75;
   color: var(--color-ink-2);
   max-width: 38ch;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
   .careers-dept-strip {
     grid-template-columns: 1fr;
   }
@@ -180,7 +180,7 @@
 .careers-photo-essay figcaption {
   margin-top: 10px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   letter-spacing: 0.05em;
   color: color-mix(in srgb, var(--text) 45%, transparent);
 }
@@ -201,7 +201,7 @@
 }
 
 .careers-voice p {
-  font-size: 15.5px;
+  font-size: max(15.5px, var(--floor-body));
   line-height: 1.7;
   font-style: italic;
   color: color-mix(in srgb, var(--text) 80%, transparent);
@@ -209,7 +209,7 @@
 
 .careers-voice footer {
   margin-top: 14px;
-  font-size: 13px;
+  font-size: max(13px, var(--floor-label));
   color: color-mix(in srgb, var(--text) 50%, transparent);
 }
 

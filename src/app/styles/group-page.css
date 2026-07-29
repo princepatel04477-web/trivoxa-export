@@ -83,7 +83,7 @@
   max-width: 38rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
   .split-sticky {
     grid-template-columns: 1fr;
   }
@@ -143,13 +143,13 @@
 
 .foundation-photo__caption {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   letter-spacing: 0.02em;
   color: var(--color-ink-2);
   margin-top: var(--space-2xs);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
   .foundation-split {
     grid-template-columns: 1fr;
     row-gap: var(--space-2xl);
@@ -245,7 +245,7 @@
 
 .numbered-list__index {
   font-family: var(--font-mono);
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   letter-spacing: 0.06em;
   color: var(--color-accent);
   flex-shrink: 0;
@@ -265,7 +265,7 @@
   margin-left: auto;
 }
 
-@media (max-width: 780px) {
+@media (max-width: 767px) {
   .numbered-list__row {
     flex-wrap: wrap;
     min-height: 0;
@@ -356,7 +356,7 @@
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   color: var(--color-accent);
   margin-top: var(--space-2xs);
 }
@@ -364,7 +364,7 @@
 .leadership-panel__email {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   color: var(--color-ink-2);
   margin-top: var(--space-2xs);
 }
@@ -380,7 +380,7 @@
   margin-top: var(--space-lg);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
   .leadership-panel {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -423,7 +423,7 @@
 
 .ecosystem-diagram__node-label {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: max(0.6875rem, var(--floor-label));
   letter-spacing: 0.02em;
   fill: var(--color-ink-2);
 }
@@ -452,7 +452,7 @@
   margin-top: var(--space-lg);
   padding-top: var(--space-lg);
   border-top: 1px solid var(--color-rule);
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   color: var(--color-ink-2);
 }
 
@@ -466,7 +466,7 @@
 .commitments-table th {
   text-align: left;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: max(0.75rem, var(--floor-label));
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--color-ink-2);
@@ -502,12 +502,12 @@
 }
 
 .commitments-table__desc {
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   line-height: 1.6;
   color: var(--color-ink-2);
 }
 
-@media (max-width: 780px) {
+@media (max-width: 767px) {
   .commitments-table,
   .commitments-table tbody,
   .commitments-table tr,
@@ -530,7 +530,7 @@
     content: attr(data-label);
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: max(0.75rem, var(--floor-label));
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--color-accent);
