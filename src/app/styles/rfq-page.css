@@ -490,3 +490,12 @@
   max-width: 300px;
   margin-bottom: 10px;
 }
+
+/* The Suspense skeleton (RfqFormSkeleton) reserves the picker's exact height
+   so the real form does not push the page down when it hydrates. It is a
+   placeholder, not a control: no pointer affordance, and quiet enough that a
+   fast connection never shows a flash of something that looks interactive. */
+.rfq-path-card--skeleton {
+  cursor: default;
+  opacity: 0.55;
+}

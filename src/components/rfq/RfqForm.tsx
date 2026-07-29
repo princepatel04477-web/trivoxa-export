@@ -18,18 +18,13 @@ import {
   rfqTermsSchema,
 } from "@/lib/validation/rfq";
 import LazyCrane from "@/components/LazyCrane";
+import { RFQ_PATHS as PATHS, type RfqPath } from "@/lib/data/rfq-paths";
 
 const STEPS = ["Company", "Product", "Terms"] as const;
 
-/** Which conversation the visitor wants to have (spec §4 — RFQ paths). */
-type RfqPath = "product" | "service" | "partnership" | "career";
-
-const PATHS: { key: RfqPath; title: string; desc: string }[] = [
-  { key: "product", title: "Product Export RFQ", desc: "Source products with HS codes, MOQs, and a formal quotation." },
-  { key: "service", title: "Service Engagement", desc: "Technology, AI, software, design, or marketing from Trivoxa Digital." },
-  { key: "partnership", title: "Partnership", desc: "Manufacturing, logistics, or distribution partnerships with the Group." },
-  { key: "career", title: "Careers", desc: "Join the team — see open areas and send your application." },
-];
+/* The path list lives in lib/data/rfq-paths so the Suspense skeleton can lay
+   out the identical picker and reserve exactly the right height (§5.5). One
+   copy, so the two can never drift and reintroduce the shift. */
 
 interface Attachment {
   filename: string;

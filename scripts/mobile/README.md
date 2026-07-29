@@ -1,12 +1,16 @@
 # Mobile gates (§8.2 / §8.3)
 
-Measures the three gates that can be checked statically, on the **built**
+Measures the §8.2 gates a headless browser can answer honestly, on the **built**
 site, across every route and every must-pass width.
 
 ```bash
 npm run build
 bash scripts/mobile/serve.sh                 # always restart through this
 node scripts/mobile/audit.mjs                # 360 / 390 / 430, all routes
+node scripts/mobile/motion-check.mjs         # §5  motion doctrine on touch
+node scripts/mobile/chrome-check.mjs         # §7  drawer, CTA, header, form
+node scripts/mobile/vitals-check.mjs         # CLS, LCP, keyboard pass
+node scripts/mobile/landscape-check.mjs      # §8.1 landscape
 node scripts/mobile/desktop-check.mjs        # desktop non-regression
 ```
 
@@ -19,15 +23,21 @@ npm install --no-save playwright && npx playwright install chromium
 
 ## Gates covered
 
-| Gate | Threshold |
-|---|---|
-| Horizontal overflow at 360/390/430 | zero elements past the viewport edge |
-| Tap targets under 44px | zero |
-| Text under 13px | zero |
+| Gate | Threshold | Script |
+|---|---|---|
+| Horizontal overflow at 360/390/430 | zero elements past the viewport edge | audit |
+| Tap targets under 44px | zero | audit |
+| Text under 13px | zero | audit |
+| Cumulative Layout Shift | < 0.05 | vitals |
+| Largest Contentful Paint | < 2.5s | vitals |
+| Reduced-motion parity | full content, zero motion | motion |
+| Keyboard pass, drawer + form | clean | vitals |
+| Landscape | must not break | landscape |
 
-Not covered here: sustained frame rate, Lighthouse, LCP/CLS/INP and device
-temperature. Those are judged on a throttled mid-tier Android per §8.1 and
-cannot be produced by headless Chromium on a software rasteriser.
+Not covered: sustained frame rate, Lighthouse Performance, INP and device
+temperature. §8.1 judges those on a throttled mid-tier Android, and headless
+Chromium rasterises WebGL through SwiftShader — any number produced here would
+measure the rasteriser rather than the site. See `docs/research/MOBILE_SIGNOFF.md`.
 
 ## Options
 
