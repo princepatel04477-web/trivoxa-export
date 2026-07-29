@@ -15,7 +15,8 @@
     "businesses": "الأعمال",
     "globalPresence": "الحضور العالمي",
     "requestQuote": "اطلب عرض سعر",
-    "dismissQuotePrompt": "إغلاق دعوة طلب عرض السعر"
+    "dismissQuotePrompt": "إغلاق دعوة طلب عرض السعر",
+    "back": "رجوع"
   },
   "megaMenu": {
     "productExports": "صادرات المنتجات",

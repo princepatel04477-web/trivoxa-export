@@ -15,7 +15,8 @@
     "businesses": "Negocios",
     "globalPresence": "Presencia global",
     "requestQuote": "Solicitar cotización",
-    "dismissQuotePrompt": "Descartar el aviso de presupuesto"
+    "dismissQuotePrompt": "Descartar el aviso de presupuesto",
+    "back": "Atrás"
   },
   "megaMenu": {
     "productExports": "Exportación de productos",

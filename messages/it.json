@@ -15,7 +15,8 @@
     "businesses": "Attività",
     "globalPresence": "Presenza globale",
     "requestQuote": "Richiedi un preventivo",
-    "dismissQuotePrompt": "Chiudi l'invito a richiedere un preventivo"
+    "dismissQuotePrompt": "Chiudi l'invito a richiedere un preventivo",
+    "back": "Indietro"
   },
   "megaMenu": {
     "productExports": "Esportazione di prodotti",

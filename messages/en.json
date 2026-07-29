@@ -15,7 +15,8 @@
     "businesses": "Businesses",
     "globalPresence": "Global Presence",
     "requestQuote": "Request a Quote",
-    "dismissQuotePrompt": "Dismiss quote prompt"
+    "dismissQuotePrompt": "Dismiss quote prompt",
+    "back": "Back"
   },
   "megaMenu": {
     "productExports": "Product Exports",

@@ -15,7 +15,8 @@
     "businesses": "Activités",
     "globalPresence": "Présence mondiale",
     "requestQuote": "Demander un devis",
-    "dismissQuotePrompt": "Masquer l'invitation à demander un devis"
+    "dismissQuotePrompt": "Masquer l'invitation à demander un devis",
+    "back": "Retour"
   },
   "megaMenu": {
     "productExports": "Exportations de produits",

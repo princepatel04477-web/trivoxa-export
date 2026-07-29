@@ -54,6 +54,69 @@ ok(!opened.inert, 'open drawer is not inert');
 ok(opened.minRow >= 48, `drawer rows >= 48px (min ${opened.minRow} across ${opened.rowCount})`);
 ok(opened.focusInside, 'focus moves into the drawer');
 
+// §7.1 — progressive disclosure: one level visible at a time, with a back
+// affordance, and the parent always reachable as a destination.
+const levels = async () => page.evaluate(() => {
+  const c = document.querySelector('.mobile-nav .nav__content');
+  return {
+    depth: Number(c?.dataset.depth ?? -1),
+    back: !!c?.querySelector('.mobile-nav__back'),
+    rows: [...c.querySelectorAll('ul > li')].map((li) => li.textContent.trim()),
+    branches: [...c.querySelectorAll('.mobile-nav__branch')].map((b) => b.textContent.trim().replace(/\s*›$/, '')),
+  };
+});
+
+const root = await levels();
+ok(root.depth === 0, `opens at the root (depth ${root.depth})`);
+ok(!root.back, 'no back affordance at the root');
+ok(root.branches.length === 2, `root offers 2 branches (${root.branches.join(', ')})`);
+ok(!root.rows.some((r) => /Textile|Healthcare|Fabrics/.test(r)), 'root does not render grandchildren');
+
+await page.click('.mobile-nav__branch:nth-of-type(1), .mobile-nav .nav__content .mobile-nav__branch');
+await page.waitForTimeout(450);
+const l1 = await levels();
+ok(l1.depth === 1, `descends one level (depth ${l1.depth})`);
+ok(l1.back, 'back affordance appears');
+
+// Go back out, then down the Businesses tree to depth 2.
+await page.click('.mobile-nav__back');
+await page.waitForTimeout(450);
+ok((await levels()).depth === 0, 'back returns to the root');
+
+await page.evaluate(() => {
+  const b = [...document.querySelectorAll('.mobile-nav__branch')].find((x) => /Businesses/i.test(x.textContent));
+  b.click();
+});
+await page.waitForTimeout(450);
+const biz = await levels();
+ok(biz.depth === 1, `Businesses opens at depth ${biz.depth}`);
+ok(biz.branches.length === 2, `two divisions offered (${biz.branches.join(', ')})`);
+ok(biz.rows.some((r) => /Businesses/i.test(r)), 'parent remains reachable as a destination');
+
+await page.evaluate(() => {
+  const b = [...document.querySelectorAll('.mobile-nav__branch')].find((x) => /Product/i.test(x.textContent));
+  b.click();
+});
+await page.waitForTimeout(450);
+const prod = await levels();
+ok(prod.depth === 2, `descends to depth ${prod.depth}`);
+ok(prod.branches.length === 0, 'deepest level is all destinations');
+ok(prod.rows.some((r) => /Textile/i.test(r)), 'shows the product categories');
+const dupes = prod.rows.filter((r) => /^Product Exports$/i.test(r)).length;
+ok(dupes === 1, `parent listed exactly once (${dupes})`);
+
+const rowH = await page.evaluate(() => {
+  const rows = [...document.querySelectorAll('.mobile-nav .nav__content > ul > li > a, .mobile-nav__back')];
+  return Math.min(...rows.map((r) => Math.round(r.getBoundingClientRect().height)));
+});
+ok(rowH >= 48, `deep-level rows >= 48px (min ${rowH})`);
+
+// Return to the root so the scroll-lock assertions below are unaffected.
+await page.click('.mobile-nav__back');
+await page.waitForTimeout(350);
+await page.click('.mobile-nav__back');
+await page.waitForTimeout(350);
+
 // The page behind must not have moved.
 const lockedScroll = await page.evaluate(() => {
   window.scrollTo(0, 0); // an attempt the lock should make irrelevant

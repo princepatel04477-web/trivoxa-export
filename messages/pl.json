@@ -15,7 +15,8 @@
     "businesses": "Działalność",
     "globalPresence": "Globalna obecność",
     "requestQuote": "Poproś o wycenę",
-    "dismissQuotePrompt": "Zamknij monit o wycenę"
+    "dismissQuotePrompt": "Zamknij monit o wycenę",
+    "back": "Wstecz"
   },
   "megaMenu": {
     "productExports": "Eksport produktów",

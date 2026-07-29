@@ -15,7 +15,8 @@
     "businesses": "Negócios",
     "globalPresence": "Presença global",
     "requestQuote": "Solicitar cotação",
-    "dismissQuotePrompt": "Dispensar o aviso de orçamento"
+    "dismissQuotePrompt": "Dispensar o aviso de orçamento",
+    "back": "Voltar"
   },
   "megaMenu": {
     "productExports": "Exportação de produtos",

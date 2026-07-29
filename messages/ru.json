@@ -15,7 +15,8 @@
     "businesses": "Направления",
     "globalPresence": "Глобальное присутствие",
     "requestQuote": "Запросить предложение",
-    "dismissQuotePrompt": "Закрыть предложение запросить расчёт"
+    "dismissQuotePrompt": "Закрыть предложение запросить расчёт",
+    "back": "Назад"
   },
   "megaMenu": {
     "productExports": "Экспорт продукции",
