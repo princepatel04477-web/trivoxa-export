@@ -526,6 +526,33 @@
 .ticker:hover .ticker-track {
   animation-play-state: paused;
 }
+/* §5.1 — ambient motion is suspended when nobody can see it. Both classes are
+   driven by GlobalPresenceTicker (IntersectionObserver + visibilitychange). */
+.ticker.is-offscreen .ticker-track,
+.ticker.is-hidden-doc .ticker-track {
+  animation-play-state: paused;
+}
+@media (max-width: 767px) {
+  /* §5.1 — half speed on mobile. A marquee crossing a 390px viewport at the
+     desktop rate reads as agitation; at half rate it reads as a wire feed,
+     which is the register this section is written in. Doubling the duration
+     is the whole change — the distance is a percentage, so the geometry is
+     untouched. */
+  .ticker-track {
+    animation-duration: 64s;
+  }
+}
+/* §5.4 — "Ticker stops." The global reduced-motion block collapses every
+   animation to 0.01ms with one iteration, which would leave this track resting
+   at translateX(-50%) — its mid-loop position, with the corridor list visually
+   cut in half. Removing the animation outright rests it at translateX(0),
+   which is the composed state a reader who opted out should see. */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none !important;
+    transform: none;
+  }
+}
 @keyframes ticker-scroll {
   from {
     transform: translateX(0);

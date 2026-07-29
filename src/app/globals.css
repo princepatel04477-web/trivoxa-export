@@ -399,6 +399,24 @@ html[lang="ru"] {
   select {
     font-size: max(16px, 1rem);
   }
+
+  /* §5.3 — "Reveal animations only: opacity and transform. No animated
+     height, top, margin, filter, or box-shadow on mobile."
+
+     Every headline on the site reveals through `.word_inner`, which starts
+     at blur(6px) and is tweened to blur(0px) with a per-word stagger. A
+     moving blur is the most expensive thing in that list: it cannot be
+     composited, so each frame re-rasterises every word individually, and a
+     staggered heading multiplies that by its word count. On a mid-tier
+     Android this is the reveal that drops frames.
+
+     The tween sets `filter` INLINE, so only !important can take it back.
+     Nothing is lost visually: the same tween already animates opacity, and
+     at 390px a 6px blur on 16px type reads as the fade it accompanies
+     rather than as a distinct effect. */
+  .word_inner {
+    filter: none !important;
+  }
 }
 @media (max-width: 429px) {
   :root {

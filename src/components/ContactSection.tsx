@@ -70,8 +70,11 @@ export default function ContactSection() {
         { opacity: 1, delay: 0.2, stagger: 0.02, duration: 0.5, scrollTrigger: { trigger: ".hp-contact-section .container .contact" } }
       );
 
-      // Left-text parallax
-      if (window.innerWidth > 767) {
+      // Left-text parallax. The rail it moves is `display: none` below the md
+      // rung (shared.css), so this is scrub work bound to an element the
+      // reader cannot see. matchMedia keeps the boundary reactive to rotation
+      // and reverts the tweens on the way down (§5.3).
+      gsap.matchMedia().add("(min-width: 768px)", () => {
         gsap.fromTo(
           ".hp-contact-section .left-text-wrapper .left-text .top",
           { x: 80 },
@@ -82,7 +85,7 @@ export default function ContactSection() {
           { x: -80 },
           { x: 0, scrollTrigger: { trigger: ".hp-contact-section .container .contact", scrub: true } }
         );
-      }
+      });
 
       ScrollTrigger.refresh();
     });

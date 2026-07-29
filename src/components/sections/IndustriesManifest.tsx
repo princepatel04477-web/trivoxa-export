@@ -39,6 +39,7 @@ export default function IndustriesManifest() {
     const reduced = prefersReducedMotion();
 
     const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
       const head = ".industries-folio__eyebrow, .industries-folio__title";
       if (reduced) {
         gsap.set(head, { opacity: 1, y: 0 });
@@ -53,12 +54,21 @@ export default function IndustriesManifest() {
         });
       }
 
-      // Under reduced motion the whole horizontal act is skipped: no pin, no
-      // scrub, no snap. The stylesheet stacks the track vertically at the same
-      // media condition, so all six panels are reachable by ordinary scrolling
-      // — without this the carousel simply pinned and the reader could never
-      // reach panels 2-6 without the scrubbed motion they opted out of.
-      if (!reduced && window.innerWidth > 767) {
+      // §5.1 — the 7,680px horizontal pin is a desktop device and a hostile
+      // mobile one: it seizes the scroll gesture, defeats the iOS swipe-back
+      // edge, and makes the page length unpredictable. Below the md rung it is
+      // not built at all and the stylesheet stacks the panels into normal
+      // document flow (flagship-sections.css, same 767px condition) — the
+      // §5.1 "vertical stack" replacement, which is the preferred answer for
+      // this section specifically. Reduced motion takes the same path.
+      //
+      // gsap.matchMedia rather than an `if (window.innerWidth > 767)`: the
+      // imperative form is evaluated once at mount, so rotating a handset from
+      // landscape (844px, pin built) to portrait (390px) left the section
+      // pinned at a width where the CSS had already stacked it, and panels 2-6
+      // became unreachable. matchMedia reverts the pin on the way down and
+      // builds it on the way up, which is also §5.3's orientation requirement.
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 768px)", () => {
         const track = trackRef.current!;
         const panels = gsap.utils.toArray<HTMLElement>(".industries-folio__panel", track);
 
@@ -88,7 +98,7 @@ export default function IndustriesManifest() {
         });
 
         ScrollTrigger.refresh();
-      }
+      });
     }, sectionRef);
 
     return () => ctx.revert();

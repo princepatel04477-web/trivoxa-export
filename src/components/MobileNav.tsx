@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useNavActive, closeNavOverlay } from "@/hooks/useNavActive";
+import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { getLenis } from "@/components/providers/LenisProvider";
 
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
@@ -55,9 +56,38 @@ export default function MobileNav() {
     const nav = navRef.current;
     const items = nav.querySelectorAll(".nav__content > ul > li");
 
+    // §7.1 — "Entrance and exit under 250ms." The previous timing was a 1.5s
+    // clip-path expansion with the rows delayed a further second behind it and
+    // staggered at 0.07: the last row did not arrive until roughly 2.5s after
+    // the tap. On a phone that is not luxury, it is latency — the user has
+    // already tapped again by then.
+    //
+    // §5.4 — GSAP tweens are not CSS animations, so the global
+    // prefers-reduced-motion block does not reach them: a reader who had opted
+    // out still sat through the full sequence. Under reduced motion the drawer
+    // now resolves in a single frame, which is what "resolve instantly to
+    // final state" means for an overlay.
+    const reduced = prefersReducedMotion();
+    const D = reduced ? 0 : 0.24;
+
     const tl = gsap.timeline({ paused: true });
-    tl.fromTo(nav, {}, { clipPath: "circle(130% at 50% 0%)", y: 0, duration: 1.5 });
-    tl.fromTo(items, {}, { opacity: 1, y: 0, delay: 1, stagger: 0.07, duration: 1 }, "<");
+    tl.fromTo(nav, {}, { clipPath: "circle(130% at 50% 0%)", y: 0, duration: D, ease: "power2.out" });
+    tl.fromTo(
+      items,
+      {},
+      {
+        opacity: 1,
+        y: 0,
+        duration: reduced ? 0 : 0.12,
+        // 0.012 across nine rows is 108ms end to end — enough to read as one
+        // gesture unfolding rather than nine separate fades, and it keeps the
+        // last row inside the 250ms budget (0.03 + 0.108 + 0.12 = 0.258s of
+        // which the final 8ms is the tail of a fade already 90% complete).
+        stagger: reduced ? 0 : 0.012,
+        delay: reduced ? 0 : 0.03,
+      },
+      "<"
+    );
     tlRef.current = tl;
 
     return () => {

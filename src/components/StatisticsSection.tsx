@@ -97,13 +97,15 @@ export default function StatisticsSection() {
         { opacity: 1, filter: "blur(0px)", stagger: 0.04, scrollTrigger: { trigger: ".hp-sec-3 .statistics" } }
       );
 
-      if (window.innerWidth > 767) {
+      // Same rail, same reasoning as ContactSection: hidden below the md rung,
+      // so the parallax is built only where it can be seen (§5.3).
+      gsap.matchMedia().add("(min-width: 768px)", () => {
         gsap.fromTo(
           ".hp-sec-3 .left-text-wrapper .left-text .top",
           { x: 80 },
           { x: 0, scrollTrigger: { trigger: ".hp-sec-3 .statistics", scrub: true } }
         );
-      }
+      });
 
       ScrollTrigger.refresh();
     });

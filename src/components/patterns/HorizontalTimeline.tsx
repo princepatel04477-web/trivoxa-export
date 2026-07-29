@@ -24,7 +24,12 @@ export default function HorizontalTimeline({ steps }: { steps: TimelineStep[] })
     if (!ref.current || !railRef.current) return;
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 900px)", () => {
+      // 1024px is the ladder's xl entry and must stay in lockstep with the
+      // stylesheet's `max-width: 1023px` vertical fallback (businesses-page.css).
+      // If the two ever disagree, the band between them creates the pin while
+      // the CSS lays the rail out vertically — the section pins and the reader
+      // cannot reach steps 2-n.
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1024px)", () => {
         const rail = railRef.current!;
         const distance = () => Math.max(0, rail.scrollWidth - ref.current!.clientWidth);
         gsap.to(rail, {
