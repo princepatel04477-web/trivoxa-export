@@ -24,7 +24,7 @@
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.85rem;
+  font-size: max(0.85rem, var(--floor-caption));
   color: var(--color-ink);
 }
 
@@ -55,7 +55,7 @@
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.85rem;
+  font-size: max(0.85rem, var(--floor-caption));
   color: var(--color-accent);
   transition: color 0.25s ease;
 }
@@ -66,7 +66,7 @@
 
 .tvx-strip__desc {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: max(0.85rem, var(--floor-caption));
   line-height: 1.5;
   color: var(--color-ink-2);
 }
@@ -179,7 +179,7 @@
 .presence-map-diagram__origin text {
   fill: var(--color-ink);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   letter-spacing: 0.04em;
 }
 
@@ -205,7 +205,7 @@
 .presence-map-diagram__label {
   fill: var(--color-ink-2);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: max(11px, var(--floor-label));
   letter-spacing: 0.05em;
   text-transform: uppercase;
   transition: fill 0.25s ease;
@@ -242,12 +242,12 @@
   border: 1px solid var(--color-rule);
   border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: max(0.75rem, var(--floor-label));
   color: var(--color-ink-2);
 }
 
 .presence-map-diagram__panel-hint {
-  font-size: 0.9rem;
+  font-size: max(0.9rem, var(--floor-caption));
   color: var(--color-ink-2);
   font-style: italic;
 }
@@ -277,7 +277,7 @@
   display: inline-block;
   margin-top: var(--space-3xs);
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: max(0.8125rem, var(--floor-label));
   color: var(--color-accent);
   letter-spacing: 0.06em;
 }
@@ -325,7 +325,7 @@
 .presence-map-diagram__cta {
   display: inline-block;
   margin-top: var(--space-sm);
-  font-size: 0.9rem;
+  font-size: max(0.9rem, var(--floor-caption));
   color: var(--color-accent);
   border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
   padding-bottom: 2px;
@@ -361,7 +361,7 @@
   display: block;
   margin-top: var(--space-2xs);
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: max(0.8125rem, var(--floor-label));
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-2);
@@ -382,12 +382,12 @@
 }
 
 .presence-port__role {
-  font-size: 0.9rem;
+  font-size: max(0.9rem, var(--floor-caption));
   color: var(--color-accent);
 }
 
 .presence-port__detail {
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   line-height: 1.65;
   color: var(--color-ink-2);
 }

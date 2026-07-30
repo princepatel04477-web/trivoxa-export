@@ -1,3 +1,7 @@
+/* The scroll lock itself is applied from MobileNav (position:fixed plus a
+   captured offset — see §7.1 there). `overflow: hidden` is kept only as the
+   belt to that braces: it is what non-iOS engines honour, and it costs
+   nothing where the JS lock is already doing the work. */
 body.nav-active {
   overflow: hidden;
 }
@@ -23,6 +27,15 @@ body.nav-active .hamburger > div:nth-child(2) {
 
 .mobile-nav {
   position: fixed;
+  /* Anchored explicitly, not left to its static position.
+     A `position: fixed` element with no top/left resolves to where it WOULD
+     have sat in flow — which is fine while the body scrolls normally, and
+     catastrophic once the §7.1 scroll lock pins the body at `top: -<scrollY>`:
+     the drawer inherited that offset and opened ~1800px above the viewport,
+     invisible, on any page the reader had scrolled down. Anchoring to the
+     viewport makes the drawer independent of whatever the lock does to body. */
+  top: 0;
+  left: 0;
   /* Above the global grain overlay (z-index 9999) — the full-screen nav must
      read crisp, not through grain. */
   z-index: 10000;
@@ -72,106 +85,87 @@ body.nav-active .hamburger > div:nth-child(2) {
   margin-bottom: 25px;
 }
 
+/* §7.1 — "Rows: 48px minimum." The type was already 30px, but a 32px line box
+   with no padding made the actual target 32px: generous letters in a cramped
+   row. min-height plus centring gives the row real height without moving the
+   text off its own baseline. */
 .mobile-nav .nav__content > ul > li > a,
-.mobile-nav .nav__content > ul > li > .mobile-nav__acc-trigger {
+.mobile-nav .nav__content > ul > li > .mobile-nav__branch {
   font-size: 30px;
   line-height: 32px;
   letter-spacing: 1px;
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
   font-family: var(--font-body);
   font-weight: 400;
   color: var(--text);
 }
 
-/* ---------- Accordion trigger ---------- */
-.mobile-nav__acc-trigger {
+/* ---------- Progressive disclosure (§7.1) ---------- */
+/* One level visible at a time. A branch row descends; the back row returns.
+   Both are 48px minimum like every other row in the drawer. */
+.mobile-nav__branch {
   width: 100%;
   display: flex !important;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
   background: none;
   border: 0;
   padding: 0;
   text-align: left;
   cursor: pointer;
+  /* Inherits the 30px face from the shared row rule above; only the chevron
+     distinguishes it from a destination, which is the point — a branch should
+     read as a peer of the links beside it, not as a different kind of thing. */
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-family: inherit;
+  color: inherit;
 }
 
-.mobile-nav__caret {
-  font-size: 20px;
+.mobile-nav__chev {
+  font-size: 26px;
   line-height: 1;
   color: var(--gold-bright, var(--gold));
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
+}
+.mobile-nav__branch:active .mobile-nav__chev {
+  transform: translateX(3px);
 }
 
-li.opened .mobile-nav__caret {
-  transform: scaleY(-1);
-}
-
-/* ---------- Accordion panel ---------- */
-.mobile-nav__acc {
-  display: grid;
-  grid-template-rows: 0fr;
-  overflow: hidden;
-  transition: grid-template-rows 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.mobile-nav__acc.is-open {
-  grid-template-rows: 1fr;
-}
-
-.mobile-nav__acc > * {
-  min-height: 0;
-}
-
-.mobile-nav__acc .sub-menu {
-  padding: 18px 0 6px 15px;
-}
-
-.mobile-nav__acc .sub-menu > li a {
-  display: block;
-  padding: 8px 0;
-  font-size: 19px;
-  line-height: 26px;
-  font-family: var(--font-body);
-  font-weight: 400;
-}
-
-/* ---------- Businesses divisions ---------- */
-.mobile-nav__division {
-  padding: 18px 0 4px 15px;
-}
-
-.mobile-nav__division-title {
-  display: block;
-  font-size: 21px;
-  line-height: 28px;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-  font-family: var(--font-body);
-  font-weight: 600;
-  color: var(--gold-bright, var(--gold));
-}
-
-.mobile-nav__division ul {
-  list-style: none;
-}
-
-.mobile-nav__division ul a {
-  display: block;
-  padding: 7px 0;
-  font-size: 18px;
-  line-height: 26px;
-}
-
-.mobile-nav__external {
-  display: block;
-  margin-top: 8px;
-  padding: 7px 0;
+/* The back affordance leads the panel, above the rows, so it is the first
+   thing under the thumb on the way in and the first thing focus reaches. */
+.mobile-nav__back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  margin-bottom: 8px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 14px;
-  letter-spacing: 0.05em;
+  font-size: max(14px, var(--floor-caption));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--gold-bright, var(--gold));
-  opacity: 0.85;
+}
+.mobile-nav__chev--back {
+  font-size: 22px;
+}
+.mobile-nav__back:active .mobile-nav__chev--back {
+  transform: translateX(-3px);
+}
+
+/* Rows start hidden and are animated in per panel (see MobileNav) so a level
+   change reads as a new level arriving rather than as rows mutating. */
+.mobile-nav__back {
+  opacity: 0;
 }
 
 /* ---------- Sticky bottom CTA inside the overlay ---------- */

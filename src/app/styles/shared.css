@@ -51,8 +51,10 @@
 
 .scroll-to .text {
   text-transform: uppercase;
-  font-size: 12px;
-  line-height: 12px;
+  font-size: max(12px, var(--floor-label));
+  /* Unitless so it tracks the floored size — a fixed 12px leading is shorter
+     than the glyphs once the label lifts to 13px on a phone. */
+  line-height: 1;
   letter-spacing: 0.6px;
   opacity: 0;
 }
@@ -89,14 +91,9 @@
   display: flex;
 }
 
-.container {
-  max-width: 1684px;
-  margin: 0 auto;
-  /* Gutters resolve through --gutter-left/right (globals.css), which fold the
-     landscape safe-area insets in via max(). Identical to the previous flat
-     32px anywhere without insets, which is every desktop. */
-  padding: 0 var(--gutter-right) 0 var(--gutter-left);
-}
+/* `.container` now lives in globals.css as `@utility container`, so there is
+   exactly one definition instead of this one racing Tailwind's built-in
+   across chunk boundaries. See the ladder comment there. */
 
 /* Section transition polish — subtle fade gradient between sections */
 section {
@@ -180,8 +177,16 @@ section {
     background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg) 92%, transparent) 40%);
     pointer-events: none;
   }
+  /* The bar is a row now: the CTA takes the width it can, the dismiss control
+     sits beside it rather than floating over the label. */
+  .mobile-sticky-cta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   .mobile-sticky-cta a {
     pointer-events: all;
+    flex: 1;
     display: block;
     text-align: center;
     padding: 14px 20px;
@@ -195,8 +200,40 @@ section {
     letter-spacing: 0.5px;
     box-shadow: 0 10px 30px rgba(4, 9, 20, 0.5);
   }
+  /* §7.2 — dismissible. Sized to the 44px floor and styled from the same
+     tokens as the bar, deliberately quieter than the CTA beside it: this is a
+     way out, not a second offer. */
+  .mobile-sticky-cta__dismiss {
+    pointer-events: all;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+    background: color-mix(in srgb, var(--bg-card, var(--bg)) 88%, transparent);
+    color: var(--text-2);
+    font-size: 20px;
+    line-height: 1;
+  }
   body.nav-active .mobile-sticky-cta {
     display: none;
+  }
+}
+
+/* §7.2 — "add corresponding bottom padding to the page container while it is
+   visible". The class is toggled on <html> by MobileStickyCta for exactly as
+   long as the bar is on screen. 78px is the bar's own height; --safe-bottom
+   clears the home indicator underneath it.
+
+   On the footer specifically, because that is what the bar actually covers —
+   putting it on body would add a scroll region below the last section on every
+   page whether or not anything was underneath. */
+@media (max-width: 767px) {
+  html.has-sticky-cta .footer {
+    padding-bottom: calc(78px + var(--safe-bottom));
   }
 }
 
@@ -340,7 +377,7 @@ ul {
 .left-side-title {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   line-height: 20px;
   letter-spacing: 0.6px;
   display: block;

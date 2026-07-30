@@ -33,7 +33,7 @@
   display: inline-block;
   margin-top: var(--space-md);
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   letter-spacing: 0.04em;
   color: var(--color-ink);
   text-decoration: none;
@@ -57,7 +57,7 @@
   gap: var(--space-2xs);
   max-width: 60%;
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: max(0.8125rem, var(--floor-label));
   color: var(--color-ink-2);
 }
 
@@ -131,7 +131,7 @@
   display: block;
   margin-top: var(--space-sm);
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   letter-spacing: 0.06em;
   color: var(--color-accent);
 }

@@ -4,6 +4,13 @@ import { useState } from "react";
 import type { Product, ProductGroup } from "@/lib/data/product-categories";
 import { displayField } from "@/lib/data/product-categories";
 import ProductDrawer from "@/components/products/ProductDrawer";
+// .ind-table lives in industry-page.css, which until now was imported only by
+// /industries/[slug]. This component is also rendered by the textile-apparel
+// subcategory pages, where the table therefore had no padding, no rules and no
+// header treatment at all — rows collapsed to 28px, which is what surfaced it
+// against the 44px gate. Styles travel with the component (the convention
+// TrivoxaShell and Logo already follow) so it cannot come apart again.
+import "@/app/styles/industry-page.css";
 
 function Table({ products, onSelect }: { products: Product[]; onSelect: (p: Product) => void }) {
   return (

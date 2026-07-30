@@ -47,7 +47,7 @@
 
 .capability-row__index {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   letter-spacing: 0.04em;
   color: var(--color-accent);
   opacity: 0.55;
@@ -87,7 +87,7 @@
 .capability-row__desc {
   margin: var(--space-2xs) 0 0;
   max-width: 46ch;
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   line-height: 1.65;
   color: var(--color-ink-2);
 }

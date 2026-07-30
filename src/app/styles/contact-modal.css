@@ -10,9 +10,15 @@
   left: 0;
   opacity: 0;
   pointer-events: none;
+  /* opacity + pointer-events hides the modal from a mouse but NOT from the
+     focus order: every field in the closed quote form was still tabbable, and
+     a screen reader still announced it. `visibility: hidden` takes it out of
+     both, and is still transitionable (it flips at the end of the fade out and
+     the start of the fade in), so the animation is unchanged. */
+  visibility: hidden;
   display: flex;
   align-items: center;
-  transition: all 0.5s;
+  transition: opacity 0.5s, visibility 0.5s;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 99999;
@@ -51,6 +57,7 @@
 
 body.contact-modal-open .contact-modal {
   opacity: 1;
+  visibility: visible;
   pointer-events: all;
 }
 
@@ -59,7 +66,7 @@ body.contact-modal-open .contact-modal .container {
 }
 
 .contact-form .form-status {
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   line-height: 1.6;
   margin: 4px 0 0;
 }

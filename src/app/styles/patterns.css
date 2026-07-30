@@ -84,7 +84,7 @@
 
 .numbered-list__index {
   font-family: var(--font-mono);
-  font-size: 0.9375rem;
+  font-size: max(0.9375rem, var(--floor-body));
   letter-spacing: 0.06em;
   color: var(--color-accent);
   flex-shrink: 0;
@@ -218,7 +218,7 @@
 
 .process-loader__num {
   font-family: var(--font-mono, monospace);
-  font-size: 0.9rem;
+  font-size: max(0.9rem, var(--floor-caption));
   font-weight: 600;
   letter-spacing: 0.04em;
 }

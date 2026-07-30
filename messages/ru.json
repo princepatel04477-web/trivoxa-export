@@ -14,7 +14,9 @@
     "theGroup": "Группа",
     "businesses": "Направления",
     "globalPresence": "Глобальное присутствие",
-    "requestQuote": "Запросить предложение"
+    "requestQuote": "Запросить предложение",
+    "dismissQuotePrompt": "Закрыть предложение запросить расчёт",
+    "back": "Назад"
   },
   "megaMenu": {
     "productExports": "Экспорт продукции",

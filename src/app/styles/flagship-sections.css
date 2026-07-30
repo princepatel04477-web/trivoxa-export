@@ -37,7 +37,7 @@
 }
 .industries-folio__eyebrow {
   font-family: var(--font-mono);
-  font-size: clamp(0.7rem, 0.6vw + 0.55rem, 0.85rem);
+  font-size: max(clamp(0.7rem, 0.6vw + 0.55rem, 0.85rem), var(--floor-label));
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -106,7 +106,7 @@
   min-width: 0;
   margin-top: var(--space-sm);
   max-width: 40ch;
-  font-size: clamp(0.85rem, 0.2vw + 0.8rem, 1rem);
+  font-size: max(clamp(0.85rem, 0.2vw + 0.8rem, 1rem), var(--floor-caption));
   line-height: 1.6;
   color: var(--color-ink-2);
 }
@@ -138,7 +138,7 @@
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   font-family: var(--font-mono);
-  font-size: clamp(0.75rem, 0.2vw + 0.7rem, 0.85rem);
+  font-size: max(clamp(0.75rem, 0.2vw + 0.7rem, 0.85rem), var(--floor-label));
   letter-spacing: 0.05em;
   color: var(--color-ink-2);
 }
@@ -256,7 +256,7 @@
   left: clamp(18px, 2vw, 28px);
   bottom: clamp(16px, 1.6vw, 24px);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: max(0.72rem, var(--floor-label));
   letter-spacing: 0.14em;
   color: var(--text);
 }
@@ -268,7 +268,7 @@
 }
 .biz-arm__eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: max(0.8rem, var(--floor-label));
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
@@ -308,7 +308,7 @@
 }
 .biz-arm__cat {
   font-family: var(--font-mono);
-  font-size: 0.76rem;
+  font-size: max(0.76rem, var(--floor-label));
   letter-spacing: 0.02em;
   color: var(--text-2);
   padding: 0;
@@ -326,7 +326,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.95rem;
+  font-size: max(0.95rem, var(--floor-body));
   color: var(--gold);
   text-decoration: none;
   border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
@@ -342,6 +342,19 @@
 }
 .biz-arm__cta:hover span {
   transform: translateX(4px);
+}
+
+/* §6.2 — the CTA is an underlined inline link, so it takes real height
+   rather than an overlay: the underline is the affordance and it must
+   stay hard against the text. min-height with the border pushed to the
+   bottom keeps the rule where it is while the target grows downward into
+   the card's own padding. */
+@media (pointer: coarse) {
+  .biz-arm__cta {
+    min-height: 44px;
+    align-items: flex-end;
+    padding-bottom: 10px;
+  }
 }
 @media (max-width: 820px) {
   .biz-arms__inner {
@@ -373,7 +386,7 @@
 .certifications-strip__eyebrow {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: max(0.78rem, var(--floor-label));
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -400,7 +413,7 @@
 .certifications-strip__group-title {
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: max(0.75rem, var(--floor-label));
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-ink-2);
@@ -449,7 +462,7 @@
 }
 .cert-mark__code-text {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: max(13px, var(--floor-label));
   fill: var(--color-ink-2);
   text-transform: uppercase;
 }
@@ -459,19 +472,19 @@
 .cert-mark__code {
   margin-top: var(--space-2xs);
   font-family: var(--font-heading);
-  font-size: 0.85rem;
+  font-size: max(0.85rem, var(--floor-caption));
   color: var(--color-ink);
 }
 .cert-mark__name {
   margin-top: 2px;
-  font-size: 0.68rem;
+  font-size: max(0.68rem, var(--floor-label));
   line-height: 1.35;
   color: var(--color-ink-2);
 }
 .cert-mark__status {
   margin-top: var(--space-3xs);
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: max(0.65rem, var(--floor-label));
   letter-spacing: 0.04em;
   color: var(--color-ink-2);
   opacity: 0.75;
@@ -479,7 +492,7 @@
 .certifications-strip__footnote {
   margin-top: var(--space-xl);
   text-align: center;
-  font-size: 0.85rem;
+  font-size: max(0.85rem, var(--floor-caption));
   color: var(--color-ink-2);
 }
 @media (max-width: 720px) {
@@ -513,6 +526,33 @@
 .ticker:hover .ticker-track {
   animation-play-state: paused;
 }
+/* §5.1 — ambient motion is suspended when nobody can see it. Both classes are
+   driven by GlobalPresenceTicker (IntersectionObserver + visibilitychange). */
+.ticker.is-offscreen .ticker-track,
+.ticker.is-hidden-doc .ticker-track {
+  animation-play-state: paused;
+}
+@media (max-width: 767px) {
+  /* §5.1 — half speed on mobile. A marquee crossing a 390px viewport at the
+     desktop rate reads as agitation; at half rate it reads as a wire feed,
+     which is the register this section is written in. Doubling the duration
+     is the whole change — the distance is a percentage, so the geometry is
+     untouched. */
+  .ticker-track {
+    animation-duration: 64s;
+  }
+}
+/* §5.4 — "Ticker stops." The global reduced-motion block collapses every
+   animation to 0.01ms with one iteration, which would leave this track resting
+   at translateX(-50%) — its mid-loop position, with the corridor list visually
+   cut in half. Removing the animation outright rests it at translateX(0),
+   which is the composed state a reader who opted out should see. */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none !important;
+    transform: none;
+  }
+}
 @keyframes ticker-scroll {
   from {
     transform: translateX(0);
@@ -523,7 +563,7 @@
 }
 .ticker-row {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-ink-2);
@@ -533,7 +573,7 @@
   margin: var(--space-sm) auto 0;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--floor-label));
   letter-spacing: 0.04em;
   color: var(--color-ink-2);
   opacity: 0.65;
@@ -556,7 +596,7 @@
   display: block;
   margin-top: var(--space-sm);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: max(0.75rem, var(--floor-label));
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-style: normal;
@@ -594,7 +634,7 @@
   background: var(--color-paper-2);
   border: 1px solid var(--color-rule);
   padding: var(--space-2xs) var(--space-sm);
-  font-size: 0.8rem;
+  font-size: max(0.8rem, var(--floor-label));
   color: var(--color-ink);
   white-space: nowrap;
 }
@@ -675,7 +715,7 @@
 }
 .magazine-feature__tag {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: max(0.75rem, var(--floor-label));
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -706,7 +746,7 @@
 }
 .magazine-secondary__tag {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--floor-label));
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -717,7 +757,7 @@
   margin: var(--space-2xs) 0;
 }
 .magazine-secondary__dek {
-  font-size: 0.9rem;
+  font-size: max(0.9rem, var(--floor-caption));
   color: var(--color-ink-2);
 }
 /* Pending state: article bodies don't exist yet, so cards render as
@@ -732,15 +772,23 @@
   display: inline-block;
   margin-top: var(--space-2xs);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--floor-label));
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-ink-2);
   opacity: 0.65;
 }
 @media (max-width: 900px) {
+  /* Collapse the TRACK, not just the spans. Leaving `repeat(12, 1fr)` in place
+     while the children span all twelve still reserves eleven 32px gaps — a
+     352px floor the grid can never go below, which overflows a 360px viewport
+     by 23px no matter how narrow the content is. One column removes the floor
+     entirely; the row gap does the separating. */
+  .magazine-grid {
+    grid-template-columns: 1fr;
+  }
   .magazine-feature,
   .magazine-secondary {
-    grid-column: span 12;
+    grid-column: auto;
   }
 }

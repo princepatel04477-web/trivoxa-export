@@ -227,6 +227,28 @@
   margin-bottom: 7px;
 }
 
+/* §7.1 — the drawer trigger is the single most important control on a
+   phone and it measured 28x11: two rules and the air between them, with
+   no box of its own. It gets a real 48x48 (§7.1's own figure, above the
+   44px floor), centred so the glyph does not move a pixel. The contact
+   circle beside it goes to 44x44 the same way. */
+@media (pointer: coarse) {
+  .header .header-wrapper .h-right .hamburger {
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    /* Pull the box outward so the glyph keeps its optical position
+       against the gutter instead of being pushed inboard by the
+       new padding. */
+    margin-right: -10px;
+  }
+  .header .header-wrapper .h-right .mobile-contact > div {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .header .mega-menu {
   width: 100%;
   position: absolute;
@@ -291,7 +313,7 @@
 .header .nav-drop ul li a {
   display: block;
   padding: 11px 22px;
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   line-height: 1.3;
   transition: color 0.25s ease, background 0.25s ease;
 }
@@ -386,7 +408,7 @@
 .header .mega-menu .m-right .mega-col .sub-menu > li.mega-external a {
   margin-top: 14px;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: max(14px, var(--floor-body));
   letter-spacing: 0.05em;
   color: var(--gold-bright, var(--gold));
   opacity: 0.85;
@@ -537,7 +559,7 @@
   background: transparent;
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: max(0.8rem, var(--floor-label));
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
@@ -612,7 +634,7 @@
   background: transparent;
   color: var(--text-2);
   font-family: var(--font-body);
-  font-size: 0.875rem;
+  font-size: max(0.875rem, var(--floor-caption));
   text-align: start;
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
@@ -630,7 +652,7 @@
 
 .lang-switch__code {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: max(0.68rem, var(--floor-label));
   letter-spacing: 0.08em;
   opacity: 0.65;
 }

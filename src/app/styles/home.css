@@ -21,7 +21,7 @@
   gap: 12px;
   text-transform: uppercase;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: max(12px, var(--floor-label));
   font-weight: 500;
   letter-spacing: 4px;
   color: var(--trivoxa-gold, var(--gold-hover));
@@ -75,7 +75,7 @@
   padding: 16px 38px;
   border-radius: 40px;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   letter-spacing: 0.3px;
   cursor: pointer;
   transition: background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -188,14 +188,14 @@
 
 .hp-global .globe-stats .stat .k {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: max(13px, var(--floor-label));
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--trivoxa-gold, var(--gold-hover));
 }
 
 .hp-global .globe-stats .stat .v {
-  font-size: 15px;
+  font-size: max(15px, var(--floor-body));
   color: color-mix(in srgb, var(--text) 70%, transparent);
   font-weight: 300;
 }
@@ -278,7 +278,7 @@
 
 .article-card .tag {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: max(11px, var(--floor-label));
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--trivoxa-gold, var(--gold-hover));
@@ -296,7 +296,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   color: color-mix(in srgb, var(--text) 75%, transparent);
   transition: gap 0.3s ease, color 0.3s ease;
 }
@@ -348,7 +348,7 @@
 
 .hp-careers .highlight p {
   margin: 0;
-  font-size: 14px;
+  font-size: max(14px, var(--floor-caption));
   line-height: 1.6;
   color: color-mix(in srgb, var(--text) 62%, transparent);
   font-weight: 300;
@@ -430,7 +430,7 @@
   .btn-gold,
   .btn-ghost {
     padding: 15px 30px;
-    font-size: 14px;
+    font-size: max(14px, var(--floor-body));
   }
   .hp-careers .highlights {
     grid-template-columns: 1fr;
@@ -467,7 +467,7 @@
   margin: 0 0 12px;
 }
 .hp-trust .trust-card__body {
-  font-size: clamp(14px, 1.1vw, 16px);
+  font-size: max(clamp(14px, 1.1vw, 16px), var(--floor-caption));
   line-height: 1.7;
   font-weight: 300;
   color: color-mix(in srgb, var(--text) 68%, transparent);
@@ -476,7 +476,7 @@
 .hp-trust .trust-note {
   margin-top: clamp(28px, 3vw, 44px);
   max-width: 64ch;
-  font-size: 0.85rem;
+  font-size: max(0.85rem, var(--floor-caption));
   line-height: 1.7;
   color: color-mix(in srgb, var(--text) 50%, transparent);
 }

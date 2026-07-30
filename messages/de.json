@@ -14,7 +14,9 @@
     "theGroup": "Die Gruppe",
     "businesses": "Geschäftsbereiche",
     "globalPresence": "Globale Präsenz",
-    "requestQuote": "Angebot anfordern"
+    "requestQuote": "Angebot anfordern",
+    "dismissQuotePrompt": "Angebotshinweis schließen",
+    "back": "Zurück"
   },
   "megaMenu": {
     "productExports": "Produktexporte",

@@ -4,6 +4,78 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   THE BREAKPOINT LADDER (§3.1) — the single responsive contract.
+
+     xs   —  up to 389px    small handsets
+     sm   —  390px – 429px  baseline handset, the design target
+     md   —  430px – 767px  large handsets, landscape phones
+     lg   —  768px – 1023px tablet portrait
+     xl   —  1024px+        desktop
+
+   Written as `min-width` here because that is the only form Tailwind
+   accepts. New page CSS is authored mobile-last and states the rungs as
+   their `max-width` complements:
+
+     xs   @media (max-width: 389px)
+     sm   @media (max-width: 429px)     xs + sm
+     md   @media (max-width: 767px)     xs + sm + md
+     lg   @media (max-width: 1023px)    everything below desktop
+     xl   @media (min-width: 1024px)
+
+   This governs the Tailwind scale and NEW rules only. An earlier revision
+   also rewrote every existing page stylesheet onto these rungs — 50
+   breakpoints across 22 files. That was reverted: the hand-authored
+   values (520/575/640/700/720/780/800/820/860/900/991/…) are the shipped
+   design and are load-bearing. `HorizontalTimeline` shows why: it pins its
+   rail at `min-width: 900px`, so moving `businesses-page.css` to 1023px put
+   the CSS and the component on different rungs. Do not re-align existing page
+   CSS to this ladder; match the component's own JS breakpoint instead.
+
+   `--breakpoint-*: initial` clears Tailwind's own 40/48/64/80/96rem
+   scale. That scale was the second, contradictory system the audit
+   found (§1 finding 2): it reached the shipped CSS through the
+   `.container` utility, whose five rem-keyed max-widths were fighting
+   this project's own `.container` from a different chunk — so which
+   one won came down to stylesheet load order. There is now one scale.
+
+   Widths above 1024px (1080/1199/1399/1599/2000) are the pre-existing
+   desktop ramp and are deliberately untouched: §3.1 marks the xl rung
+   DO NOT TOUCH and §0 forbids regressing the approved desktop build.
+   Collapsing them would, by definition, change desktop rendering.
+   ============================================================ */
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 390px;
+  --breakpoint-md: 430px;
+  --breakpoint-lg: 768px;
+  --breakpoint-xl: 1024px;
+}
+
+/* The one container. Declared as a Tailwind utility rather than as a
+   plain rule in shared.css, which is what the audit's contradiction
+   actually was: two `.container` definitions of equal specificity
+   landing in DIFFERENT chunks, so which max-width applied depended on
+   stylesheet load order.
+
+   `@utility` extends the built-in container rather than replacing it,
+   so Tailwind still emits one `max-width` cap per breakpoint. Those
+   caps are now ladder-aligned (390/430/768/1024) instead of the old rem
+   scale, they sit in the same emitted file as this rule, and this rule
+   is unconditional and emitted last — so it wins at every width and the
+   caps are inert. That ordering is the load-bearing invariant, so it is
+   asserted directly against the built CSS in the Phase 6 gate rather
+   than left to trust.
+
+   Gutters resolve through --gutter-left/right, which fold the landscape
+   safe-area insets in via max(); identical to a flat 32px anywhere
+   without insets. */
+@utility container {
+  max-width: 1684px;
+  margin-inline: auto;
+  padding-inline: var(--gutter-left) var(--gutter-right);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -172,13 +244,24 @@ html[lang="ru"] {
   --gutter-left: max(var(--gutter), var(--safe-left));
   --gutter-right: max(var(--gutter), var(--safe-right));
 
+  /* Type floors (§6.1). Zero on desktop, so every existing font-size
+     computes to exactly what it computed to before; raised on the
+     mobile rungs, where each declaration reads them through
+     `max(<declared>, var(--floor-*))` and can only ever go UP.
+
+     One media query enforces the whole floor policy, and desktop is
+     provably untouched because max(x, 0px) === x. */
+  --floor-label: 0px;    /* eyebrow, index, label, utility */
+  --floor-caption: 0px;  /* secondary copy, captions */
+  --floor-body: 0px;     /* body copy, interactive text */
+
   /* ============================================================
      ESTABLISHMENT TYPE SCALE (Task 2) — the single strict scale.
      Page CSS should resolve type through these tokens instead of
      one-off px/rem. Fluid steps use clamp(min, vw, max). Longevity
      is a function of restraint: few sizes, used consistently.
      ============================================================ */
-  --fs-eyebrow: 0.75rem;                        /* 12px — mono eyebrow/label */
+  --fs-eyebrow: max(0.75rem, var(--floor-label));  /* 12px desktop, 13px floor on mobile */
   --fs-caption: 0.8125rem;                      /* 13px — captions, footnotes */
   --fs-meta: 0.875rem;                          /* 14px — meta, fine print */
   --fs-body-sm: 0.9375rem;                      /* 15px — dense body */
@@ -289,6 +372,150 @@ html[lang="ru"] {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ============================================================
+   THE MOBILE FLOOR (§6.1) — md rung and below.
+
+   Institutional confidence is communicated by generous, legible
+   type, not by small type. The audit measured indices at 11.52px
+   and list items at 12.16px; nothing on this site renders below
+   13px on a phone now.
+
+   Gutters come down from the desktop 32px because at 390px a 32px
+   pair spends 16% of the viewport on air. 24px at md and 20px at
+   sm are the §6.1 targets, and --gutter-left/right still fold the
+   landscape safe-area insets in over the top via max().
+   ============================================================ */
+@media (max-width: 767px) {
+  :root {
+    --gutter: 24px;
+    --floor-label: 13px;
+    --floor-caption: 14px;
+    --floor-body: 16px;
+    /* §6.1 asks for more letter-spacing to carry the eyebrow once it lifts
+       to 13px. Tracking is em-based, so it also has to widen in absolute
+       terms to keep reading as a spaced label rather than a small word. */
+    --tracking-eyebrow: 0.2em;
+  }
+
+  /* Safety net for controls that inherit their size rather than declaring
+     one: below 16px iOS zooms the viewport on focus and the layout breaks
+     (§7.4). Every control that DOES declare a size is already floored at
+     the declaration site, which outranks this. */
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1rem);
+  }
+
+  /* NOTE: an earlier revision killed the `.word_inner` blur-morph here on the
+     grounds that a moving filter is expensive to rasterise. It is — but the
+     blur-to-sharp morph is the site's signature headline reveal, and removing
+     it on every page below 768px changed the character of the whole site, not
+     just its frame cost. The reveal stays. Frame budget on mobile is bought
+     elsewhere (DPR clamp, idle-canvas suspension) or not at all. */
+}
+@media (max-width: 429px) {
+  :root {
+    --gutter: 20px;
+  }
+}
+
+/* ============================================================
+   TOUCH ERGONOMICS (§6.2) — 44px, and the pressed state.
+
+   Scoped to `pointer: coarse` rather than to a width, because this
+   is a property of the INPUT DEVICE, not of the viewport: a narrow
+   desktop window still has a mouse and needs nothing here, and a
+   1024px tablet has a thumb and does. Nothing in this block paints,
+   so it cannot regress the approved desktop composition.
+
+   Two mechanisms, chosen per case:
+
+   1. `.tap-44` — a transparent ::after that centres a 44x44 hit
+      area over the element WITHOUT changing its box. §6.2's rule
+      exactly: the visual treatment does not change, the target
+      does. Correct for isolated controls and for links sitting in
+      a row with real gaps.
+
+   2. Real height (`min-height` + centring). Correct wherever
+      targets STACK, because overlays on a 37px pitch would overlap
+      each other and turn a near-miss into a mis-tap on the
+      neighbour — worse than the small target it set out to fix.
+      Where this is used, spacing is set to >=8px per §6.2.
+   ============================================================ */
+@media (pointer: coarse) {
+  .tap-44 {
+    position: relative;
+  }
+  .tap-44::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    /* Invisible, and never a paint or hit-test cost for anything else. */
+    pointer-events: auto;
+  }
+
+  /* Mechanism 1 applied. These are all inline links and inline buttons
+     whose underline or baseline IS the affordance, sitting in rows with
+     real gaps — so they get target without their composition moving.
+     Listed here rather than repeated across seven stylesheets so the
+     policy has one place to be read and audited. */
+  .tvx-crumb a,
+  .tvx-info-row a,
+  .leadership-panel__email,
+  .arm-panel__link,
+  .pgrid__spec-btn {
+    position: relative;
+  }
+  .tvx-crumb a::after,
+  .tvx-info-row a::after,
+  .leadership-panel__email::after,
+  .arm-panel__link::after,
+  .pgrid__spec-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: 44px;
+  }
+
+  /* Mechanism 2. A checkbox is tappable across its whole label, so the
+     LABEL carries the target — the box itself stays 16px and the control
+     keeps its native look. */
+  .pgrid__add,
+  .insights-teaser__vote {
+    min-height: 44px;
+  }
+
+  /* On touch there is no hover, so the pressed state is the ONLY
+     acknowledgement a tap receives. A site that does not answer a
+     tap feels broken however fast it actually is. Opacity only —
+     it is compositor-only and cannot shift layout (§5.3). */
+  a:active,
+  button:active,
+  [role="button"]:active,
+  summary:active {
+    opacity: 0.62;
+  }
+  /* The transition above (globals `a, button`) animates colour, not
+     opacity, so the press reads instantly and the release eases. */
+  a,
+  button,
+  [role="button"],
+  summary {
+    transition: opacity 0.18s ease-out, color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @layer base {
@@ -612,6 +839,8 @@ a, button {
     radial-gradient(ellipse at 72% 38%, color-mix(in srgb, var(--gold) 7%, transparent), transparent 55%),
     var(--bg);
 }
+/* Strokes an inline <svg> (see ParticleFallback), so it inherits the page's
+   colour tokens directly rather than needing a mask. */
 .particle-fallback__globe {
   position: absolute;
   top: 50%;

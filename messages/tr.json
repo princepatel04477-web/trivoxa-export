@@ -14,7 +14,9 @@
     "theGroup": "Grup",
     "businesses": "İş Alanları",
     "globalPresence": "Küresel Varlık",
-    "requestQuote": "Teklif İsteyin"
+    "requestQuote": "Teklif İsteyin",
+    "dismissQuotePrompt": "Teklif bildirimini kapat",
+    "back": "Geri"
   },
   "megaMenu": {
     "productExports": "Ürün İhracatı",

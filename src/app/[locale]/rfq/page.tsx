@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Steps } from "@/components/trivoxa/ui";
 import RfqForm from "@/components/rfq/RfqForm";
+import RfqFormSkeleton from "@/components/rfq/RfqFormSkeleton";
 import "@/app/styles/rfq-page.css";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function RfqPage() {
 
       <section className="tvx-section tvx-section--tight">
         <div className="container">
-          <Suspense fallback={null}>
+          <Suspense fallback={<RfqFormSkeleton />}>
             <RfqForm />
           </Suspense>
 

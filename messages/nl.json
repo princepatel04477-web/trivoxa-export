@@ -14,7 +14,9 @@
     "theGroup": "De Groep",
     "businesses": "Activiteiten",
     "globalPresence": "Wereldwijde aanwezigheid",
-    "requestQuote": "Offerte aanvragen"
+    "requestQuote": "Offerte aanvragen",
+    "dismissQuotePrompt": "Offertemelding sluiten",
+    "back": "Terug"
   },
   "megaMenu": {
     "productExports": "Productexport",
