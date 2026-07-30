@@ -1,5 +1,18 @@
 # Mobile Corrective Directive — Sign-off (§8)
 
+> **Scope correction — read this first.** Phases 3 and 4 (motion doctrine on
+> touch, `1e5b2c4`; render tiering, particle budgets, poster substitution,
+> `1acfc8a`) were **reverted at the owner's direction**. So was the site-wide
+> breakpoint re-alignment: 50 `@media` preludes across 22 stylesheets are back
+> on their original hand-authored values. The animation system — GSAP morph
+> particle field, the `.word_inner` blur-morph headline reveal, every scroll
+> trigger — is byte-identical to `77151eb` on all 14 files that carry it.
+>
+> What still ships from this branch: the Phase-1 render work, the type floors,
+> the 44px touch targets, the drawer/header/form chrome (Phase 5), and the
+> `/rfq` CLS fix. Sections below marked ~~struck~~ describe reverted work and
+> are kept only so the decision is traceable.
+
 Measured against the built site, not asserted. Reproduce with:
 
 ```bash
@@ -59,16 +72,21 @@ the code is what each surface will ask of the device:
   promoted to the tablet budget (Phase 1).
 - Per-surface backing stores measured at 390×844 DPR 3: 0.51 MP + 0.18 MP +
   0.19 MP, against the audit's 3.38 MP and 3.88 MP (Phase 1).
-- Post-processing (bloom + chromatic aberration) is HIGH tier only, so no phone
-  and no tablet runs the full-screen chain (§4.3).
-- Instance counts intersect the per-class ceiling with the tier budget, so
-  tiering can only ever reduce work below an already-validated number (§4.3).
-- The runtime probe demotes a tier if p95 frame time over the first 90 frames
-  exceeds 20ms, persisted for the session (§4.2); the streak monitor still hands
-  off to the poster after 10 consecutive missed frames.
+- ~~Post-processing (bloom + chromatic aberration) is HIGH tier only~~ —
+  **reverted.** Post-processing runs as originally authored on every class.
+- ~~Instance counts intersect the per-class ceiling with the tier budget~~ —
+  **reverted.** Particle counts are the original values.
+- ~~The runtime probe demotes a tier if p95 frame time exceeds 20ms~~ —
+  **reverted.** There is no tier resolver and no poster substitution.
 - Off-screen and backgrounded canvases cancel their RAF loops entirely, and the
   GPU idle gate stops issuing draw calls once the field has settled invisible
-  (Phase 1).
+  (Phase 1 — retained).
+
+With tiering reverted, the four unmeasured gates carry more risk than they did
+mid-Phase-4, because the mitigation they were paired with is gone. They remain
+the first thing to check on a real handset. This is the owner's call, recorded
+here rather than argued: the morph field is the site's signature and was judged
+worth its cost.
 
 ## §8.3 Overflow one-liner
 
@@ -86,11 +104,12 @@ the net could not mask a genuine defect.
 | 1 | DPR clamp, canvas suspension, safe areas, viewport units | `77151eb` |
 | 2 | Breakpoint ladder, type floors | `5dba8e1` |
 | 2 | 44px tap targets + measurement harness | `4a93dc4` |
-| 3 | Motion doctrine on touch | `1e5b2c4` |
-| 4 | Render tier, particle budgets, globe, poster | `1acfc8a` |
+| 3 | ~~Motion doctrine on touch~~ | `1e5b2c4` — **reverted** |
+| 4 | ~~Render tier, particle budgets, globe, poster~~ | `1acfc8a` — **reverted** |
 | 5 | Drawer, quote affordance, header, forms | `6b61a00` |
 | 5 | Progressive disclosure + fixed-overlay regression | `a2a0300` |
-| 6 | Verification, CLS fix, sign-off | this commit |
+| 6 | Verification, CLS fix, sign-off | `0e4bf9a` |
+| — | Animation-system restore + breakpoint restore | this commit |
 
 ## Defects found during verification
 
@@ -106,15 +125,18 @@ Each was found by measuring rather than by reading, and each is fixed:
 4. **Three subcategory pages rendered a completely unstyled table.**
    `ProductTable` renders `.ind-table` but `industry-page.css` was imported only
    by `/industries/[slug]`.
-5. **A JS/CSS breakpoint mismatch would have trapped the reader.** The
-   horizontal timeline built its pin at ≥900px while its CSS stacked the rail at
-   ≤1023px; between the two the section pinned with steps 2–n unreachable.
-6. **Pins survived rotation.** All three were gated on a one-shot
-   `window.innerWidth`, so a handset that loaded in landscape kept a pinned hero
-   and a pinned 7,680px folio after rotating to portrait.
-7. **The ticker rested mid-loop under reduced motion**, cutting the corridor
-   list in half, because the global block collapses animations rather than
-   removing them.
+5. **A JS/CSS breakpoint mismatch in source.** The horizontal timeline builds
+   its pin at ≥900px while the ladder had moved its CSS to stack the rail at
+   ≤1023px. Source is now consistent again — `businesses-page.css` is back on
+   900px, the breakpoint the component actually reads.
+
+   Measured on the restored build: 880px stacks and does not pin; 950px, 1023px,
+   1024px and 1440px are all horizontal with every step reachable. Only the
+   exact-900px boundary remains, and it predates this branch — see finding 11.
+6. ~~**Pins survived rotation.**~~ Fix lived in the reverted animation files;
+   orientation behaviour is back to the original. Open, by owner's decision.
+7. ~~**The ticker rested mid-loop under reduced motion.**~~ Same — reverted.
+   Open, by owner's decision.
 8. **The drawer took ~2.5s to open** and ignored reduced motion entirely (GSAP
    tweens are not CSS animations).
 9. **The drawer opened off-screen after the scroll lock landed.**
@@ -123,13 +145,38 @@ Each was found by measuring rather than by reading, and each is fixed:
 10. **`/rfq` shifted 0.298 CLS**, six times the gate, on the conversion page:
     `RfqForm` suspends on `useSearchParams` and had a `null` fallback.
 
+11. **A 1px breakpoint overlap on the horizontal timeline — OPEN, not fixed.**
+    `businesses-page.css` stacks the rail at `max-width: 900px` and
+    `HorizontalTimeline` pins at `min-width: 900px`. Both bounds are inclusive,
+    so at a viewport of *exactly* 900px the section pins while the rail is still
+    stacked. Measured: 900px stacks and pins; 950px and up are horizontal and
+    correct; 880px stacks and does not pin.
+
+    Pre-existing — both values are unchanged from `77151eb`, and the window is
+    one pixel wide. Left open deliberately: this branch restores the site, it
+    does not re-tune it. The fix, when someone wants it, is `max-width: 899px`.
+
+### A verification note worth keeping
+
+An earlier draft of this file recorded two further defects — that
+`businesses-page.css` and `footer.css` never reached the browser, and that 3,074
+tap targets had regressed below 44px. Both were false. A `next start` process
+from 34 minutes earlier was still bound to port 3123 (`pkill` is a no-op on
+Windows), so every runtime probe was reading a stale build whose CSS chunk names
+no longer existed on disk. Against the correct build the audit returns
+**0 / 0 / 0**, matching production exactly.
+
+The lesson is procedural, not technical: a measurement harness that cannot prove
+*which build it measured* can manufacture defects as easily as it can miss them.
+Confirm the server is serving the bytes you just built before trusting a number.
+
 ## Standing constraints (§0)
 
 - **No hardcoded colours.** Every colour added resolves to an existing token.
-  The poster ships as a CSS mask specifically so it can take
-  `var(--gold-particle)` rather than baking gold into an SVG. The one literal
-  in the codebase remains `themeColor` in `layout.tsx`, documented in Phase 1 as
-  coupled to `--bg`.
+  (The poster mask that carried `var(--gold-particle)` went with the Phase-4
+  revert; the fallback globe is back to a stroked inline `<svg>`, which takes
+  the token just as directly.) The one literal in the codebase remains
+  `themeColor` in `layout.tsx`, documented in Phase 1 as coupled to `--bg`.
 - **No new typefaces.** Mobile changes scale, spacing and tracking only.
 - **Motion stack unchanged.** GSAP + ScrollTrigger + Lenis. Framer Motion was
   already present and is untouched; nothing was added.
@@ -139,8 +186,13 @@ Each was found by measuring rather than by reading, and each is fixed:
 - **India in data, not identity.** No headline, hero, tagline or brand-voice copy
   was changed. The only copy added is the drawer's "Back" and the CTA's dismiss
   label.
-- **`prefers-reduced-motion`** is honoured on every surface touched, and
-  measured for content parity rather than assumed.
+- **`prefers-reduced-motion`** is honoured on every surface *still* touched
+  (drawer, chrome, forms), and measured for content parity rather than assumed.
+  The reduced-motion parity work on the ticker and the pinned sections was
+  inside the reverted files and no longer ships.
+- **Breakpoints are the original hand-authored values.** The ladder in
+  `globals.css` governs the Tailwind scale and newly-written rules only. See the
+  note at the top of that file before re-aligning any page stylesheet.
 
 ## Desktop non-regression
 

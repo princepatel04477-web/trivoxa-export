@@ -177,7 +177,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .brands .swiper .swiper-slide {
     padding: 28px 20px;
   }

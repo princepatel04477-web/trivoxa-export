@@ -14,14 +14,23 @@
      xl   —  1024px+        desktop
 
    Written as `min-width` here because that is the only form Tailwind
-   accepts; page CSS is authored mobile-last and therefore states the
-   rungs as their `max-width` complements:
+   accepts. New page CSS is authored mobile-last and states the rungs as
+   their `max-width` complements:
 
      xs   @media (max-width: 389px)
      sm   @media (max-width: 429px)     xs + sm
      md   @media (max-width: 767px)     xs + sm + md
      lg   @media (max-width: 1023px)    everything below desktop
      xl   @media (min-width: 1024px)
+
+   This governs the Tailwind scale and NEW rules only. An earlier revision
+   also rewrote every existing page stylesheet onto these rungs — 50
+   breakpoints across 22 files. That was reverted: the hand-authored
+   values (520/575/640/700/720/780/800/820/860/900/991/…) are the shipped
+   design and are load-bearing. `HorizontalTimeline` shows why: it pins its
+   rail at `min-width: 900px`, so moving `businesses-page.css` to 1023px put
+   the CSS and the component on different rungs. Do not re-align existing page
+   CSS to this ladder; match the component's own JS breakpoint instead.
 
    `--breakpoint-*: initial` clears Tailwind's own 40/48/64/80/96rem
    scale. That scale was the second, contradictory system the audit
@@ -400,23 +409,12 @@ html[lang="ru"] {
     font-size: max(16px, 1rem);
   }
 
-  /* §5.3 — "Reveal animations only: opacity and transform. No animated
-     height, top, margin, filter, or box-shadow on mobile."
-
-     Every headline on the site reveals through `.word_inner`, which starts
-     at blur(6px) and is tweened to blur(0px) with a per-word stagger. A
-     moving blur is the most expensive thing in that list: it cannot be
-     composited, so each frame re-rasterises every word individually, and a
-     staggered heading multiplies that by its word count. On a mid-tier
-     Android this is the reveal that drops frames.
-
-     The tween sets `filter` INLINE, so only !important can take it back.
-     Nothing is lost visually: the same tween already animates opacity, and
-     at 390px a 6px blur on 16px type reads as the fade it accompanies
-     rather than as a distinct effect. */
-  .word_inner {
-    filter: none !important;
-  }
+  /* NOTE: an earlier revision killed the `.word_inner` blur-morph here on the
+     grounds that a moving filter is expensive to rasterise. It is — but the
+     blur-to-sharp morph is the site's signature headline reveal, and removing
+     it on every page below 768px changed the character of the whole site, not
+     just its frame cost. The reveal stays. Frame budget on mobile is bought
+     elsewhere (DPR clamp, idle-canvas suspension) or not at all. */
 }
 @media (max-width: 429px) {
   :root {
@@ -841,14 +839,8 @@ a, button {
     radial-gradient(ellipse at 72% 38%, color-mix(in srgb, var(--gold) 7%, transparent), transparent 55%),
     var(--bg);
 }
-/* The poster frame (§4.3), generated from the live scene's own geometry by
-   scripts/mobile/export-posters.mjs.
-
-   Applied as a MASK, not as an <img>: an externally-referenced SVG cannot read
-   this page's custom properties, so a coloured file would have to bake gold in
-   and break §0.1's no-hardcoded-colour rule. The mask carries shape and depth
-   only; every pixel of colour below comes from --gold-particle, the same token
-   the live field's points are drawn with. */
+/* Strokes an inline <svg> (see ParticleFallback), so it inherits the page's
+   colour tokens directly rather than needing a mask. */
 .particle-fallback__globe {
   position: absolute;
   top: 50%;
@@ -856,12 +848,12 @@ a, button {
   width: min(46vw, 520px);
   height: min(46vw, 520px);
   transform: translateY(-50%);
-  background: var(--gold-particle);
-  opacity: 0.5;
-  -webkit-mask: url("/images/posters/particle-globe.svg") center / contain no-repeat;
-  mask: url("/images/posters/particle-globe.svg") center / contain no-repeat;
+  fill: none;
+  stroke: var(--gold-particle);
+  stroke-width: 0.6;
+  opacity: 0.28;
 }
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .particle-fallback__globe {
     right: 50%;
     transform: translate(50%, -50%);

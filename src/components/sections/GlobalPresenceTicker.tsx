@@ -17,40 +17,6 @@ export default function GlobalPresenceTicker() {
     category: t(`corridor${n}Category`),
   }));
   const sectionRef = useRef<HTMLElement>(null);
-  const tickerRef = useRef<HTMLDivElement>(null);
-
-  // §5.1 — the ticker may stay: it is ambient, not navigational. But it is an
-  // infinite animation, and for most of a 14,000px document it is nowhere near
-  // the viewport. A compositor-only transform is cheap, not free — it still
-  // costs a composited layer kept alive and a frame committed for every tick,
-  // which on a phone is heat spent on something nobody is looking at.
-  //
-  // The class is toggled rather than the style written directly so the paused
-  // state stays declarative and inspectable in CSS.
-  useEffect(() => {
-    const el = tickerRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => el.classList.toggle("is-offscreen", !entry.isIntersecting),
-      // A little margin so it is already running by the time it is looked at,
-      // rather than visibly starting from a standstill at the edge.
-      { rootMargin: "120px 0px" }
-    );
-    io.observe(el);
-
-    // A backgrounded tab should not be animating at all — same reasoning as
-    // the canvas suspension in Phase 1.
-    const onVisibility = () =>
-      el.classList.toggle("is-hidden-doc", document.visibilityState === "hidden");
-    document.addEventListener("visibilitychange", onVisibility);
-    onVisibility();
-
-    return () => {
-      io.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
-  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -85,7 +51,7 @@ export default function GlobalPresenceTicker() {
         <p className="home-lead" data-reveal-body>{t("lead")}</p>
       </div>
 
-      <div className="ticker" ref={tickerRef}>
+      <div className="ticker">
         <div className="ticker-track">
           {doubled.map((row, i) => (
             <span className="ticker-row" key={i}>

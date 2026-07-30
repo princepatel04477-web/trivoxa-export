@@ -71,7 +71,7 @@ a.pxp-manifest__entry:hover .pxp-manifest__arrow {
   user-select: none;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 860px) {
   .pxp-manifest {
     flex-direction: column;
   }

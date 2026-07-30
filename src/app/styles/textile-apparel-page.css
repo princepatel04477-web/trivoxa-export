@@ -117,7 +117,7 @@
     linear-gradient(165deg, var(--color-paper-2), var(--color-paper));
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
   .tvx-lookbook-row {
     grid-template-columns: 1fr;
     min-height: 0;

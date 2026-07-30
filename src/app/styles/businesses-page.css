@@ -61,7 +61,7 @@
   color: var(--color-ink-2);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
   .arm-panel--right .arm-panel__content {
     margin-left: 0;
     text-align: left;
@@ -164,7 +164,7 @@
   color: var(--color-accent);
 }
 
-@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
   /* vertical fallback — no pin, all steps fully visible */
   .h-timeline__rail {
     flex-direction: column;

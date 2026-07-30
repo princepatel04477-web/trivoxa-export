@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { createParticleScene, type ParticleScene, type SceneConfig } from "@/lib/particle-scene";
 import { markPreloaderDone } from "@/lib/site-events";
 import { isLowEndDevice } from "@/lib/gpu-capability";
-import { tierRendersPoster } from "@/lib/device";
 import ParticleFallback from "@/components/ParticleFallback";
 
 interface ParticleCanvasProps {
@@ -31,15 +30,7 @@ export default function ParticleCanvas({ config }: ParticleCanvasProps) {
   // the runtime frame-budget monitor (fires mid-session on a device that
   // looked fine at load but can't sustain the field) both land here — either
   // one swaps the canvas for the static, zero-cost fallback.
-  // §4.3 — TIER_STATIC (reduced motion, or data-saver) renders the poster frame
-  // and never creates a WebGL context at all. That is a stronger guarantee than
-  // the scene's internal reduced-motion handling, which still built the field
-  // and merely held it still: a still field is a still 8,000-point draw, and a
-  // reader who asked for less motion or less data should not be paying for a
-  // GPU context to sit there.
-  const [useFallback, setUseFallback] = useState(
-    () => !forcedOn() && (isLowEndDevice() || tierRendersPoster())
-  );
+  const [useFallback, setUseFallback] = useState(() => !forcedOn() && isLowEndDevice());
 
   useEffect(() => {
     if (useFallback) {

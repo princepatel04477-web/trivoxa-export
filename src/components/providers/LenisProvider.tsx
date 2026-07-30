@@ -56,17 +56,6 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
       lerp: 0.09,
       duration: 1.2,
       smoothWheel: true,
-      // §5.2 — touch scroll belongs to the platform. `syncTouch` is what
-      // Lenis 1.x calls the old `smoothTouch`, and leaving it off means a
-      // thumb gets iOS/Android's own momentum curve rather than a JS
-      // reimplementation of it. Every user's thumb already knows exactly
-      // how that should feel, and overriding it is the fastest way to make
-      // an expensive site feel cheap.
-      //
-      // false is already the Lenis default, so this line changes no
-      // behaviour — it is here so the decision is visible at the call site
-      // and nobody turns it on later thinking it is an upgrade.
-      syncTouch: false,
     });
     lenisInstance = lenis;
     emit("lenis:init");

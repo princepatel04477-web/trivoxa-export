@@ -40,20 +40,9 @@ export default function HeroSection() {
         else tl.play();
       });
 
-      // Both scroll-driven effects below are built through gsap.matchMedia
-      // rather than a one-shot `window.innerWidth` test. The imperative form is
-      // evaluated once at mount, so a handset that started in landscape kept a
-      // pinned 120%-tall hero after rotating to portrait — and a pin is the one
-      // thing that must never outlive the width it was measured for.
-      // matchMedia also reverts cleanly, which is what §5.3 asks for on
-      // orientation change.
-      const mm = gsap.matchMedia();
-
-      // Scroll-scrubbed cue fade — not built at all under reduced motion, per
-      // the rule that no motion may be bound to the scroll position. The cue
-      // itself is display:none below the sm rung (hero.css), so there is
-      // nothing to fade there either.
-      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 430px)", () => {
+      // Scroll-scrubbed cue fade — disabled outright under reduced motion, per
+      // the rule that no motion may be bound to the scroll position.
+      if (!reducedMotion && window.innerWidth > 575) {
         gsap.fromTo(
           ".hp-sec-1 .scroll-to",
           {},
@@ -66,14 +55,9 @@ export default function HeroSection() {
             },
           }
         );
-      });
+      }
 
-      // The hero pin holds the section for an extra 120% of viewport height
-      // while the copy fades out under the thumb. On a phone that is 120% of
-      // scroll spent going nowhere, on top of a document already past 14,000px
-      // — so it is a desktop-and-tablet device only (§5.1, §5.5: nothing
-      // animating that the user did not scroll to).
-      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 768px)", () => {
+      if (!reducedMotion && window.innerWidth > 767) {
         gsap
           .timeline({
             scrollTrigger: {
@@ -87,7 +71,7 @@ export default function HeroSection() {
           .to(".hp-sec-1 .hero-tagline", { opacity: 0, y: -80, ease: "none" }, 0)
           .to(".hp-sec-1 .grain-globe", { scale: 1.15, ease: "none" }, 0)
           .to(".hp-sec-1 .title-anim, .hp-sec-1 .subtitle, .hp-sec-1 .hero-cta", { opacity: 0, ease: "none" }, 0.7);
-      });
+      }
 
       ScrollTrigger.refresh();
       return unsub;

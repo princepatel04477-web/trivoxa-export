@@ -144,7 +144,7 @@
 /* Desktop: the particle globe is parked on the RIGHT (see particle-scene.ts
    sweep(".hp-global", side)), so all of the section's copy is left-aligned and
    held in the left ~half to sit clear of it. Mobile keeps the centred stack. */
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   .hp-global .container {
     align-items: flex-start;
     padding-right: min(52%, 700px);
@@ -401,7 +401,7 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .home-sec {
     padding: 110px 0;
   }
@@ -420,7 +420,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .home-sec {
     padding: 88px 0;
   }
@@ -480,7 +480,7 @@
   line-height: 1.7;
   color: color-mix(in srgb, var(--text) 50%, transparent);
 }
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .hp-trust .trust-grid {
     grid-template-columns: 1fr;
   }

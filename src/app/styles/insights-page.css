@@ -126,7 +126,7 @@
   border-color: var(--color-accent);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
   .insights-magazine {
     grid-template-columns: 1fr;
     gap: var(--space-lg);
@@ -293,7 +293,7 @@
   color: var(--destructive, #e5484d);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .insights-teaser__form-row {
     flex-direction: column;
   }

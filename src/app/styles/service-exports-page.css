@@ -92,7 +92,7 @@
   color: var(--color-ink-2);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 780px) {
   .capability-row {
     grid-template-columns: 2.5rem 1fr;
     padding: var(--space-md) var(--space-xs);

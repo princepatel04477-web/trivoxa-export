@@ -96,7 +96,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .hp-sec-3 .statistics,
   .hp-sec-4 .container .row-wrapper,
   .hp-contact-section .container .contact .row {
@@ -134,14 +134,14 @@
   }
 }
 
-@media (max-width: 429px) {
+@media (max-width: 575px) {
   .hp-sec-3 .statistics .numbers .statistic .number {
     font-size: 32px;
     line-height: 42px;
   }
 }
 
-@media (max-width: 389px) {
+@media (max-width: 399px) {
   .hp-sec-3 .statistics .numbers .statistic .number {
     font-size: 27px;
     line-height: 37px;

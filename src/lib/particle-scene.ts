@@ -18,15 +18,7 @@ import { createPerfHud, isPerfHudEnabled } from "./perf-hud";
 // Suspension for this surface is handled by the existing visibilitychange
 // handler plus the GPU idle gate in renderLoop — an IntersectionObserver has
 // nothing to say about a position:fixed, full-viewport canvas.
-import {
-  deviceClass,
-  renderTier,
-  createFrameProbe,
-  TIER_PARTICLE_SCALE,
-  TIER_MAX_ARCS,
-  tierAllowsPostProcessing,
-  tierAllowsAutoRotate,
-} from "./device";
+import { deviceClass } from "./device";
 import {
   EffectComposer,
   RenderPass,
@@ -313,21 +305,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const renderClass = deviceClass();
   const mobileGpu = renderClass === "mobile";
 
-  // RENDER TIER (§4.2/§4.3) — how much work this device may spend, which is a
-  // different question from what kind of device it is. One resolver in
-  // lib/device.ts; nothing here decides locally.
-  const tier = renderTier();
-
-  // The tier budget and the per-class count are intersected rather than the
-  // tier simply replacing the class. §4.3 puts TIER_HIGH at "current desktop
-  // value — unchanged", and a flagship handset does resolve to HIGH, which
-  // taken alone would hand a phone the full 18,000-point desktop field —
-  // roughly double what this scene has ever been measured carrying on mobile
-  // (see the COUNT_* note above). Taking the minimum means tiering can only
-  // ever REDUCE work below an already-validated ceiling, never raise it above
-  // one, and the frame probe can still demote from there.
-  const classCount = isMobile ? COUNT_MOBILE : isTablet ? COUNT_TABLET : COUNT_DESKTOP;
-  const count = Math.min(classCount, Math.round(COUNT_DESKTOP * TIER_PARTICLE_SCALE[tier]));
+  const count = isMobile ? COUNT_MOBILE : isTablet ? COUNT_TABLET : COUNT_DESKTOP;
   const maxDpr = mobileGpu
     ? MAX_DPR_MOBILE
     : renderClass === "tablet"
@@ -359,17 +337,11 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const canvas = renderer.domElement;
   canvas.style.cssText = "position:fixed;inset:0;z-index:-1;pointer-events:none;";
 
-  // Postprocessing is HIGH-tier only (§4.3: "MID — Bloom off"). Mipmap bloom
-  // and chromatic aberration are the first things to cost frames on a
-  // mid-range mobile GPU: they are full-screen passes, so their cost scales
-  // with the backing store rather than with the particle count and cutting
-  // instances does nothing to relieve them.
-  //
-  // Previously gated on the hardware class, which let every tablet and every
-  // capable-looking phone keep the full chain. Now a tablet at MID renders the
-  // same clean composite the phones do, and only a desktop (or a device the
-  // probe has confirmed can afford it) pays for the chain.
-  const composer = tierAllowsPostProcessing(tier) ? new EffectComposer(renderer) : null;
+  // Postprocessing is desktop/tablet-only — mipmap bloom + chromatic aberration
+  // are the first things to cost frames on mid-range mobile GPUs. Gated on the
+  // hardware class, not on CSS width, so rotating a phone cannot switch the
+  // chain on.
+  const composer = mobileGpu ? null : new EffectComposer(renderer);
   if (composer) {
     composer.addPass(new RenderPass(scene, camera));
     const effects: Effect[] = [];
@@ -845,16 +817,6 @@ ${
   let dragLastX = 0;
   let dragOffset = 0;
   let idleSpin = 0;
-  /**
-   * A touch that has begun but has not yet declared a direction (§4.5). Held
-   * until the gesture travels far enough to be classified as a horizontal drag
-   * (rotate) or a vertical one (scroll — released, never rotates).
-   */
-  let pendingTouch: { x: number; y: number; id: number } | null = null;
-  /** Live finger count, so a pinch is never read as a drag. */
-  let touchCount = 0;
-  /** §4.5's explicit figure: horizontal intent is 12px of horizontal travel. */
-  const TOUCH_INTENT_PX = 12;
   /** Trade-route overlay (line geometry + packets + hub markers). Geo mode only. */
   let tradeArcs: TradeArcs | null = null;
   /** Region the reader has scrolled to; handed to uActiveRegion through a dip. */
@@ -879,36 +841,6 @@ ${
       dragLastX = e.clientX;
       dragOffset += dx * DRAG_SENSITIVITY;
       dragVel = dx * DRAG_SENSITIVITY;
-      return;
-    }
-
-    // §4.5's horizontal-intent threshold. A touch is watched until it has
-    // travelled far enough to mean something, then classified once and for all:
-    //
-    //   |dx| >= 12 and |dx| > |dy|  ->  a deliberate horizontal drag; rotate.
-    //   |dy| >= 12                  ->  the reader is scrolling; let go of the
-    //                                   gesture entirely and never rotate for
-    //                                   it, even if the finger later curves
-    //                                   sideways mid-flick.
-    //
-    // Deciding vertical FIRST is the part that matters. A diagonal swipe down
-    // the page will eventually cross 12px on both axes, and whichever test runs
-    // first wins — so scroll wins, because a globe that occasionally fails to
-    // spin is a small disappointment and a page that occasionally fails to
-    // scroll is a broken website.
-    if (pendingTouch && e.pointerId === pendingTouch.id) {
-      const dx = e.clientX - pendingTouch.x;
-      const dy = e.clientY - pendingTouch.y;
-      if (Math.abs(dy) >= TOUCH_INTENT_PX) {
-        pendingTouch = null;
-      } else if (Math.abs(dx) >= TOUCH_INTENT_PX && Math.abs(dx) > Math.abs(dy)) {
-        dragging = true;
-        // Anchored at the CURRENT position, not the origin, so the globe does
-        // not jump by the 12px the gesture spent proving itself.
-        dragLastX = e.clientX;
-        dragVel = 0;
-        pendingTouch = null;
-      }
     }
   }
   window.addEventListener("pointermove", handlePointer);
@@ -920,69 +852,24 @@ ${
   // also throw the globe.
   function handleDragStart(e: PointerEvent) {
     if (!draggable || reducedMotion || uBend.value < 0.6) return;
+    // Mouse and pen only. A touch drag competes directly with scrolling — a
+    // diagonal swipe would throw the globe on the way down the page — and the
+    // globe is small enough on a phone that dragging it isn't the point.
+    if (e.pointerType === "touch") return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     const el = e.target as HTMLElement | null;
     if (el?.closest("a, button, input, textarea, select, [role='button'], [contenteditable]")) return;
-
-    if (e.pointerType === "touch") {
-      // §4.5 — a single finger rotates the globe, but ONLY once the gesture has
-      // proved it is horizontal. Arming immediately is the failure the section
-      // names: the globe is a full-viewport fixed field, so every downward
-      // swipe starts on top of it, and a drag that rotates from the first pixel
-      // means the reader is trapped and cannot scroll past.
-      //
-      // So the gesture is watched, not captured. `pendingTouch` holds the
-      // origin; the direction is decided on the first move that travels far
-      // enough to have an opinion (below). Nothing calls preventDefault at any
-      // point — the page keeps its native scroll and its pinch-zoom, and
-      // multi-touch is ignored outright so a pinch is never mistaken for a
-      // drag.
-      if (touchCount > 1) return;
-      pendingTouch = { x: e.clientX, y: e.clientY, id: e.pointerId };
-      return;
-    }
     dragging = true;
     dragLastX = e.clientX;
     dragVel = 0;
   }
   function handleDragEnd() {
     dragging = false;
-    pendingTouch = null;
   }
-
-  // Live finger count. Tracked separately from the drag handlers because those
-  // return early on several paths (non-draggable form, press on a control) and
-  // the count has to stay correct regardless — an undercount would let the
-  // second finger of a pinch arm a rotation.
-  const activeTouches = new Set<number>();
-  function handleTouchDown(e: PointerEvent) {
-    if (e.pointerType !== "touch") return;
-    activeTouches.add(e.pointerId);
-    touchCount = activeTouches.size;
-    // A second finger landing mid-gesture retroactively cancels the drag: what
-    // looked like a one-finger rotation has turned into a pinch, and §4.5 is
-    // explicit that pinch belongs to the page.
-    if (touchCount > 1) {
-      dragging = false;
-      pendingTouch = null;
-    }
-  }
-  function handleTouchUp(e: PointerEvent) {
-    if (e.pointerType !== "touch") return;
-    activeTouches.delete(e.pointerId);
-    touchCount = activeTouches.size;
-  }
-
   if (draggable) {
-    // Passive: none of these ever call preventDefault, and saying so up front
-    // lets the browser start scrolling without waiting to find out.
-    const passive = { passive: true } as const;
-    window.addEventListener("pointerdown", handleTouchDown, passive);
-    window.addEventListener("pointerdown", handleDragStart, passive);
-    window.addEventListener("pointerup", handleTouchUp, passive);
-    window.addEventListener("pointercancel", handleTouchUp, passive);
-    window.addEventListener("pointerup", handleDragEnd, passive);
-    window.addEventListener("pointercancel", handleDragEnd, passive);
+    window.addEventListener("pointerdown", handleDragStart);
+    window.addEventListener("pointerup", handleDragEnd);
+    window.addEventListener("pointercancel", handleDragEnd);
   }
 
   const clock = new THREE.Clock();
@@ -996,23 +883,6 @@ ${
   let overBudgetStreak = 0;
   let warmupElapsed = 0;
   let degraded = false;
-
-  // §4.2's runtime probe, alongside the streak monitor above. The two answer
-  // different questions and both are wanted:
-  //   - the streak monitor is a CIRCUIT BREAKER — ten consecutive missed
-  //     frames means this device cannot run the field at all, and it hands off
-  //     to the static poster.
-  //   - the probe is a THERMOSTAT — p95 over the first 90 frames means the
-  //     device is running but running hot, so it drops one tier and keeps
-  //     rendering, for the rest of the session, across route changes.
-  // A device that trips the probe usually never reaches the breaker, which is
-  // the point: the demotion is what stops it getting there.
-  const frameProbe = createFrameProbe();
-
-  // §4.5 — auto-rotate is a MID-and-above affordance. Read once: the tier is
-  // fixed for the session, and re-reading per frame would put a function call
-  // in the hot loop for an answer that cannot change.
-  const autoRotate = tierAllowsAutoRotate(tier);
 
   // GPU idle gate (see the end of renderLoop). BLANK_ALPHA is below the
   // threshold at which a single point sprite contributes a distinguishable
@@ -1039,17 +909,11 @@ ${
     // to see genuinely slow frames rather than a clamped-away view of them.
     const rawDelta = clock.getDelta();
     perfHud?.sample(rawDelta);
-    // Sampled from the raw delta, and only after warm-up, so the shader-compile
-    // and first-texture-upload spike every scene pays on frame one cannot be
-    // mistaken for a slow device. The probe self-terminates after 90 samples.
-    if (warmupElapsed > WARMUP_SECONDS) frameProbe(rawDelta * 1000);
     const delta = Math.min(rawDelta, 0.05);
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
 
-    // Accumulated unconditionally — the frame probe above reads it too, and it
-    // used to advance only while a degrade callback was attached.
-    warmupElapsed += rawDelta;
     if (onDegrade && !degraded) {
+      warmupElapsed += rawDelta;
       if (warmupElapsed > WARMUP_SECONDS) {
         if (rawDelta * 1000 > FRAME_BUDGET_MS) {
           overBudgetStreak++;
@@ -1154,13 +1018,7 @@ ${
         // Tilt lives on the holder (23.4°); no secondary-axis wobble on points.
         // Keeps rotating while ports are up so every city cycles into view; only
         // gently eased below full speed so labels stay readable as they pass.
-        //
-        // §4.5 — "Disable auto-rotate on LOW; the user drags or it sits still."
-        // A continuously rotating globe never lets the field settle, so the GPU
-        // idle gate can never commit its final frame and a struggling device
-        // pays for the full draw indefinitely. Holding it still is what lets
-        // that gate engage, which is where the saving actually comes from.
-        if (autoRotate) points.rotation.y += IDLE_OMEGA * (portsMode ? 0.75 : 1) * delta;
+        points.rotation.y += IDLE_OMEGA * (portsMode ? 0.75 : 1) * delta;
         points.rotation.x += (0 - points.rotation.x) * kSettle;
         holder.rotation.z += (AXIAL_TILT - holder.rotation.z) * kSettle;
         holder.rotation.x += (pointer.y * PARALLAX_MAX - holder.rotation.x) * kParallax;
@@ -1462,20 +1320,8 @@ ${
     // arc bulges off the sphere (higher for longer lanes) and a gold "packet"
     // sprite runs Surat → hub along it, looping — the trade flowing outward.
     const surat = cityVecs["Surat"];
-    // §4.5 — "Reduce simultaneous animated arcs to six on MID, three on LOW."
-    // Each lane is a 64-segment line plus a sprite that is repositioned along
-    // its curve every frame, so the cost is per-arc and per-frame regardless of
-    // how much of it is on the visible hemisphere. The arcs kept are the first
-    // in CITIES order, which is the authored order — the corridors are listed
-    // by prominence, so a reduced set still reads as the principal lanes rather
-    // than an arbitrary subset. They remain line geometry; §4.5 is explicit
-    // that they are not to become particles.
-    const maxArcs = TIER_MAX_ARCS[tier];
-    let arcsBuilt = 0;
     for (const c of CITIES) {
       if (c.origin) continue;
-      if (arcsBuilt >= maxArcs) break;
-      arcsBuilt++;
       const dest = cityVecs[c.name];
       const mid = surat.clone().add(dest).multiplyScalar(0.5);
       const lift = globeRadius * (1.1 + surat.distanceTo(dest) / (globeRadius * 4.2));
@@ -2103,10 +1949,7 @@ ${
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointer);
-      window.removeEventListener("pointerdown", handleTouchDown);
       window.removeEventListener("pointerdown", handleDragStart);
-      window.removeEventListener("pointerup", handleTouchUp);
-      window.removeEventListener("pointercancel", handleTouchUp);
       window.removeEventListener("pointerup", handleDragEnd);
       window.removeEventListener("pointercancel", handleDragEnd);
       tradeArcs?.dispose();

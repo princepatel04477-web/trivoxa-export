@@ -84,7 +84,7 @@ body.contact-modal-open .contact-modal .container {
   cursor: not-allowed;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .contact-modal .container .contact-form {
     padding: 35px 45px;
   }
@@ -97,13 +97,13 @@ body.contact-modal-open .contact-modal .container {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .contact-modal .container .contact-form {
     padding: 25px;
   }
 }
 
-@media (max-width: 389px) {
+@media (max-width: 399px) {
   .contact-modal .container .contact-form {
     padding: 15px;
   }

@@ -337,7 +337,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .pgrid__count {
     margin-left: 0;
     width: 100%;

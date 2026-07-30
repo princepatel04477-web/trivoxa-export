@@ -228,10 +228,10 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .ind-ports-map { min-height: 260px; }
 }
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .ind-drawer { padding: 48px 24px 32px; }
   .ind-cert-row { gap: 24px; }
   .ind-cert { width: 92px; }

@@ -392,12 +392,12 @@
 .tvx-crumb span { color: color-mix(in srgb, var(--text) 30%, transparent); }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .tvx-grid--3, .tvx-grid--4 { grid-template-columns: repeat(2, 1fr); }
   .tvx-split { grid-template-columns: 1fr; gap: 36px; }
   .tvx-hero { padding: 170px 0 80px; }
 }
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .tvx .container { padding: 0 22px; }
   .tvx-grid--2, .tvx-grid--3, .tvx-grid--4 { grid-template-columns: 1fr; }
   .tvx-section { padding: 64px 0; }

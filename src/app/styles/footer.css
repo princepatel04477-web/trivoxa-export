@@ -397,7 +397,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .footer {
     padding-top: 60px;
   }
@@ -420,7 +420,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .footer .col:not(.footer-brand):not(.footer-newsletter) {
     width: 100%;
   }

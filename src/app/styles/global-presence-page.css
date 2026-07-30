@@ -128,7 +128,7 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .tvx-lane {
     grid-template-columns: 1fr;
     gap: var(--space-2xs);
@@ -282,7 +282,7 @@
   letter-spacing: 0.06em;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 800px) {
   .presence-map-diagram {
     grid-template-columns: 1fr;
   }

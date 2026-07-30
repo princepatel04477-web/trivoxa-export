@@ -488,7 +488,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   /* Mobile drops the centered-logo grid for the conventional
      logo-left / hamburger-right bar (the side nav clusters are hidden). */
   .header .header-wrapper {
@@ -531,7 +531,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .header {
     padding: calc(22px + var(--safe-top)) max(20px, var(--safe-right)) 0
       max(20px, var(--safe-left));
@@ -684,7 +684,7 @@
   transform: none;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .lang-switch--desktop {
     display: none;
   }

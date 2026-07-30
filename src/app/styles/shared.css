@@ -65,7 +65,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .scroll-to .line {
     width: 250px;
   }
@@ -80,7 +80,7 @@
   }
 }
 
-@media (max-width: 429px) {
+@media (max-width: 575px) {
   .scroll-to {
     display: none;
   }

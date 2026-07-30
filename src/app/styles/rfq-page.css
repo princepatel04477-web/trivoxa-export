@@ -236,7 +236,7 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .rfq-grid { grid-template-columns: 1fr; }
   .rfq-progress__step span:last-child { display: none; }
 }
@@ -459,7 +459,7 @@
   filter: grayscale(0.3) contrast(0.96);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 700px) {
   .rfq-map__frame {
     border-radius: var(--radius-lg);
   }

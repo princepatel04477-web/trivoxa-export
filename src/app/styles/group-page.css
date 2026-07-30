@@ -83,7 +83,7 @@
   max-width: 38rem;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
   .split-sticky {
     grid-template-columns: 1fr;
   }
@@ -149,7 +149,7 @@
   margin-top: var(--space-2xs);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
   .foundation-split {
     grid-template-columns: 1fr;
     row-gap: var(--space-2xl);
@@ -265,7 +265,7 @@
   margin-left: auto;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 780px) {
   .numbered-list__row {
     flex-wrap: wrap;
     min-height: 0;
@@ -380,7 +380,7 @@
   margin-top: var(--space-lg);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 900px) {
   .leadership-panel {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -507,7 +507,7 @@
   color: var(--color-ink-2);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 780px) {
   .commitments-table,
   .commitments-table tbody,
   .commitments-table tr,

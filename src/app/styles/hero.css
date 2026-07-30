@@ -258,7 +258,7 @@
   }
 }
 
-@media (max-width: 429px) {
+@media (max-width: 575px) {
   .hp-sec-1 .container .hero-proof-ribbon {
     gap: 8px 14px;
   }
@@ -282,7 +282,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 991px) {
   .hp-sec-1 {
     padding: 100px 0 60px;
   }
@@ -314,7 +314,7 @@
   }
 }
 
-@media (max-width: 429px) {
+@media (max-width: 575px) {
   .hp-sec-1 {
     padding: 80px 0 40px;
   }
@@ -339,7 +339,7 @@
   }
 }
 
-@media (max-width: 389px) {
+@media (max-width: 399px) {
   .hp-sec-1 .container .subtitle {
     font-size: 17px;
     line-height: 1.55;

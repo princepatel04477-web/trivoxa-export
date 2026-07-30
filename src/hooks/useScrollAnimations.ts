@@ -81,19 +81,10 @@ export function revealImages(scope: Element, selector = "[data-reveal-image]") {
     gsap.utils.toArray<HTMLElement>(selector, scope).forEach((el) => releaseReveal(el, "data-reveal-image"));
     return;
   }
-  // The 4% zoom inflates the element's visual box by 2% on each side. On a
-  // phone these images run the full width of the gutter, so those 2% land
-  // OUTSIDE the viewport and register as horizontal overflow for the whole
-  // 0.8s the tween is in flight — measured at 391px against a 390px viewport.
-  // Below the md rung the zoom is dropped and the reveal is carried by opacity
-  // alone, which reads identically at that size and cannot overflow anything.
-  const zoom =
-    typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches ? 1 : 1.04;
-
   gsap.utils.toArray<HTMLElement>(selector, scope).forEach((el) => {
     gsap.fromTo(
       el,
-      { scale: zoom, opacity: 0 },
+      { scale: 1.04, opacity: 0 },
       {
         scale: 1,
         opacity: 1,
