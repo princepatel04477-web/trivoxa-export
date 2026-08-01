@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Work_Sans, IBM_Plex_Mono, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans, Instrument_Serif, Instrument_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
@@ -89,6 +89,28 @@ export const metadata: Metadata = {
   description:
     "Trivoxa Group is an international business group delivering trusted products, strategic sourcing solutions, and professional services across global markets.",
   icons: { icon: "/favicon.ico", shortcut: "/favicon.ico" },
+};
+
+/**
+ * `viewportFit: "cover"` lets the page paint into the notch and home-indicator
+ * zones — without it those bands are letterboxed in the browser chrome colour,
+ * which on a full-bleed navy hero reads as a rendering fault. Everything that
+ * must stay clear of them does so through `env(safe-area-inset-*)`; see the
+ * `--safe-*` tokens in globals.css.
+ *
+ * `initialScale` is set without `maximumScale`/`userScalable` on purpose:
+ * pinch-zoom is an accessibility affordance and is never disabled here.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  // The ONE place in the codebase where a colour cannot resolve through a token:
+  // this is serialised into a <meta> tag at build time, where no stylesheet has
+  // been parsed and `var(--bg)` has no meaning. The literal is `--bg` verbatim
+  // and must be changed with it. Without it iOS paints the address bar white
+  // above a navy hero.
+  themeColor: "#0B1325",
 };
 
 /** Pre-render every locale at build time. */

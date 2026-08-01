@@ -2,7 +2,14 @@
   position: fixed;
   top: 0;
   left: 0;
-  padding: 18px 40px 0;
+  /* Safe-area aware (§3.3). The page paints under the notch now
+     (viewport-fit=cover), so the top pad ADDS the inset — the masthead must
+     start below the sensor housing, not behind it. The horizontal pads take
+     max() instead: in landscape the cutout lands in the left or right inset,
+     and 40px already clears it on every device that has one, so this only
+     grows where it must and is a literal no-op on desktop. */
+  padding: calc(18px + var(--safe-top)) max(40px, var(--safe-right)) 0
+    max(40px, var(--safe-left));
   width: 100%;
   transform: translateY(-200px);
   /* Above the global grain overlay (z-index 9999) and every canvas layer
@@ -488,7 +495,8 @@
     display: none;
   }
   .header {
-    padding: 22px 32px 0;
+    padding: calc(22px + var(--safe-top)) max(32px, var(--safe-right)) 0
+      max(32px, var(--safe-left));
   }
   .header .header-wrapper .h-right .hamburger {
     display: flex;
@@ -497,7 +505,8 @@
 
 @media (max-width: 575px) {
   .header {
-    padding: 22px 20px 0;
+    padding: calc(22px + var(--safe-top)) max(20px, var(--safe-right)) 0
+      max(20px, var(--safe-left));
   }
 }
 

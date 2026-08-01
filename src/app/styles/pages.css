@@ -16,6 +16,7 @@
   --muted: color-mix(in srgb, var(--text) 62%, transparent);
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
   color: var(--text);
   overflow-x: hidden;
 }

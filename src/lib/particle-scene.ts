@@ -15,6 +15,10 @@ import { buildEagleStage } from "./shapes/eagle";
 import { TRADE_CITIES } from "@/data/trade-cities";
 import type { GeoField } from "./shapes/presence";
 import { createPerfHud, isPerfHudEnabled } from "./perf-hud";
+// Suspension for this surface is handled by the existing visibilitychange
+// handler plus the GPU idle gate in renderLoop — an IntersectionObserver has
+// nothing to say about a position:fixed, full-viewport canvas.
+import { deviceClass } from "./device";
 import {
   EffectComposer,
   RenderPass,
@@ -285,10 +289,28 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const width = window.innerWidth;
   const height = window.innerHeight;
 
+  // LAYOUT class — a pure function of CSS width. Drives where the field sits
+  // and how bright it is relative to the copy. A narrow desktop window should
+  // behave like a phone here, which is exactly what width tells us.
   const isMobile = width <= 575;
   const isTablet = !isMobile && width <= 1024;
+
+  // RENDER class — a function of the HARDWARE, resolved once per session from
+  // the shortest viewport edge plus pointer coarseness. Deliberately separate
+  // from the layout class above: a phone held sideways reports width 844 and
+  // was previously classed "tablet", which handed a handset the tablet DPR
+  // ceiling AND the full desktop post-processing chain (bloom + chromatic
+  // aberration + per-frame noise). That is the single most expensive
+  // misclassification in the old profile.
+  const renderClass = deviceClass();
+  const mobileGpu = renderClass === "mobile";
+
   const count = isMobile ? COUNT_MOBILE : isTablet ? COUNT_TABLET : COUNT_DESKTOP;
-  const maxDpr = isMobile ? MAX_DPR_MOBILE : isTablet ? MAX_DPR_TABLET : MAX_DPR_DESKTOP;
+  const maxDpr = mobileGpu
+    ? MAX_DPR_MOBILE
+    : renderClass === "tablet"
+      ? MAX_DPR_TABLET
+      : MAX_DPR_DESKTOP;
   // Below 576px computeSide() returns 0, so the field sits centred *behind* the
   // headline copy rather than beside it. Pages that put a beat under a heading
   // pass a cap so the text stays legible.
@@ -307,7 +329,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     antialias: false, // round point sprites don't benefit; MSAA costs fill rate
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
   renderer.setSize(width, height);
   // Alpha 0 — a fully transparent canvas so the page background token shows
   // through. The RGB is unused and is not a palette value.
@@ -331,9 +353,11 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   canvas.addEventListener("webglcontextlost", onContextLost, false);
   canvas.addEventListener("webglcontextrestored", onContextRestored, false);
 
-  // Postprocessing is desktop-only — mipmap bloom + chromatic aberration are
-  // the first things to cost frames on mid-range mobile GPUs.
-  const composer = isMobile ? null : new EffectComposer(renderer);
+  // Postprocessing is desktop/tablet-only — mipmap bloom + chromatic aberration
+  // are the first things to cost frames on mid-range mobile GPUs. Gated on the
+  // hardware class, not on CSS width, so rotating a phone cannot switch the
+  // chain on.
+  const composer = mobileGpu ? null : new EffectComposer(renderer);
   if (composer) {
     composer.addPass(new RenderPass(scene, camera));
     const effects: Effect[] = [];
@@ -876,13 +900,20 @@ ${
   let warmupElapsed = 0;
   let degraded = false;
 
+  // GPU idle gate (see the end of renderLoop). BLANK_ALPHA is below the
+  // threshold at which a single point sprite contributes a distinguishable
+  // value to an 8-bit framebuffer, so crossing it cannot pop.
+  const BLANK_ALPHA = 0.004;
+  const BLANK_COMMIT_FRAMES = 2;
+  let blankFrames = 0;
+
   // Opt-in only (?perf=1) — the 60fps budget can only be confirmed on real
   // hardware, so this is the readout for doing that. Null in normal sessions.
   const perfHud = isPerfHudEnabled()
     ? createPerfHud({
         particles: count,
         dpr: renderer.getPixelRatio(),
-        tier: isMobile ? "mobile" : isTablet ? "tablet" : "desktop",
+        tier: renderClass,
       })
     : null;
 
@@ -1092,10 +1123,27 @@ ${
       if (!portsMode && !anyVisible) portGroup.visible = false;
     }
 
-    if (composer) {
-      composer.render();
+    // GPU idle gate. This canvas is position:fixed over the whole viewport, so
+    // an IntersectionObserver can never call it off-screen — yet for most of a
+    // 15,000px document the field is faded to zero, and every one of those
+    // frames is still a full count-point draw plus (off mobile) the entire post
+    // chain, producing nothing a reader can see. Once the points, the port
+    // overlay and the trade arcs have all settled to invisible we commit one
+    // last frame (so the canvas actually holds the empty state rather than a
+    // stale one) and then stop issuing draw calls. The loop itself keeps
+    // running — it is also the state machine — so the field is already correct
+    // the instant a beat asks it back.
+    if (material.opacity <= BLANK_ALPHA && !portGroup?.visible && !tradeArcs?.group.visible) {
+      blankFrames++;
     } else {
-      renderer.render(scene, camera);
+      blankFrames = 0;
+    }
+    if (blankFrames <= BLANK_COMMIT_FRAMES) {
+      if (composer) {
+        composer.render();
+      } else {
+        renderer.render(scene, camera);
+      }
     }
     // Once degraded, stop self-scheduling — the caller's onDegrade handler
     // owns teardown (dispose() also cancels animId, this just avoids one more

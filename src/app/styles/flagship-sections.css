@@ -9,7 +9,12 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  /* svh: this section PINS. A pin measures its height once and holds the
+     document open by that amount, so a unit that changes when the address bar
+     moves would desynchronise the pin from the scroll it is driven by. svh is
+     the one full-viewport unit that never changes. */
   height: 100vh;
+  height: 100svh;
   overflow: hidden;
   background: var(--color-paper);
 }
@@ -597,6 +602,7 @@
 /* ---------- Values — numbered hover list ---------- */
 .values-hover {
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   padding: var(--space-2xl) 0;

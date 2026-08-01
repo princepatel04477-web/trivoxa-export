@@ -2,7 +2,10 @@
 .group-hero {
   position: relative;
   overflow: hidden;
+  /* Full-bleed hero — svh so it does not resize on the address-bar collapse.
+     See .hp-sec-1 in hero.css for the full reasoning. */
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   padding: 160px 0 80px;

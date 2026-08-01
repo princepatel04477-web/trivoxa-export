@@ -29,7 +29,10 @@ body.nav-active .hamburger > div:nth-child(2) {
   display: flex;
   pointer-events: none;
   justify-content: center;
+  /* Drawer overlay — dynamic, so it covers exactly the visible viewport as the
+     address bar moves rather than leaving a live strip of page under it. */
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   background-color: var(--bg-card);
   clip-path: circle(50% at 50% 0%);
@@ -42,11 +45,15 @@ body.nav-active .hamburger > div:nth-child(2) {
   transform: translate(0%, -50%);
   width: 90%;
   height: 80%;
-  overflow-y: scroll;
+  overflow-y: auto;
+  /* Momentum scrolling inside the drawer, and — critically — the drawer's
+     scroll is not chained back to the document behind it once it hits an end. */
+  overscroll-behavior: contain;
   display: flex;
   padding-top: 50px;
-  /* Clear the sticky bottom CTA so the last items stay reachable. */
-  padding-bottom: 96px;
+  /* Clear the sticky bottom CTA (and the home indicator under it) so the last
+     items stay reachable. */
+  padding-bottom: calc(96px + var(--safe-bottom));
   flex-direction: column;
 }
 
@@ -173,7 +180,8 @@ li.opened .mobile-nav__caret {
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  padding: 14px max(20px, var(--safe-right)) calc(14px + var(--safe-bottom))
+    max(20px, var(--safe-left));
   background: linear-gradient(180deg, transparent 0%, var(--bg-card) 38%);
 }
 
