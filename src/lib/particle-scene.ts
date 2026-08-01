@@ -18,7 +18,7 @@ import { createPerfHud, isPerfHudEnabled } from "./perf-hud";
 // Suspension for this surface is handled by the existing visibilitychange
 // handler plus the GPU idle gate in renderLoop — an IntersectionObserver has
 // nothing to say about a position:fixed, full-viewport canvas.
-import { deviceClass } from "./device";
+import { deviceClass, isAppleWebKit } from "./device";
 import {
   EffectComposer,
   RenderPass,
@@ -49,6 +49,8 @@ const COUNT_MOBILE = 8000;
 const MAX_DPR_DESKTOP = 2;
 const MAX_DPR_TABLET = 1.5;
 const MAX_DPR_MOBILE = 1.25;
+const MAX_DPR_WEBKIT_DESKTOP = 1.5;
+const MAX_DPR_WEBKIT_TABLET = 1.25;
 
 // Frame-budget gate: 20ms/frame is the 50fps floor. 10 consecutive frames
 // over budget (not one-off jank from GC or a tab switch) triggers the static
@@ -83,6 +85,7 @@ interface ArcAnim {
 
 export interface ParticleScene {
   domElement: HTMLCanvasElement;
+  ready: Promise<void>;
   dispose(): void;
 }
 
@@ -304,13 +307,17 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   // misclassification in the old profile.
   const renderClass = deviceClass();
   const mobileGpu = renderClass === "mobile";
+  const appleWebKit = isAppleWebKit();
 
   const count = isMobile ? COUNT_MOBILE : isTablet ? COUNT_TABLET : COUNT_DESKTOP;
-  const maxDpr = mobileGpu
-    ? MAX_DPR_MOBILE
-    : renderClass === "tablet"
-      ? MAX_DPR_TABLET
-      : MAX_DPR_DESKTOP;
+  const maxDpr = (() => {
+    if (mobileGpu) return MAX_DPR_MOBILE;
+    if (renderClass === "tablet") {
+      return appleWebKit ? MAX_DPR_WEBKIT_TABLET : MAX_DPR_TABLET;
+    }
+    return appleWebKit ? MAX_DPR_WEBKIT_DESKTOP : MAX_DPR_DESKTOP;
+  })();
+  const rendererPixelRatio = () => Math.min(window.devicePixelRatio || 1, maxDpr);
   // Below 576px computeSide() returns 0, so the field sits centred *behind* the
   // headline copy rather than beside it. Pages that put a beat under a heading
   // pass a cap so the text stays legible.
@@ -329,13 +336,14 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     antialias: false, // round point sprites don't benefit; MSAA costs fill rate
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
-  renderer.setSize(width, height);
+  renderer.setPixelRatio(rendererPixelRatio());
+  renderer.setSize(width, height, false);
   // Alpha 0 — a fully transparent canvas so the page background token shows
   // through. The RGB is unused and is not a palette value.
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
-  canvas.style.cssText = "position:fixed;inset:0;z-index:-1;pointer-events:none;";
+  canvas.style.cssText =
+    "position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;";
 
   // Context loss must not be a silent, permanent drop to fallback (P0 WebGL
   // investigation, Phase 2.3). preventDefault() is required by spec for the
@@ -372,13 +380,17 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
       // indistinguishable for a soft glow, roughly halves the effect's GPU cost.
       effects.push(
         new BloomEffect({ intensity: 0.4, luminanceThreshold: 0.7, radius: 0.6, height: 360 }),
-        new VignetteEffect({ darkness: 0.6, offset: 0.3 }),
-        new ChromaticAberrationEffect({
-          offset: new THREE.Vector2(0.0005, 0.0005),
-          radialModulation: false,
-          modulationOffset: 0.15,
-        })
+        new VignetteEffect({ darkness: 0.6, offset: 0.3 })
       );
+      if (!appleWebKit) {
+        effects.push(
+          new ChromaticAberrationEffect({
+            offset: new THREE.Vector2(0.0005, 0.0005),
+            radialModulation: false,
+            modulationOffset: 0.15,
+          })
+        );
+      }
     }
     // The canvas-layer grain. The page-wide brand grain is a DOM layer (see
     // GrainOverlay) because a composer pass can only reach the canvas, not the
@@ -1017,6 +1029,16 @@ ${
       tradeArcs?.setFlatBlend(1 - uBend.value);
       // The camera lets the overlay declutter its labels in screen space.
       tradeArcs?.update(camera);
+    } else if (!reducedMotion && planar && currentFlat) {
+      // LOCKED formation on a planar page (the shared eagle finale, or any
+      // other flat: true stage) — same treatment as the globe branch's
+      // currentFlat case below: the mark holds static once settled, no
+      // in-plane spin, no Y spin, no breath.
+      points.rotation.z += (0 - points.rotation.z) * kSettle;
+      points.rotation.x += (0 - points.rotation.x) * kSettle;
+      points.rotation.y += (0 - points.rotation.y) * kSettle;
+      spinYAccum = points.rotation.y;
+      holder.rotation.set(0, 0, 0);
     } else if (!reducedMotion && planar) {
       // Planar lattice: slow in-plane spin on Z (a Y spin would collapse it
       // edge-on) plus a shallow breath. Depth comes from the camera orbit below,
@@ -1063,8 +1085,9 @@ ${
     // smaller PORTS_SCALE so it stays clear of the global-presence copy.
     let targetScale = currentIsGlobe && portsMode ? PORTS_SCALE : formationScale;
     // Subtle breathing on the planar lattice — ±1.8%, slow enough to read as
-    // respiration rather than a pulse.
-    if (planar && !reducedMotion) targetScale *= 1 + 0.018 * Math.sin(shimmerUniform.value * 0.32);
+    // respiration rather than a pulse. Suppressed once locked onto a flat:
+    // true stage (the eagle finale) — that mark holds fully still.
+    if (planar && !reducedMotion && !currentFlat) targetScale *= 1 + 0.018 * Math.sin(shimmerUniform.value * 0.32);
     if (reducedMotion) points.scale.setScalar(targetScale);
     else points.scale.setScalar(points.scale.x + (targetScale - points.scale.x) * kSettle);
 
@@ -1163,13 +1186,35 @@ ${
   }
   document.addEventListener("visibilitychange", handleVisibilityChange);
 
+  const WEBKIT_HEIGHT_TOLERANCE = 160;
+  let resizeFrame = 0;
+  let lastCanvasWidth = width;
+  let lastCanvasHeight = height;
+  let lastRendererDpr = renderer.getPixelRatio();
+
   function handleResize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const nextDpr = rendererPixelRatio();
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-    composer?.setSize(w, h);
+
+    // Safari/WebKit can emit short bursts of resize events during toolbar,
+    // sidebar and fullscreen transitions. Reallocating a Retina WebGL backing
+    // store for each height-only nudge is visible as jitter on MacBooks, so only
+    // rebuild the render target when dimensions materially change. Width/DPR
+    // changes always rebuild because they affect composition and sharpness.
+    const heightChangedEnough =
+      !appleWebKit || Math.abs(h - lastCanvasHeight) > WEBKIT_HEIGHT_TOLERANCE;
+    if (w !== lastCanvasWidth || nextDpr !== lastRendererDpr || heightChangedEnough) {
+      lastCanvasWidth = w;
+      lastCanvasHeight = h;
+      lastRendererDpr = nextDpr;
+      renderer.setPixelRatio(nextDpr);
+      renderer.setSize(w, h, false);
+      composer?.setSize(w, h);
+    }
+
     holder.scale.setScalar(fitScale()); // keep the globe proportionate on resize
     // Re-place the field for the new viewport. Only snap it while the hero is on
     // screen (before the first scroll formation) so a mid-page resize doesn't
@@ -1178,7 +1223,14 @@ ${
     side = computeSide();
     if (!centred && window.scrollY < window.innerHeight * 0.6) scene.position.x = side;
   }
-  window.addEventListener("resize", handleResize);
+  const scheduleResize = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      handleResize();
+    });
+  };
+  window.addEventListener("resize", scheduleResize);
 
   // Same value as globeRadius above, aliased under the name the port overlay
   // and hero assembly below already use.
@@ -1647,6 +1699,8 @@ ${
     gsap.to(morphProgress, { value: 1, duration: 2.1, ease: "none" });
   }
 
+  let revealDelayMs = 0;
+
   // Initial state. (Caller signals preloader-done once this instance's promise
   // resolves — see ParticleCanvas.tsx.)
   if (geoStages?.length) {
@@ -1690,6 +1744,7 @@ ${
       material.opacity = heroOpacity;
     } else {
       assembleInto(stages[0]);
+      revealDelayMs = 900;
       if (stages[0].accent) {
         accentA.set(stages[0].accent);
         accentB.set(stages[0].accent);
@@ -1701,7 +1756,17 @@ ${
     }
   } else if (heroShape) {
     assembleInto(heroShape);
+    revealDelayMs = reducedMotion ? 0 : 900;
   }
+
+  let readyTimer = 0;
+  const ready: Promise<void> = new Promise((resolve) => {
+    if (revealDelayMs === 0) {
+      resolve();
+      return;
+    }
+    readyTimer = window.setTimeout(resolve, revealDelayMs);
+  });
 
   // Scroll choreography — a deliberate, sparse sequence, supplied per page as
   // a beat list (see SceneConfig). The field only forms a shape at a handful of
@@ -1958,12 +2023,15 @@ ${
 
   return {
     domElement: canvas,
+    ready,
     dispose() {
       disposed = true;
+      if (readyTimer) clearTimeout(readyTimer);
       settleTimers.forEach((t) => clearTimeout(t));
       window.removeEventListener("load", resync);
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", scheduleResize);
       window.removeEventListener("pointermove", handlePointer);
       window.removeEventListener("pointerdown", handleDragStart);
       window.removeEventListener("pointerup", handleDragEnd);
