@@ -66,7 +66,10 @@ export default async function ExportCategoryPage(props: PageProps<"/[locale]/bus
         description={cat.description}
         actions={[
           { label: "Request a Quote", href: industry ? `/rfq/?category=${industry.slug}` : "/rfq/" },
-          { label: "Contact Our Team", href: "/contact/", variant: "ghost" },
+          ...(products.length > 0 && industry
+            ? [{ label: "Request Sample", href: `/rfq/?category=${industry.slug}&sample=1`, variant: "ghost" as const }]
+            : []),
+          { label: "Contact Our Team", href: "/contact/", variant: "ghost" as const },
         ]}
       />
 

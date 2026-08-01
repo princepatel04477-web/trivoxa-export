@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Steps } from "@/components/trivoxa/ui";
 import RfqForm from "@/components/rfq/RfqForm";
+import { Link } from "@/i18n/navigation";
 import "@/app/styles/rfq-page.css";
 
 export const metadata: Metadata = {
@@ -36,11 +37,16 @@ export default function RfqPage() {
             <RfqForm />
           </Suspense>
 
-          {/* Quick channels — configured via env, hidden when absent. */}
-          {(WHATSAPP_NUMBER || LINKEDIN_URL || CALENDAR_URL) && (
-            <div className="rfq-quicklinks" aria-label="Other ways to reach us">
-              <span className="rfq-quicklinks__label">Prefer another channel?</span>
-              {WHATSAPP_NUMBER && (
+          {/* Quick channels — WhatsApp/LinkedIn/calendar are configured via env
+              and hidden when absent; the Contact link is always shown so a
+              visitor with a general (non-sourcing) question always has
+              somewhere else to go (HEP-03 cross-link). */}
+          <div className="rfq-quicklinks" aria-label="Other ways to reach us">
+            <span className="rfq-quicklinks__label">General question?</span>
+            <Link href="/contact/" data-analytics="rfq-contact-crosslink">
+              Contact us →
+            </Link>
+            {WHATSAPP_NUMBER && (
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Trivoxa, I'd like a quote")}`}
                   target="_blank"
@@ -60,8 +66,7 @@ export default function RfqPage() {
                   Book a call ↗
                 </a>
               )}
-            </div>
-          )}
+          </div>
         </div>
       </section>
 

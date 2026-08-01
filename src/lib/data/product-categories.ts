@@ -25,6 +25,11 @@ export interface Product {
   grades: string;
   moq: string;
   specs: ProductSpecs;
+  /** CAS-02: "draft" products are excluded from render — never shipped
+   * blank/em-dash. A product only becomes "published" once hsCode, grades,
+   * and moq are all real (non-"TBD") values; scripts/validate-products.mjs
+   * enforces this at build time. */
+  status: "draft" | "published";
 }
 
 export interface ProductGroup {
@@ -57,8 +62,16 @@ const TBD_SPECS: ProductSpecs = {
   sampleAvailability: "Samples available on request",
 };
 
+/** Draft product — TBD fields render as "—" nowhere, because draft products
+ * are filtered out of every render path entirely (see ProductTable). */
 function product(name: string, hsCode = "TBD", grades = "TBD", moq = "TBD"): Product {
-  return { name, hsCode, grades, moq, specs: TBD_SPECS };
+  return { name, hsCode, grades, moq, specs: TBD_SPECS, status: "draft" };
+}
+
+/** Published product — all of hsCode/grades/moq must be real, confirmed
+ * values. Used only once a manufacturing partner has confirmed the spec. */
+function publishedProduct(name: string, hsCode: string, grades: string, moq: string, specs: ProductSpecs = TBD_SPECS): Product {
+  return { name, hsCode, grades, moq, specs, status: "published" };
 }
 
 export const exportCategories: ExportCategory[] = [
@@ -72,8 +85,13 @@ export const exportCategories: ExportCategory[] = [
       {
         slug: "fabrics",
         name: "Fabrics",
+        // CAS-01: only rows with a fully confirmed spec are published — a
+        // shorter complete table outranks a longer incomplete one. Dyed,
+        // Finished, Cotton, and Blended Fabric stay draft (hidden, not
+        // em-dashed) until a manufacturing partner confirms their
+        // HS code / grade / MOQ.
         products: [
-          product("Polyester Greige Fabric", "5407.61", "Standard, Premium", "5 MT"),
+          publishedProduct("Polyester Greige Fabric", "5407.61", "Standard, Premium", "5 MT"),
           product("Dyed Fabric", "5407.72"),
           product("Finished Fabric", "5407.73"),
           product("Cotton Fabric"),
@@ -173,3 +191,41 @@ export function getExportCategory(slug: string): ExportCategory | undefined {
 export function getSubCategory(categorySlug: string, subSlug: string): SubCategory | undefined {
   return getExportCategory(categorySlug)?.subCategories?.find((s) => s.slug === subSlug);
 }
+
+/** Build-time completeness gate (CAS-02): a "published" product must never
+ * carry a "TBD" required field — that is exactly the em-dash bug CAS-01
+ * fixed on the Fabrics page. This runs at module load, so any page that
+ * imports exportCategories (i.e. every product-export page, rendered during
+ * `next build`'s static generation) fails the build immediately if a
+ * published product regresses to an incomplete spec. Draft products are
+ * exempt by design — they're excluded from render, not validated for
+ * completeness. */
+function validateCatalog(categories: ExportCategory[]): void {
+  const REQUIRED: (keyof Pick<Product, "hsCode" | "grades" | "moq">)[] = ["hsCode", "grades", "moq"];
+  const problems: string[] = [];
+  const checkProduct = (p: Product, where: string) => {
+    if (p.status !== "published") return;
+    for (const field of REQUIRED) {
+      if (!p[field] || p[field] === "TBD") {
+        problems.push(`${where} > "${p.name}" is published but missing "${field}"`);
+      }
+    }
+  };
+  for (const cat of categories) {
+    for (const sub of cat.subCategories ?? []) {
+      (sub.products ?? []).forEach((p) => checkProduct(p, `${cat.slug} > ${sub.slug}`));
+      for (const group of sub.groups ?? []) {
+        group.products.forEach((p) => checkProduct(p, `${cat.slug} > ${sub.slug} > ${group.name}`));
+      }
+    }
+  }
+  if (problems.length > 0) {
+    throw new Error(
+      `Product catalog validation failed — a published product has an incomplete required field:\n` +
+        problems.map((p) => `  - ${p}`).join("\n") +
+        `\n\nFix the data, or set status: "draft" until the spec is confirmed.`
+    );
+  }
+}
+
+validateCatalog(exportCategories);

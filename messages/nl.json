@@ -130,7 +130,8 @@
       "descBuilding": "Natuursteen, marmer, graniet en bouwmaterialen.",
       "descAgri": "Landbouwproducten, specerijen, gedroogd fruit en verwerkte levensmiddelen.",
       "descEngineering": "Industriële producten, componenten en productieoplossingen.",
-      "descTechnology": "Software, AI en digitale transformatie voor de moderne onderneming."
+      "descTechnology": "Software, AI en digitale transformatie voor de moderne onderneming.",
+      "viewAll": "Bekijk alle {count} sectoren"
     },
     "businessArms": {
       "arm1Eyebrow": "Bedrijfsonderdeel 01",

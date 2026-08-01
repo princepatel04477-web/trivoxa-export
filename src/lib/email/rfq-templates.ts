@@ -1,4 +1,5 @@
 import type { RfqInput } from "@/lib/validation/rfq";
+import { CONTACT } from "@/data/contact";
 
 function row(label: string, value: string) {
   return `<tr><td style="padding:6px 16px 6px 0;color:#6b6b6b;font-size:13px;white-space:nowrap;">${label}</td><td style="padding:6px 0;font-size:14px;font-weight:600;">${value}</td></tr>`;
@@ -32,6 +33,6 @@ export function autoReplyHtml(reference: string, contactName: string) {
   <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;">
     <p>Hi ${contactName},</p>
     <p>RFQ received. Reference <strong>#${reference}</strong>. Our team responds within 24 business hours (IST).</p>
-    <p style="margin-top:24px;color:#6b6b6b;font-size:13px;">Trivoxa Group · sales@trivoxagroup.com</p>
+    <p style="margin-top:24px;color:#6b6b6b;font-size:13px;">Trivoxa Group · ${CONTACT.sales}</p>
   </div>`;
 }

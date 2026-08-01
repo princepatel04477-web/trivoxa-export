@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Pills, CtaBand } from "@/components/trivoxa/ui";
 import ProductTable from "@/components/products/ProductTable";
+import EmptyState from "@/components/EmptyState";
 import { getSubCategory } from "@/lib/data/product-categories";
 import "@/app/styles/patterns.css";
 
@@ -21,6 +22,8 @@ const applications = [
 
 export default function FabricsPage() {
   const fabrics = getSubCategory("textile-apparel", "fabrics")!;
+  // CAS-01: only fully-specified rows render — no em-dashed placeholders.
+  const publishedFabrics = (fabrics.products ?? []).filter((p) => p.status === "published");
 
   return (
     <TrivoxaShell film="fabrics">
@@ -44,7 +47,15 @@ export default function FabricsPage() {
       />
 
       <Section eyebrow="Product Portfolio" title="Fabrics We Supply." lead="Click any row for the full specification.">
-        <ProductTable products={fabrics.products} />
+        {publishedFabrics.length > 0 ? (
+          <ProductTable products={publishedFabrics} />
+        ) : (
+          <EmptyState
+            status="The published fabric specification table is being finalized with our manufacturing partners."
+            timing="Confirmed HS codes, grades, and MOQs are added here as each spec is verified."
+            action={{ label: "Request Current Specifications", href: "/rfq/?category=textile-apparel" }}
+          />
+        )}
       </Section>
 
       <Section eyebrow="Applications" title="Where These Fabrics Are Used.">
@@ -54,7 +65,7 @@ export default function FabricsPage() {
       <Section
         eyebrow="Manufacturing"
         title="Anchored by Shiveshwar Textiles."
-        lead="Our fabric capability is rooted in the woven-textile production expertise of our parent company, Shiveshwar Textiles — from greige production through dyeing, printing, and finishing, coordinated with trusted partner mills."
+        lead="Our fabric capability is rooted in the woven-textile production expertise of our founding strategic partner, Shiveshwar Textiles — from greige production through dyeing, printing, and finishing, coordinated with trusted partner mills."
       />
 
       <CtaBand

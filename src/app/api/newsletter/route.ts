@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 import { getResend } from "@/lib/email/resend";
-
-const SALES_EMAIL = "sales@trivoxagroup.com";
+import { CONTACT } from "@/data/contact";
 
 /** `topics` carries Insights topic votes (spec §4 — Insights teaser). They
  * ride to the team as an email note rather than a schema change, so the
@@ -42,8 +41,8 @@ export async function POST(request: Request) {
     if (resend) {
       try {
         await resend.emails.send({
-          from: "Trivoxa Group <no-reply@trivoxagroup.com>",
-          to: SALES_EMAIL,
+          from: `Trivoxa Group <${CONTACT.noReply}>`,
+          to: CONTACT.sales,
           subject: "Insights topic vote",
           html: `<p><strong>${parsed.data.email}</strong> wants to read about:</p><ul>${topics
             .map((t) => `<li>${t.replace(/</g, "&lt;")}</li>`)

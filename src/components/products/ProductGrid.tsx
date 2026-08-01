@@ -3,6 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import type { ProductCategory } from "@/lib/data/industries";
+import { getCertification } from "@/lib/data/certifications";
+
+/** CRA-05: a short "Enquire — pending certification" note sourced live from
+ * the Compliance data, shown in place of "Add to RFQ" for gated categories. */
+function certNote(codes: string[] | undefined): string | null {
+  if (!codes || codes.length === 0) return null;
+  const statuses = codes.map((code) => {
+    const cert = getCertification(code);
+    return cert ? `${cert.code} (${cert.detail.replace(/^In application — /, "")})` : code;
+  });
+  return `Pending certification — ${statuses.join(", ")}`;
+}
 
 export interface GridProduct extends ProductCategory {
   industry: string;
@@ -153,6 +165,7 @@ export default function ProductGrid({
         <div className="pgrid__grid">
           {visible.map((p) => {
             const isSel = selected.includes(p.name);
+            const gateNote = certNote(p.requiresCert);
             return (
               <article key={`${p.industrySlug}-${p.name}`} className={`pgrid__card${isSel ? " is-selected" : ""}`}>
                 <header>
@@ -174,14 +187,21 @@ export default function ProductGrid({
                     <dd>{p.incoterms.join(" · ")}</dd>
                   </div>
                 </dl>
+                {gateNote && <p className="pgrid__cert-note">{gateNote}</p>}
                 <footer>
                   <button type="button" className="pgrid__spec-btn" onClick={() => setSpecOf(p)}>
                     Full specs
                   </button>
-                  <label className="pgrid__add">
-                    <input type="checkbox" checked={isSel} onChange={() => toggle(p.name)} />
-                    <span>Add to RFQ</span>
-                  </label>
+                  {gateNote ? (
+                    <Link href={`/rfq/?category=${p.industrySlug}`} className="pgrid__add" data-analytics="product-grid-enquire">
+                      Enquire →
+                    </Link>
+                  ) : (
+                    <label className="pgrid__add">
+                      <input type="checkbox" checked={isSel} onChange={() => toggle(p.name)} />
+                      <span>Add to RFQ</span>
+                    </label>
+                  )}
                 </footer>
               </article>
             );
@@ -256,21 +276,30 @@ export default function ProductGrid({
                 </tr>
               </tbody>
             </table>
+            {certNote(specOf.requiresCert) && <p className="pgrid__cert-note">{certNote(specOf.requiresCert)}</p>}
             <div className="pgrid__dialog-actions">
-              <label className="pgrid__add">
-                <input
-                  type="checkbox"
-                  checked={selected.includes(specOf.name)}
-                  onChange={() => toggle(specOf.name)}
-                />
-                <span>Add to RFQ</span>
-              </label>
-              <Link
-                href={`/rfq/?products=${encodeURIComponent(specOf.name)}&category=${specOf.industrySlug}`}
-                className="pgrid__bar-cta"
-              >
-                Quote this product →
-              </Link>
+              {certNote(specOf.requiresCert) ? (
+                <Link href={`/rfq/?category=${specOf.industrySlug}`} className="pgrid__bar-cta" data-analytics="product-modal-enquire">
+                  Enquire about this product →
+                </Link>
+              ) : (
+                <>
+                  <label className="pgrid__add">
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(specOf.name)}
+                      onChange={() => toggle(specOf.name)}
+                    />
+                    <span>Add to RFQ</span>
+                  </label>
+                  <Link
+                    href={`/rfq/?products=${encodeURIComponent(specOf.name)}&category=${specOf.industrySlug}`}
+                    className="pgrid__bar-cta"
+                  >
+                    Quote this product →
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

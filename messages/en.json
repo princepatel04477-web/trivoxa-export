@@ -130,7 +130,8 @@
       "descBuilding": "Natural stone, marble, granite & construction materials.",
       "descAgri": "Sourced produce, spices, dry fruits & processed foods.",
       "descEngineering": "Industrial products, components & manufacturing solutions.",
-      "descTechnology": "Software, AI & digital transformation for modern business."
+      "descTechnology": "Software, AI & digital transformation for modern business.",
+      "viewAll": "View all {count} industries"
     },
     "businessArms": {
       "arm1Eyebrow": "Business Arm 01",

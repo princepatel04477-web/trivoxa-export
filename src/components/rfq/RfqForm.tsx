@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { getAllCategoriesWithIndustry } from "@/lib/data/industries";
+import { getCertification } from "@/lib/data/certifications";
 import {
   INCOTERMS,
   MAX_ATTACHMENTS,
@@ -22,12 +23,13 @@ import LazyCrane from "@/components/LazyCrane";
 const STEPS = ["Company", "Product", "Terms"] as const;
 
 /** Which conversation the visitor wants to have (spec §4 — RFQ paths). */
-type RfqPath = "product" | "service" | "partnership" | "career";
+type RfqPath = "product" | "service" | "partnership" | "career" | "audit";
 
 const PATHS: { key: RfqPath; title: string; desc: string }[] = [
   { key: "product", title: "Product Export RFQ", desc: "Source products with HS codes, MOQs, and a formal quotation." },
   { key: "service", title: "Service Engagement", desc: "Technology, AI, software, design, or marketing from Trivoxa Digital." },
   { key: "partnership", title: "Partnership", desc: "Manufacturing, logistics, or distribution partnerships with the Group." },
+  { key: "audit", title: "Factory Audit / Site Visit", desc: "Request a supplier audit or site visit ahead of placing an order." },
   { key: "career", title: "Careers", desc: "Join the team — see open areas and send your application." },
 ];
 
@@ -71,6 +73,17 @@ export default function RfqForm() {
     () => (searchParams.get("products") ?? "").split("|").map((s) => s.trim()).filter(Boolean),
     [searchParams]
   );
+  // CAS-06: "Request Sample" CTAs on category pages link here with
+  // ?sample=1 — pre-selects the Product path and the Sample Required toggle
+  // instead of opening a separate form.
+  const presetSample = searchParams.get("sample") === "1";
+  // CAS-07: Factory Audit / Site Visit CTAs (Group Foundation, Compliance)
+  // link here with ?path=audit to land directly on that enquiry type.
+  const rawPresetPath = searchParams.get("path");
+  const presetPath: RfqPath | null =
+    rawPresetPath === "service" || rawPresetPath === "partnership" || rawPresetPath === "audit" || rawPresetPath === "career"
+      ? rawPresetPath
+      : null;
 
   const initial = useMemo(() => {
     // A picked product wins; else the ?category= industry; else the first.
@@ -81,7 +94,7 @@ export default function RfqForm() {
   }, [categoryOptions, presetSlug, presetProducts]);
 
   const [path, setPath] = useState<RfqPath | null>(
-    presetProducts.length || presetSlug ? "product" : null
+    presetPath ?? (presetProducts.length || presetSlug ? "product" : null)
   );
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
@@ -99,7 +112,7 @@ export default function RfqForm() {
     incoterm: "FOB",
     deliveryStart: "",
     deliveryEnd: "",
-    sampleRequired: "no",
+    sampleRequired: presetSample ? "yes" : "no",
     notes: presetProducts.length ? `Products of interest: ${presetProducts.join(", ")}` : "",
     attachments: [],
   });
@@ -270,7 +283,7 @@ export default function RfqForm() {
     );
   }
 
-  if (path === "service" || path === "partnership") {
+  if (path === "service" || path === "partnership" || path === "audit") {
     return <InquiryForm kind={path} onBack={() => setPath(null)} />;
   }
 
@@ -368,6 +381,19 @@ export default function RfqForm() {
                   <strong>{selectedCategory.category.leadTime}</strong> · HS{" "}
                   <strong>{selectedCategory.category.hsCode}</strong>. Quantities below the MOQ are quoted case by
                   case — submit anyway and we&rsquo;ll advise.
+                </p>
+              )}
+              {selectedCategory?.category.requiresCert && selectedCategory.category.requiresCert.length > 0 && (
+                <p className="rfq-helper rfq-helper--cert" role="note">
+                  Certification status for {selectedCategory.category.name}:{" "}
+                  {selectedCategory.category.requiresCert
+                    .map((code) => {
+                      const cert = getCertification(code);
+                      return cert ? `${cert.code} — ${cert.detail}` : code;
+                    })
+                    .join(" · ")}
+                  . We can still log your requirement now; export is contingent on certification completing. See{" "}
+                  <Link href="/compliance/">our full compliance posture →</Link>
                 </p>
               )}
             </>
@@ -469,8 +495,22 @@ export default function RfqForm() {
   );
 }
 
-/** Service / partnership enquiry — a focused message form into /api/contact. */
-function InquiryForm({ kind, onBack }: { kind: "service" | "partnership"; onBack: () => void }) {
+const INQUIRY_TITLES: Record<"service" | "partnership" | "audit", string> = {
+  service: "Service Engagement",
+  partnership: "Partnership",
+  audit: "Factory Audit / Site Visit",
+};
+
+const INQUIRY_PROMPTS: Record<"service" | "partnership" | "audit", string> = {
+  service: "What do you want to build or achieve?",
+  partnership: "What kind of partnership do you have in mind?",
+  audit: "Which facility or product line, and when would you like to visit or audit?",
+};
+
+/** Service / partnership / factory-audit enquiry — a focused message form
+ * into /api/contact (CAS-07: factory audit / site visit as a distinct RFQ
+ * enquiry type, not a separate form). */
+function InquiryForm({ kind, onBack }: { kind: "service" | "partnership" | "audit"; onBack: () => void }) {
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
@@ -479,7 +519,7 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership"; onBack
   const [submitting, setSubmitting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
 
-  const title = kind === "service" ? "Service Engagement" : "Partnership";
+  const title = INQUIRY_TITLES[kind];
 
   async function submit() {
     if (!fullName.trim() || !email.trim() || message.trim().length < 10) {
@@ -516,8 +556,8 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership"; onBack
         <span className="tvx-eyebrow">{title} Enquiry Received</span>
         <h2>Reference #{reference}</h2>
         <p>Our team responds within 24 business hours (IST).</p>
-        <Link className="tvx-btn tvx-btn--primary" href={kind === "service" ? "/businesses/service-exports/" : "/group/"}>
-          {kind === "service" ? "Explore Service Exports" : "About the Group"}
+        <Link className="tvx-btn tvx-btn--primary" href={kind === "service" ? "/businesses/service-exports/" : kind === "audit" ? "/compliance/" : "/group/"}>
+          {kind === "service" ? "Explore Service Exports" : kind === "audit" ? "See Our Compliance Posture" : "About the Group"}
         </Link>
       </div>
     );
@@ -538,7 +578,7 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership"; onBack
         <Field label="Business Email">
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
-        <Field label={kind === "service" ? "What do you want to build or achieve?" : "What kind of partnership do you have in mind?"} full>
+        <Field label={INQUIRY_PROMPTS[kind]} full>
           <textarea rows={6} value={message} onChange={(e) => setMessage(e.target.value)} />
         </Field>
       </div>

@@ -130,7 +130,8 @@
       "descBuilding": "Doğal taş, mermer, granit ve yapı malzemeleri.",
       "descAgri": "Tarım ürünleri, baharatlar, kuru meyveler ve işlenmiş gıdalar.",
       "descEngineering": "Endüstriyel ürünler, bileşenler ve üretim çözümleri.",
-      "descTechnology": "Modern işletmeler için yazılım, yapay zekâ ve dijital dönüşüm."
+      "descTechnology": "Modern işletmeler için yazılım, yapay zekâ ve dijital dönüşüm.",
+      "viewAll": "{count} sektörün tümünü görüntüle"
     },
     "businessArms": {
       "arm1Eyebrow": "İş Kolu 01",

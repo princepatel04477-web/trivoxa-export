@@ -9,6 +9,14 @@ import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import CinematicPanel from "@/components/patterns/CinematicPanel";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import NumberedList from "@/components/patterns/NumberedList";
+import { SHIVESHWAR_DESCRIPTOR } from "@/lib/corporate";
+import { taxonomy } from "@/lib/data/taxonomy";
+
+/** Product Exports division tags — every taxonomy entry with a live catalog
+ * route, canonical full names (PTO-02). Previously a local literal array of
+ * shortened, differently-named tags ("Healthcare", "Furniture", "Jewellery"
+ * vs. the canonical "Healthcare & Pharmaceuticals" etc.). */
+const productExportTags = taxonomy.filter((t) => t.catalogHref).map((t) => t.displayName);
 
 export const metadata: Metadata = {
   title: "Businesses | Trivoxa Group",
@@ -29,7 +37,7 @@ const divisions = [
     href: "/businesses/product-exports/",
     cta: "Explore Product Exports",
     image: "/images/businesses/product-exports-editorial.webp",
-    categories: ["Textile & Apparel", "Healthcare", "Building Materials", "Furniture", "Agriculture", "Engineering", "Jewellery"],
+    categories: productExportTags,
     align: "left" as const,
   },
   {
@@ -54,7 +62,7 @@ const steps = [
 ];
 
 const strengths = [
-  { title: "Manufacturing Foundation", description: "Built upon the manufacturing expertise of our parent company, Shiveshwar Textiles." },
+  { title: "Manufacturing Foundation", description: SHIVESHWAR_DESCRIPTOR },
   { title: "Trusted Partner Network", description: "A growing ecosystem of carefully selected manufacturers, professionals, and solution providers." },
   { title: "Quality-Driven Approach", description: "Every project is guided by attention to quality, reliability, and long-term value." },
   { title: "Global Perspective", description: "Supporting businesses across international markets with solutions designed for global trade." },

@@ -7,8 +7,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/server";
 import { getResend } from "@/lib/email/resend";
 import { autoReplyHtml, salesNotificationHtml } from "@/lib/email/rfq-templates";
 import { rfqSchema } from "@/lib/validation/rfq";
-
-const SALES_EMAIL = "sales@trivoxagroup.com";
+import { CONTACT } from "@/data/contact";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -71,14 +70,14 @@ export async function POST(request: Request) {
 
     try {
       await resend.emails.send({
-        from: "Trivoxa RFQ <rfq@trivoxagroup.com>",
-        to: SALES_EMAIL,
+        from: `Trivoxa RFQ <${CONTACT.rfqSender}>`,
+        to: CONTACT.sales,
         subject: `New RFQ ${reference} — ${industry?.name ?? "Unknown Industry"}`,
         html: salesNotificationHtml(data, reference, industry?.name ?? industrySlug, categoryName ?? data.categoryKey),
         attachments: buyerAttachments.length > 0 ? buyerAttachments : undefined,
       });
       await resend.emails.send({
-        from: "Trivoxa Group <rfq@trivoxagroup.com>",
+        from: `Trivoxa Group <${CONTACT.rfqSender}>`,
         to: data.email,
         subject: `RFQ Received — Reference #${reference}`,
         html: autoReplyHtml(reference, data.contactName),

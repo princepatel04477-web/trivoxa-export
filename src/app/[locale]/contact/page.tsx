@@ -3,6 +3,8 @@ import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section } from "@/components/trivoxa/ui";
 import ContactForm from "@/components/ContactForm";
+import { CONTACT, mailto } from "@/data/contact";
+import { SHIVESHWAR_RELATIONSHIP } from "@/lib/corporate";
 import "@/app/styles/industries-page.css";
 
 export const metadata: Metadata = {
@@ -52,7 +54,7 @@ export default function ContactPage() {
           <div>
             <div className="tvx-info-row">
               <div className="tvx-info-label">Email</div>
-              <a href="mailto:hello@trivoxagroup.com">hello@trivoxagroup.com</a>
+              <a href={mailto(CONTACT.general)}>{CONTACT.general}</a>
             </div>
             <div className="tvx-info-row">
               <div className="tvx-info-label">Business</div>
@@ -60,7 +62,7 @@ export default function ContactPage() {
             </div>
             <div className="tvx-info-row">
               <div className="tvx-info-label">Foundation</div>
-              <p>Backed by Shiveshwar Textiles</p>
+              <p>Backed by our {SHIVESHWAR_RELATIONSHIP}, Shiveshwar Textiles</p>
             </div>
             <div className="tvx-info-row">
               <div className="tvx-info-label">Follow</div>

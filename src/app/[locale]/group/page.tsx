@@ -11,6 +11,7 @@ import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import LeadershipPanel from "@/components/leadership/LeadershipPanel";
 import EcosystemDiagram from "@/components/ecosystem/EcosystemDiagram";
 import GroupLattice from "@/components/group/GroupLattice";
+import { SHIVESHWAR_NAME, SHIVESHWAR_RELATIONSHIP, SHIVESHWAR_FOUNDATION_LINE } from "@/lib/corporate";
 import "@/app/styles/patterns.css";
 import "@/app/styles/group-page.css";
 import "@/app/styles/signature-canvas.css";
@@ -103,10 +104,10 @@ const jsonLd = {
   name: "Trivoxa Group",
   description:
     "Trivoxa Group is an international business group committed to connecting global businesses with trusted products, strategic sourcing solutions, and professional services.",
-  parentOrganization: {
-    "@type": "Organization",
-    name: "Shiveshwar Textiles",
-  },
+  // Shiveshwar Textiles is an independent strategic manufacturing partner,
+  // not a parent/subsidiary — schema.org has no clean property for an
+  // arms-length partnership like this, so it is intentionally left out of
+  // structured data rather than misrepresented via parentOrganization.
   founder: founders.map((f) => ({
     "@type": "Person",
     name: f.name,
@@ -154,7 +155,7 @@ export default function GroupPage() {
           title="A Global Business Group Built on Trust, Purpose, and Long-Term Vision."
           paragraphs={[
             "Trivoxa Group is an international business group committed to connecting global businesses with trusted products, strategic sourcing solutions, and professional services.",
-            "Built upon the manufacturing expertise of our parent company, Shiveshwar Textiles, we combine industry knowledge with a forward-looking approach to international business. By bringing together trusted manufacturers, skilled professionals, and global partners, we help organizations build stronger supply chains, access new opportunities, and achieve sustainable growth.",
+            `Built upon the manufacturing expertise of our ${SHIVESHWAR_RELATIONSHIP}, ${SHIVESHWAR_NAME}, we combine industry knowledge with a forward-looking approach to international business. By bringing together trusted manufacturers, skilled professionals, and global partners, we help organizations build stronger supply chains, access new opportunities, and achieve sustainable growth.`,
             "At Trivoxa, we believe meaningful business is built on trust, quality, and relationships that last far beyond a single transaction.",
           ]}
         />
@@ -168,11 +169,7 @@ export default function GroupPage() {
           <div className="foundation-split">
             <div className="foundation-split__copy">
               <p>Every great organization is built on a strong foundation.</p>
-              <p>
-                Trivoxa Group was established as the international business arm of Shiveshwar Textiles, a
-                manufacturing company with extensive expertise in woven textile production and quality-focused
-                operations.
-              </p>
+              <p>{SHIVESHWAR_FOUNDATION_LINE}</p>
               <p>
                 This manufacturing heritage provides us with practical industry knowledge, a deep understanding of
                 production processes, and a commitment to delivering reliable solutions to global markets.
@@ -201,6 +198,9 @@ export default function GroupPage() {
               ))}
             </div>
           </div>
+          <Link href="/rfq/?path=audit" className="tvx-btn tvx-btn--ghost foundation-section__audit-cta">
+            Request a Factory Audit / Site Visit →
+          </Link>
         </div>
       </section>
 
@@ -274,13 +274,13 @@ export default function GroupPage() {
           <div className="partners-grid">
             <div className="partners-grid__founding">
               <figure className="foundation-photo__frame" />
-              <h3>Founding Manufacturing Partner — Shiveshwar Textiles</h3>
+              <h3>Founding Manufacturing Partner — {SHIVESHWAR_NAME}</h3>
               <p>
-                As the parent company of Trivoxa Group, Shiveshwar Textiles provides the manufacturing expertise
-                and industry experience that support our commitment to quality and reliability.
+                As Trivoxa Group&rsquo;s {SHIVESHWAR_RELATIONSHIP}, {SHIVESHWAR_NAME} provides the manufacturing
+                expertise and industry experience that support our commitment to quality and reliability.
               </p>
               <p>
-                Alongside our parent company, we continue building relationships with trusted manufacturers,
+                Alongside {SHIVESHWAR_NAME}, we continue building relationships with trusted manufacturers,
                 logistics providers, technology partners, and industry specialists who share our values.
               </p>
             </div>

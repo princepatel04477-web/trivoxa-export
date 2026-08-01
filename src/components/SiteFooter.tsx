@@ -4,6 +4,8 @@ import { useState, type FormEvent } from "react";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "@/components/brand/Logo";
 import { FOOTER_TONE } from "@/lib/logo";
+import { regionsTagline } from "@/data/regions";
+import { taxonomy } from "@/lib/data/taxonomy";
 
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
 const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL;
@@ -21,12 +23,11 @@ const groupColumn = [
   { label: "Careers", href: "/careers/" },
 ];
 
+// Every taxonomy entry with a live catalog route (PTO-02), plus the
+// catch-all link — previously a local literal list missing Furniture &
+// Interiors and Jewellery & Precious Products.
 const productColumn = [
-  { label: "Textile & Apparel", href: "/businesses/product-exports/textile-apparel/" },
-  { label: "Healthcare & Pharmaceuticals", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-  { label: "Building Materials", href: "/businesses/product-exports/building-materials/" },
-  { label: "Agriculture & Food", href: "/businesses/product-exports/agriculture-food/" },
-  { label: "Engineering & Industrial", href: "/businesses/product-exports/engineering-industrial/" },
+  ...taxonomy.filter((t) => t.catalogHref).map((t) => ({ label: t.displayName, href: t.catalogHref! })),
   { label: "All Product Exports", href: "/businesses/product-exports/" },
 ];
 
@@ -110,7 +111,7 @@ export default function SiteFooter() {
               </div>
               <div className="footer-locations__global">
                 <span className="footer-locations__label">Serving buyers across</span>
-                <p>Middle East · Europe · Africa · North America · Southeast Asia</p>
+                <p>{regionsTagline}</p>
               </div>
             </div>
 

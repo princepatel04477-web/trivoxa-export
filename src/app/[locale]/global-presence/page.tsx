@@ -6,6 +6,8 @@ import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import PresenceGlobe from "@/components/presence/PresenceGlobe";
 import PresenceStats from "@/components/presence/PresenceStats";
 import LazyCrane from "@/components/LazyCrane";
+import { regions } from "@/data/regions";
+import { taxonomy } from "@/lib/data/taxonomy";
 
 export const metadata: Metadata = {
   title: "Global Presence | Trivoxa Group",
@@ -13,17 +15,10 @@ export const metadata: Metadata = {
     "Trivoxa Group connects opportunities across borders through an expanding network of suppliers, partners, and clients.",
 };
 
-/** `slug` drives the `#region-*` anchor each lane carries — those ids are what the
- *  particle field's regionCues hang off, so each cluster illuminates as its row
- *  scrolls up. See GLOBAL_PRESENCE in src/lib/choreography.ts. */
-const regions = [
-  { slug: "europe", icon: "🇪🇺", title: "Europe", description: "Textiles, building materials, and professional services for established and emerging European markets.", categories: ["Textiles", "Building Materials", "Professional Services"] },
-  { slug: "middle-east", icon: "🕌", title: "Middle East", description: "Building materials, agriculture, and consumer goods for fast-growing Gulf and regional markets.", categories: ["Building Materials", "Agriculture", "Consumer Goods"] },
-  { slug: "africa", icon: "🌍", title: "Africa", description: "Agriculture, pharmaceuticals, and industrial products supporting infrastructure and development.", categories: ["Agriculture", "Pharmaceuticals", "Industrial Products"] },
-  { slug: "north-america", icon: "🗽", title: "North America", description: "Textiles, home goods, and technology services for demanding, quality-focused buyers.", categories: ["Textiles", "Home Goods", "Technology Services"] },
-  { slug: "south-america", icon: "🌎", title: "South America", description: "Sourcing partnerships and consumer goods for expanding regional supply chains.", categories: ["Sourcing Partnerships", "Consumer Goods"] },
-  { slug: "asia-pacific", icon: "🌏", title: "Asia-Pacific", description: "Manufacturing collaboration, technology services, and cross-border trade across APAC.", categories: ["Manufacturing Collaboration", "Technology Services", "Cross-Border Trade"] },
-];
+// Region list now reads from data/regions.ts (PTO-03) — the single source
+// also used by the footer tagline. `slug` remains load-bearing: it drives
+// the `#region-*` anchor each lane carries, which the particle field's
+// regionCues hang off (see GLOBAL_PRESENCE in src/lib/choreography.ts).
 
 // Export ports — Layer 2 (commerce/logistics data, honestly placed on the
 // logistics page rather than the homepage). UN/LOCODEs are the standard
@@ -50,11 +45,12 @@ const exportPorts = [
   },
 ];
 
-/** Honest presence numbers derived from what the site actually publishes. */
+/** Honest presence numbers derived from what the site actually publishes —
+ * computed from data modules (PTO-05), never typed as literals. */
 const presenceStats = [
-  { value: 6, label: "Regions served" },
-  { value: 8, label: "Industries covered" },
-  { value: 3, label: "Export ports" },
+  { value: regions.length, label: "Regions served" },
+  { value: taxonomy.length, label: "Industries covered" },
+  { value: exportPorts.length, label: "Export ports" },
   { value: 24, suffix: "h", label: "Response window (IST)" },
 ];
 
@@ -86,7 +82,7 @@ const growth = [
 
 const why = [
   { icon: "🌐", title: "Global Business Perspective", description: "An international outlook shaping every solution we deliver." },
-  { icon: "🏭", title: "Manufacturing Heritage", description: "Real production knowledge from our parent company." },
+  { icon: "🏭", title: "Manufacturing Heritage", description: "Real production knowledge from our founding manufacturing partner." },
   { icon: "🤝", title: "Trusted Partner Network", description: "A growing ecosystem of vetted partners worldwide." },
   { icon: "🧭", title: "Cross-Border Expertise", description: "Experience navigating international trade and compliance." },
   { icon: "💬", title: "Professional Communication", description: "Clear, reliable coordination across time zones." },
@@ -144,7 +140,7 @@ export default function GlobalPresencePage() {
         </div>
       </section>
 
-      <Section id="regions" eyebrow="Regions We Serve" title="Building Presence Across Six Global Regions." lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
+      <Section id="regions" eyebrow="Regions We Serve" title={`Building Presence Across ${regions.length} Global Regions.`} lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
         <div className="tvx-lanes">
           {regions.map((r) => (
             <div className="tvx-lane" key={r.title} id={`region-${r.slug}`}>

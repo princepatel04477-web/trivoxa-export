@@ -130,7 +130,8 @@
       "descBuilding": "Piedra natural, mármol, granito y materiales de construcción.",
       "descAgri": "Productos agrícolas, especias, frutos secos y alimentos procesados.",
       "descEngineering": "Productos industriales, componentes y soluciones de fabricación.",
-      "descTechnology": "Software, IA y transformación digital para la empresa moderna."
+      "descTechnology": "Software, IA y transformación digital para la empresa moderna.",
+      "viewAll": "Ver los {count} sectores"
     },
     "businessArms": {
       "arm1Eyebrow": "División 01",

@@ -3,14 +3,23 @@
  * form/API (name + hsCode); logistics fields on carried-over categories
  * predate the master doc and remain until real trade data replaces them. */
 
+export type Incoterm = "FOB" | "CIF" | "EXW" | "DDP";
+
 export interface ProductCategory {
   name: string;
   hsCode: string;
   moq: string;
-  incoterms: ("FOB" | "CIF" | "EXW" | "DDP")[];
+  incoterms: Incoterm[];
   leadTime: string;
   packaging: string;
   specSheetUrl?: string;
+  /** CRA-05: certification code(s) (matching src/lib/data/certifications.ts
+   * `code`) this category's export is contingent on. When present, the RFQ
+   * UI shows "Enquire" instead of "Add to RFQ" and surfaces the live
+   * certification status inline — Chairman decision (2026-07-31, D8):
+   * Pharma/Nutraceutical/Spice categories move to enquiry-only ahead of
+   * FSSAI / WHO-GMP certification. */
+  requiresCert?: string[];
 }
 
 export interface Industry {
@@ -61,11 +70,11 @@ export const industries: Industry[] = [
     buyerTypes: ["Pharmaceutical distributors", "Healthcare product importers", "Pharmacy chains & wholesalers", "Nutraceutical brands"],
     complianceNote: "Pharmaceutical product exports are subject to destination-country import regulations. Buyers are responsible for confirming import licensing in their country.",
     categories: [
-      { name: "Generic Formulations", hsCode: "3004.90", moq: "10,000 units", incoterms: ["FOB", "CIF", "DDP"], leadTime: "30–35 days", packaging: "Blister strips, export cartons, cold-chain optional" },
-      { name: "Active Pharmaceutical Ingredients", hsCode: "2941.90", moq: "25 kg", incoterms: ["FOB", "CIF"], leadTime: "20–25 days", packaging: "HDPE drums, GMP-sealed" },
+      { name: "Generic Formulations", hsCode: "3004.90", moq: "10,000 units", incoterms: ["FOB", "CIF", "DDP"], leadTime: "30–35 days", packaging: "Blister strips, export cartons, cold-chain optional", requiresCert: ["FSSAI", "WHO-GMP"] },
+      { name: "Active Pharmaceutical Ingredients", hsCode: "2941.90", moq: "25 kg", incoterms: ["FOB", "CIF"], leadTime: "20–25 days", packaging: "HDPE drums, GMP-sealed", requiresCert: ["FSSAI", "WHO-GMP"] },
       { name: "Ayurvedic & Herbal Extracts", hsCode: "1302.19", moq: "50 kg", incoterms: ["FOB", "CIF", "EXW"], leadTime: "15–20 days", packaging: "Vacuum-sealed pouches, fibre drums" },
       { name: "Surgical Disposables", hsCode: "9018.90", moq: "5,000 units", incoterms: ["FOB", "CIF"], leadTime: "20–30 days", packaging: "Sterile-sealed, export cartons" },
-      { name: "Nutraceuticals & Supplements", hsCode: "2106.90", moq: "5,000 units", incoterms: ["FOB", "CIF", "DDP"], leadTime: "25–30 days", packaging: "Bottled, shrink-wrapped export pack" },
+      { name: "Nutraceuticals & Supplements", hsCode: "2106.90", moq: "5,000 units", incoterms: ["FOB", "CIF", "DDP"], leadTime: "25–30 days", packaging: "Bottled, shrink-wrapped export pack", requiresCert: ["FSSAI", "WHO-GMP"] },
     ],
   },
   {
@@ -103,7 +112,7 @@ export const industries: Industry[] = [
     buyerTypes: ["Food importers & distributors", "Spice & ingredient wholesalers", "Food manufacturers", "Retail & foodservice buyers"],
     complianceNote: "Food and agricultural exports from India are regulated by FSSAI and APEDA. Buyers should confirm the specific registrations and phytosanitary certifications applicable to their shipment before placing an order.",
     categories: [
-      { name: "Cumin & Whole Spices", hsCode: "0909.31", moq: "10 MT", incoterms: ["FOB", "CIF"], leadTime: "12–18 days", packaging: "25kg PP bags, food-grade liners" },
+      { name: "Cumin & Whole Spices", hsCode: "0909.31", moq: "10 MT", incoterms: ["FOB", "CIF"], leadTime: "12–18 days", packaging: "25kg PP bags, food-grade liners", requiresCert: ["FSSAI", "Spice Board"] },
       { name: "Groundnuts", hsCode: "1202.42", moq: "20 MT", incoterms: ["FOB", "CIF", "EXW"], leadTime: "15–20 days", packaging: "50kg jute/PP bags" },
       { name: "Castor Oil & Derivatives", hsCode: "1515.30", moq: "20 MT", incoterms: ["FOB", "CIF"], leadTime: "15–20 days", packaging: "Flexi-tanks or 200L drums" },
       { name: "Processed & Dehydrated Foods", hsCode: "2005.99", moq: "5 MT", incoterms: ["FOB", "CIF", "DDP"], leadTime: "20–25 days", packaging: "Vacuum pouches, export cartons" },
@@ -143,6 +152,19 @@ export const industries: Industry[] = [
       "Helping retailers, distributors, and consumer brands strengthen their supply chains with scalable sourcing and business solutions.",
     buyerTypes: ["Retail chains", "E-commerce brands", "Distributors & wholesalers"],
     complianceNote: "Consumer goods requirements vary by category — labeling, safety marks, and certification needs are confirmed against the destination market before production begins.",
+    categories: [],
+  },
+  {
+    slug: "jewellery-precious-products",
+    name: "Jewellery & Precious Products",
+    description:
+      "Connecting global buyers with carefully sourced jewellery and precious products through trusted manufacturing partnerships.",
+    productCategorySlug: "jewellery-precious-products",
+    buyerTypes: ["Jewellery retailers & distributors", "Wholesale & export houses", "Private-label jewellery brands"],
+    complianceNote: "Precious metal and gemstone exports are typically subject to hallmarking, purity certification, and Kimberley Process documentation where applicable. Buyers should confirm the specific certification requirements for their destination market before placing an order.",
+    // Portfolio is being finalized with our manufacturing partners — see
+    // data/taxonomy.ts (status: "active") and CAS-04 in the corrective
+    // directive. Populate once real HS codes/MOQ/lead time land.
     categories: [],
   },
 ];

@@ -1,0 +1,24 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm, 12px);
+  padding: var(--space-xl, 32px) 0;
+  max-width: 560px;
+}
+
+.empty-state__status {
+  font-size: var(--fs-body, 1rem);
+  color: var(--text);
+  margin: 0;
+}
+
+.empty-state__timing {
+  font-size: var(--fs-caption, 0.875rem);
+  color: var(--text-2);
+  margin: 0;
+}
+
+.empty-state__action {
+  margin-top: var(--space-2xs, 4px);
+}

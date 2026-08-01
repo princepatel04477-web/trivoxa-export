@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
+import { CONTACT, mailto } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "About | Trivoxa Group",
@@ -21,8 +22,8 @@ export default function AboutPage() {
         eyebrow="Our Origin"
         title="From One Factory to a Growing Export Group."
         lead={
-          "Trivoxa Group began as the international trade arm of Shiveshwar Textiles, a woven-textile manufacturer based in Surat, Gujarat. Years spent running production floors — managing looms, holding delivery windows, answering to quality checks — shaped how the company approaches export: reliability first, everything else second.\n\n" +
-          "As buyer inquiries grew beyond textiles into healthcare, building materials, agriculture, and engineering goods, Trivoxa Group formed to carry that same manufacturing discipline into new categories — sourcing through vetted partners rather than manufacturing in-house, but holding every shipment to the standard the parent company built its name on."
+          "Trivoxa Group began in strategic partnership with Shiveshwar Textiles, a woven-textile manufacturer based in Surat, Gujarat. Years spent running production floors — managing looms, holding delivery windows, answering to quality checks — shaped how the company approaches export: reliability first, everything else second.\n\n" +
+          "As buyer inquiries grew beyond textiles into healthcare, building materials, agriculture, and engineering goods, Trivoxa Group formed to carry that same manufacturing discipline into new categories — sourcing through vetted partners rather than manufacturing in-house, but holding every shipment to the standard our founding manufacturing partner built its name on."
         }
       />
 
@@ -45,7 +46,7 @@ export default function AboutPage() {
         </div>
         <div className="tvx-info-row">
           <div className="tvx-info-label">Email</div>
-          <a href="mailto:hello@trivoxagroup.com">hello@trivoxagroup.com</a>
+          <a href={mailto(CONTACT.general)}>{CONTACT.general}</a>
         </div>
       </Section>
 

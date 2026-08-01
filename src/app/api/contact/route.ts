@@ -3,8 +3,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 import { getResend } from "@/lib/email/resend";
 import { contactSchema } from "@/lib/validation/contact";
-
-const SALES_EMAIL = "sales@trivoxagroup.com";
+import { CONTACT } from "@/data/contact";
 
 /** Buyer-supplied text goes into an HTML email body, so it is escaped at the
  * boundary — the same treatment the newsletter route already gives topic votes. */
@@ -52,8 +51,8 @@ export async function POST(request: Request) {
     // how the RFQ and newsletter routes already handle Resend.
     try {
       await resend.emails.send({
-        from: "Trivoxa Group <no-reply@trivoxagroup.com>",
-        to: SALES_EMAIL,
+        from: `Trivoxa Group <${CONTACT.noReply}>`,
+        to: CONTACT.sales,
         subject: `New contact form message — ${reference}`,
         html: `<p><strong>${escapeHtml(data.fullName)}</strong> (${escapeHtml(data.email)})${
           data.companyName ? ` — ${escapeHtml(data.companyName)}` : ""

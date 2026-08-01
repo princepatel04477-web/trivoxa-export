@@ -2,30 +2,23 @@
 
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { taxonomy, featuredTaxonomy } from "@/lib/data/taxonomy";
 
-// Industry names reuse the megaMenu keys so the nav and this section always
-// agree; only the descriptions are unique to the home page.
-const INDUSTRY_DEFS = [
-  { nameKey: "textileApparel", descKey: "descTextile", image: "/images/industries/textile-editorial.webp" },
-  { nameKey: "healthcarePharma", descKey: "descHealthcare", image: "/images/industries/healthcare-editorial.webp" },
-  { nameKey: "buildingMaterials", descKey: "descBuilding", image: "/images/industries/building-editorial.webp" },
-  { nameKey: "agricultureFood", descKey: "descAgri", image: "/images/industries/agriculture.jpg" },
-  { nameKey: "engineeringIndustrial", descKey: "descEngineering", image: "/images/industries/engineering.jpg" },
-  { nameKey: null, descKey: "descTechnology", image: "/images/industries/technology.jpg" },
-] as const;
-
-const TOTAL = String(INDUSTRY_DEFS.length).padStart(2, "0");
+const TOTAL = String(featuredTaxonomy.length).padStart(2, "0");
 
 export default function IndustriesManifest() {
   const t = useTranslations("home.industries");
   const tm = useTranslations("megaMenu");
-  const INDUSTRIES = INDUSTRY_DEFS.map((d) => ({
-    name: d.nameKey ? tm(d.nameKey) : t("nameTechnology"),
-    desc: t(d.descKey),
-    image: d.image,
+  // Which industries appear and in what order comes from taxonomy.ts
+  // (PTO-02) — only the translated copy is looked up per-locale here.
+  const INDUSTRIES = featuredTaxonomy.map((entry) => ({
+    name: entry.megaMenuKey ? tm(entry.megaMenuKey) : entry.displayName,
+    desc: entry.homeDescKey ? t(entry.homeDescKey) : entry.shortDescription,
+    image: entry.image ?? "/images/industries/textile-editorial.webp",
   }));
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -119,6 +112,11 @@ export default function IndustriesManifest() {
       </div>
       <div className="industries-folio__progress">
         <span ref={progressRef}>01</span> / {TOTAL}
+      </div>
+      <div className="industries-folio__viewall container">
+        <Link href="/industries/" className="btn-ghost">
+          {t("viewAll", { count: taxonomy.length })} →
+        </Link>
       </div>
     </section>
   );

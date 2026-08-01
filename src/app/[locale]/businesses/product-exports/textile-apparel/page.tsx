@@ -49,7 +49,7 @@ export default function TextileApparelPage() {
         eyebrow="Industry Overview"
         title="From Fibre to Finished Product."
         lead={
-          "Textile & Apparel is where Trivoxa's story begins. Our parent company, Shiveshwar Textiles, brings deep expertise in woven textile production and quality-focused operations.\n\n" +
+          "Textile & Apparel is where Trivoxa's story begins. Our founding strategic partner, Shiveshwar Textiles, brings deep expertise in woven textile production and quality-focused operations.\n\n" +
           "Today we extend that heritage into a full sourcing capability — connecting global buyers with fabrics, home textiles, and apparel accessories through a trusted partner network."
         }
       />

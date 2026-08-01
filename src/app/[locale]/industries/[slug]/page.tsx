@@ -8,6 +8,7 @@ import NumberedList from "@/components/patterns/NumberedList";
 import IndustryManifest from "@/components/industries/IndustryManifest";
 import { industries, getIndustryBySlug } from "@/lib/data/industries";
 import { getExportCategory } from "@/lib/data/product-categories";
+import { SHIVESHWAR_DESCRIPTOR } from "@/lib/corporate";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
 import "@/app/styles/industry-page.css";
@@ -28,7 +29,7 @@ export async function generateMetadata(props: PageProps<"/[locale]/industries/[s
 
 /** Shared "Why Trivoxa" strengths (master doc §5.7, verbatim). */
 const strengths = [
-  { title: "Manufacturing Foundation", description: "Built upon the manufacturing expertise of our parent company, Shiveshwar Textiles." },
+  { title: "Manufacturing Foundation", description: SHIVESHWAR_DESCRIPTOR },
   { title: "Industry Understanding", description: "Solutions developed around the operational realities of each industry." },
   { title: "Trusted Network", description: "A growing ecosystem of manufacturers, technology providers, logistics specialists, and business professionals." },
   { title: "Quality-Driven Operations", description: "Committed to consistency, reliability, and continuous improvement." },

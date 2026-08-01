@@ -130,7 +130,8 @@
       "descBuilding": "Kamień naturalny, marmur, granit i materiały budowlane.",
       "descAgri": "Produkty rolne, przyprawy, bakalie i żywność przetworzona.",
       "descEngineering": "Produkty przemysłowe, komponenty i rozwiązania produkcyjne.",
-      "descTechnology": "Oprogramowanie, SI i transformacja cyfrowa dla nowoczesnego biznesu."
+      "descTechnology": "Oprogramowanie, SI i transformacja cyfrowa dla nowoczesnego biznesu.",
+      "viewAll": "Zobacz wszystkie branże ({count})"
     },
     "businessArms": {
       "arm1Eyebrow": "Obszar działalności 01",

@@ -130,7 +130,8 @@
       "descBuilding": "Naturstein, Marmor, Granit und Baumaterialien.",
       "descAgri": "Ausgewählte Erzeugnisse, Gewürze, Trockenfrüchte und verarbeitete Lebensmittel.",
       "descEngineering": "Industrieprodukte, Komponenten und Fertigungslösungen.",
-      "descTechnology": "Software, KI und digitale Transformation für moderne Unternehmen."
+      "descTechnology": "Software, KI und digitale Transformation für moderne Unternehmen.",
+      "viewAll": "Alle {count} Branchen ansehen"
     },
     "businessArms": {
       "arm1Eyebrow": "Geschäftsbereich 01",

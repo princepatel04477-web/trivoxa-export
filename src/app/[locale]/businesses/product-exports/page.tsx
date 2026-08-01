@@ -11,11 +11,12 @@ import ProductGrid from "@/components/products/ProductGrid";
 import { exportCategories } from "@/lib/data/product-categories";
 import { industries } from "@/lib/data/industries";
 
-// Furniture & Interiors and Jewellery & Precious Products are withheld from
-// this listing (and site navigation) until real product data exists — see
-// the matching note in Header.tsx. Both routes still exist directly.
-const WITHHELD_SLUGS = new Set(["furniture-interiors", "jewellery-precious-products"]);
-const liveExportCategories = exportCategories.filter((c) => !WITHHELD_SLUGS.has(c.slug));
+// Furniture & Interiors and Jewellery & Precious Products are confirmed
+// active export lines (Chairman decision D4, 2026-07-31) — both are listed
+// here and in site navigation. Their category pages show the honest
+// "tell us what you need" state (see [category]/page.tsx) until real
+// product data lands (CAS-03/CAS-04); they are not silently withheld.
+const liveExportCategories = exportCategories;
 
 /** Every published product across every industry — feeds the searchable,
  * filterable grid (spec §4). */

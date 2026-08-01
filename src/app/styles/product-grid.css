@@ -145,6 +145,13 @@
   text-align: right;
 }
 
+.pgrid__cert-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--gold) 70%, var(--text-2));
+}
+
 .pgrid__card footer {
   display: flex;
   align-items: center;

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { openings, type JobOpening } from "@/lib/data/openings";
+import { CONTACT, mailto } from "@/data/contact";
+import EmptyState from "@/components/EmptyState";
 
 function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void }) {
   return (
@@ -71,7 +73,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
             </dl>
             <a
               className="tvx-btn tvx-btn--primary ind-drawer__specsheet"
-              href={`mailto:dhruv@trivoxagroup.com?subject=${encodeURIComponent(`Application — ${job.title} (${job.id})`)}`}
+              href={mailto(CONTACT.careers, `Application — ${job.title} (${job.id})`)}
             >
               Apply for This Role
             </a>
@@ -90,19 +92,11 @@ export default function JobBoard() {
 
   if (openings.length === 0) {
     return (
-      <div className="job-board__empty">
-        <p className="job-board__empty-lead">
-          There are no open roles listed right now. We&rsquo;re always interested in
-          talented people who share our values — introduce yourself and tell us
-          how you&rsquo;d like to contribute.
-        </p>
-        <a
-          className="tvx-btn tvx-btn--primary"
-          href={`mailto:dhruv@trivoxagroup.com?subject=${encodeURIComponent("Open Application — Trivoxa Group")}`}
-        >
-          Submit an Open Application
-        </a>
-      </div>
+      <EmptyState
+        status="There are no open roles listed right now."
+        timing="We review open applications continuously, not on a fixed hiring cycle."
+        action={{ label: "Submit an Open Application", href: mailto(CONTACT.careers, "Open Application — Trivoxa Group"), external: true }}
+      />
     );
   }
 

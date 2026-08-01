@@ -130,7 +130,8 @@
       "descBuilding": "Pierre naturelle, marbre, granit et matériaux de construction.",
       "descAgri": "Produits agricoles, épices, fruits secs et aliments transformés.",
       "descEngineering": "Produits industriels, composants et solutions de fabrication.",
-      "descTechnology": "Logiciels, IA et transformation numérique pour l'entreprise moderne."
+      "descTechnology": "Logiciels, IA et transformation numérique pour l'entreprise moderne.",
+      "viewAll": "Voir les {count} secteurs"
     },
     "businessArms": {
       "arm1Eyebrow": "Pôle d'activité 01",
