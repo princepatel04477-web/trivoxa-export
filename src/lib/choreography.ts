@@ -11,6 +11,7 @@
  */
 
 import {
+  withEagleFinale,
   buildBusinessesStages,
   buildGroupStages,
   buildInsightsStages,
@@ -63,16 +64,16 @@ const CAREERS_PALETTE = { primary: "--text-2", accent: "--gold-hover", ground: "
  * Home — a deliberate, sparse sequence:
  *   globe (hero) → vessel (trust) → container (about) → [hidden: business arms
  *   + industries] → ports globe (global presence) → [hidden: values / insights
- *   / careers / CTA / footer].
+ *   / careers] → eagle (CTA) → dimmed eagle (footer).
  *
  * The field is faded out across the content-dense sections on purpose, so it
- * never competes with the copy. The eagle finale that used to close the page
- * (CTA + a dimmed footer wash) has been removed sitewide — the field simply
- * stays hidden from Values through the footer instead of forming a mark.
+ * never competes with the copy.
  */
 export const HOME: Omit<SceneConfig, "onDegrade"> = {
   hero: "globe",
   ports: true,
+  // Home already closes on the eagle through its beat list (.hp-cta), so it needs
+  // no finale appended — but it resolves its colour from the same tokens.
   palette: PARTICLE_PALETTE,
   beats: [
     // Trust ("A sourcing partner, not just a supplier directory") — a cargo
@@ -93,9 +94,18 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
       ports: true,
       onLeaveBack: { opacity: 0 }, // scrolling up into the carousel
     },
-    // Values / Insights / Careers / CTA / Footer — NO animation. Keep the
-    // field hidden through the rest of the page.
+    // Values / Insights / Careers — NO animation. Keep the field hidden.
     { trigger: ".hp-values", opacity: 0 },
+    // Final CTA — the Trivoxa eagle, in grains, behind the copy.
+    { trigger: ".hp-cta", shape: "eagle", sweep: 0 },
+    // Footer — hold the eagle but drop it to a dim wash so footer copy stays
+    // fully legible; scrolling back up restores full opacity.
+    {
+      trigger: ".footer",
+      opacity: 0.18,
+      fadeDuration: 0.8,
+      onLeaveBack: { opacity: 1, fadeDuration: 0.5 },
+    },
   ],
 };
 
@@ -112,15 +122,14 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
  *     → three interlocked, accent on the founding node (Foundation → Our Story)
  *     → six in an orbital ring (The Trivoxa Way → Leadership)
  *     → the complete mesh, connections drawn in (Business Ecosystem — the climax,
- *       held through the section rather than passed through, including Looking
- *       Ahead and the CTA — no further morph after this)
+ *       held through the section rather than passed through)
+ *     → relaxed drift, hex silhouette persisting (Looking Ahead → CTA)
  *
  * The stage buffers come from buildGroupStages, called by the scene with the pool
- * size it settled on for this device tier. The shared eagle finale that used to
- * follow has been removed sitewide — the mesh simply holds.
+ * size it settled on for this device tier.
  */
 export const GROUP: Omit<SceneConfig, "onDegrade"> = {
-  buildStages: buildGroupStages,
+  buildStages: withEagleFinale(buildGroupStages),
   // Bound to the page's own section ids rather than to added marker elements, so
   // a trigger boundary is always exactly a section boundary.
   stageBindings: [
@@ -129,8 +138,10 @@ export const GROUP: Omit<SceneConfig, "onDegrade"> = {
     // → six cells, orbital ring
     { trigger: "#trivoxa-way", start: "top center", endTrigger: "#leadership", end: "center center" },
     // → complete mesh. Resolves by the time the ecosystem diagram is centred,
-    //   then holds through Looking Ahead and the CTA — nothing starts again.
+    //   then holds: nothing starts again until Looking Ahead.
     { trigger: "#ecosystem", start: "top bottom", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: "#looking-ahead", start: "top center", endTrigger: ".group-cta-wrap", end: "top center" },
   ],
   motion: "planar",
   palette: GROUP_PALETTE,
@@ -157,29 +168,33 @@ export const GROUP: Omit<SceneConfig, "onDegrade"> = {
  *
  *   globe (hero, Global Overview)
  *     → the regional clusters illuminate in sequence (Regions)
- *     → the trade-route arcs draw between hubs (Trade & Operations), then hold
- *       spinning and draggable through Growing and the CTA — no further morph
+ *     → the trade-route arcs draw between hubs (Trade & Operations)
+ *     → routes settle, particles relax to drift, then converge on the eagle
  *
  * The flat world map was REMOVED: `bend` is pinned at 1 for every stage, so the
  * field never unwraps. Everything on this page already rode that one uniform —
  * idle spin, axial tilt, parallax, drag (disabled below bend 0.6) and the route
  * overlay's own sphere↔flat blend — so holding it at 1 keeps the globe
  * spinning and draggable through the entire page instead of going inert and
- * flat halfway down. The shared eagle finale that used to close the page has
- * also been removed sitewide — the routed globe simply holds.
+ * flat halfway down. The stages remain distinct because they still switch
+ * region illumination, routes and the eagle finale on and off.
  */
 export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
   buildGeoField: ({ count }) => buildPresenceGeo(count),
-  // Every stage holds bend: 1. The stage list is what switches regions and
-  // routes on — it is no longer what flattens the globe.
+  // Every stage holds bend: 1. The stage list is what switches regions, routes
+  // and the finale on — it is no longer what flattens the globe.
   geoStages: [
     // Hero + Global Overview + Network — the globe, spherical and spinning.
     { name: "globe", bend: 1 },
     // Regions: illumination is driven by regionCues, never by bend.
     { name: "globe-regions", bend: 1 },
-    // Trade & Operations: route arcs drawn between hubs, on the sphere — holds
-    // through Growing and the CTA.
+    // Trade & Operations: route arcs drawn between hubs, on the sphere.
     { name: "globe-routes", bend: 1, routes: true },
+    // Close: routes settle out and the globe converges into the shared eagle.
+    // `eagle: true` blends the analytic form toward the sampled mark (see the
+    // uEagleBlend path in particle-scene) — geo mode has no position buffers of
+    // its own, so this is how the finale reaches it.
+    { name: "eagle", bend: 1, drift: 0.2, eagle: true },
   ],
   // One binding per transition, so this list is always geoStages.length - 1.
   // The old first binding scrubbed the unwrap across Overview→Network; with no
@@ -188,8 +203,10 @@ export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
   stageBindings: [
     // → regional illumination
     { trigger: "#regions", start: "top bottom", end: "top center" },
-    // → routes draw, then hold through Growing and the CTA
+    // → routes draw
     { trigger: "#trade-operations", start: "top bottom", end: "top center" },
+    // → relax into the eagle
+    { trigger: "#growing", start: "top center", endTrigger: ".tvx-cta", end: "top center" },
   ],
   // One cue per region row, fired as each scrolls up into view.
   regionCues: [
@@ -220,9 +237,8 @@ export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
  *     → the point emits; particles fan into scattered knowledge nodes (Categories)
  *     → nodes organise into an interconnected web, connections drawing between
  *       related nodes (Featured, first half)
- *     → full density: a calm editorial lattice (Featured, second half), which
- *       holds through the CTA — no further morph (the shared eagle finale
- *       that used to close the page has been removed sitewide)
+ *     → full density: a calm editorial lattice (Featured, second half)
+ *     → the lattice converges into the shared eagle behind the CTA (CTA)
  *
  * SECTION MAPPING NOTE. The brief lists five sections; this page has four blocks.
  * There is no "All Insights" listing — no articles are published yet, and the page
@@ -238,7 +254,7 @@ export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
  * letting individual grains twinkle. Nothing here is energetic.
  */
 export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
-  buildStages: buildInsightsStages,
+  buildStages: withEagleFinale(buildInsightsStages),
   // Coherent per-node pulse phase — the nodes breathe, the grains don't twinkle.
   buildPhase: buildInsightsPhase,
   stageBindings: [
@@ -246,13 +262,15 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
     { trigger: "#categories", start: "top 80%", end: "bottom center" },
     // → nodes organise into the connected web
     { trigger: "#featured", start: "top 75%", end: "center center" },
-    // → full density lattice, across the back half of the same section — holds
-    //   through the CTA, no further morph.
+    // → full density lattice, across the back half of the same section
     { trigger: "#featured", start: "center center", end: "bottom 70%" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: ".tvx-cta", start: "top bottom", end: "center center" },
   ],
-  // The strokes start arriving as the web organises (mid-stage-2) and keep
-  // completing through the densification (stage 3), then hold — the lattice
-  // stands alone at full density.
+  // The strokes start arriving as the web organises (mid-stage-2) and are still
+  // completing through the densification (stage 3), then fade out as the eagle
+  // takes over — the closing mark stands alone. The default envelope would have
+  // finished the strokes before the lattice even formed.
   linkEnvelope: { drawFrom: 1.55, drawTo: 3.0, fadeFrom: 3.45, fadeTo: 4.0 },
   motion: "planar",
   palette: INSIGHTS_PALETTE,
@@ -271,9 +289,8 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
  *   one silhouette, centred, breathing (hero)
  *     → a second forms and connects to it (Our Culture)
  *     → silhouettes multiply into a connected cluster (Areas We're Growing)
- *     → full formation: a network of figures as one organisation (Open Roles),
- *       which holds through the CTA — no further morph (the shared eagle
- *       finale that used to close the page has been removed sitewide)
+ *     → full formation: a network of figures as one organisation (Open Roles)
+ *     → the team converges into the shared eagle behind the CTA, then faint drift
  *
  * SECTION MAPPING NOTE. The brief's "Values / life-at-Trivoxa" beat has no section
  * on this page — values live on the Group page, and Careers runs Culture → Where
@@ -289,16 +306,17 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
  * pages read apart from each other, not just from Home.
  */
 export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
-  buildStages: buildCareersStages,
+  buildStages: withEagleFinale(buildCareersStages),
   buildPhase: buildCareersPhase,
   stageBindings: [
     // → a second silhouette forms and connects
     { trigger: "#culture", start: "top 80%", end: "bottom center" },
     // → multiply into a connected cluster
     { trigger: "#areas", start: "top 80%", end: "bottom center" },
-    // → full formation, behind the open roles — holds through the CTA, no
-    //   further morph.
+    // → full formation, behind the open roles
     { trigger: "#opportunities", start: "top bottom", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: ".tvx-cta", start: "top bottom", end: "center center" },
   ],
   // The first connection draws as the second figure arrives (mid-morph into stage
   // 1) and the network keeps completing all the way to the full formation, so the
@@ -321,9 +339,8 @@ export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
  *     → cleaves into TWO divisions: Product Exports dense, Service Exports
  *       lighter and networked, with the accent marking the divide (Our Divisions)
  *     → resolves into a left-to-right PROCESS CHAIN: source → coordinate →
- *       verify → deliver (How We Work), which holds through Why Trivoxa and
- *       the CTA — no further morph (the shared eagle finale that used to
- *       close the page has been removed sitewide)
+ *       verify → deliver (How We Work)
+ *     → converges into the shared eagle behind the CTA (Why Trivoxa → CTA)
  *
  * The continuity requirement is met in the geometry rather than here: the cube's
  * points are sorted by x once, and every later stage partitions that ordering into
@@ -331,15 +348,16 @@ export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
  * grain crossing another. See src/lib/shapes/businesses.ts.
  */
 export const BUSINESSES: Omit<SceneConfig, "onDegrade"> = {
-  buildStages: buildBusinessesStages,
+  buildStages: withEagleFinale(buildBusinessesStages),
   stageBindings: [
     // → the cube loosens
     { trigger: "#overview", start: "top 80%", end: "bottom center" },
     // → cleaves into the two divisions
     { trigger: "#divisions", start: "top 80%", end: "center center" },
-    // → resolves into the process chain — holds through Why Trivoxa and the
-    //   CTA, no further morph.
+    // → resolves into the process chain
     { trigger: "#process", start: "top 80%", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: "#why", start: "top center", endTrigger: ".tvx-cta", end: "top center" },
   ],
   motion: "planar",
   palette: BUSINESSES_PALETTE,
