@@ -35,7 +35,10 @@ export default function ShaderBackground({ variant }: { variant: string }) {
     try {
       scene = createShaderBackground(canvasRef.current, variant, () => setReady(false));
       sceneRef.current = scene;
-    } catch {
+    } catch (err) {
+      // Previously silent — any renderer/shader failure here dropped straight
+      // to the ambient fallback with no trace.
+      console.error(`[ShaderBackground] createShaderBackground("${variant}") failed — falling back to ambient background.`, err);
       raf = requestAnimationFrame(() => setReady(false));
     }
     return () => {

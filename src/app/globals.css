@@ -593,10 +593,32 @@ a, button {
   width: min(46vw, 520px);
   height: min(46vw, 520px);
   transform: translateY(-50%);
-  fill: none;
+}
+.particle-fallback__disc {
+  fill: color-mix(in srgb, var(--gold) 6%, transparent);
   stroke: var(--gold-particle);
   stroke-width: 0.6;
-  opacity: 0.28;
+  opacity: 0.55;
+}
+.particle-fallback__equator {
+  fill: none;
+  stroke: var(--gold-particle);
+  stroke-width: 0.4;
+  opacity: 0.3;
+}
+.particle-fallback__rim {
+  fill: none;
+  stroke: var(--gold-particle);
+  stroke-width: 0.8;
+  opacity: 0.45;
+}
+.particle-fallback__hub {
+  fill: var(--gold-particle);
+  opacity: 0.75;
+}
+.particle-fallback__hub--origin {
+  fill: var(--gold);
+  opacity: 1;
 }
 @media (max-width: 575px) {
   .particle-fallback__globe {

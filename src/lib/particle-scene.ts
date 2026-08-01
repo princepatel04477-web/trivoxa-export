@@ -315,6 +315,22 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const canvas = renderer.domElement;
   canvas.style.cssText = "position:fixed;inset:0;z-index:-1;pointer-events:none;";
 
+  // Context loss must not be a silent, permanent drop to fallback (P0 WebGL
+  // investigation, Phase 2.3). preventDefault() is required by spec for the
+  // browser to attempt restoration at all; the render loop keeps running
+  // (it isn't gated on this), so Three.js's own GPU-resource recreation on
+  // next draw handles the recovery. Both events are logged — this failure
+  // class was previously invisible.
+  const onContextLost = (e: Event) => {
+    e.preventDefault();
+    console.error("[particle-scene] WebGL context lost.");
+  };
+  const onContextRestored = () => {
+    console.warn("[particle-scene] WebGL context restored.");
+  };
+  canvas.addEventListener("webglcontextlost", onContextLost, false);
+  canvas.addEventListener("webglcontextrestored", onContextRestored, false);
+
   // Postprocessing is desktop-only — mipmap bloom + chromatic aberration are
   // the first things to cost frames on mid-range mobile GPUs.
   const composer = isMobile ? null : new EffectComposer(renderer);
@@ -1905,6 +1921,8 @@ ${
       window.removeEventListener("pointerup", handleDragEnd);
       window.removeEventListener("pointercancel", handleDragEnd);
       tradeArcs?.dispose();
+      canvas.removeEventListener("webglcontextlost", onContextLost, false);
+      canvas.removeEventListener("webglcontextrestored", onContextRestored, false);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       // Not composer.dispose(): it also disposes Pass.fullscreenGeometry, a
       // static triangle shared by every EffectComposer on the page — doing

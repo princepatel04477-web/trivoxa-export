@@ -37,18 +37,30 @@ export default function ParticleCanvas({ config }: ParticleCanvasProps) {
       setUseFallback(true);
     };
 
-    createParticleScene({ ...config, onDegrade: handleDegrade }).then((scene) => {
-      if (cancelled) {
-        scene.dispose();
-        return;
-      }
-      sceneRef.current = scene;
-      containerRef.current?.appendChild(scene.domElement);
-      // Only the scene instance that actually mounted (not one torn down
-      // mid-load, e.g. by a dev Strict Mode remount) gets to signal that
-      // the hero is ready to reveal.
-      markPreloaderDone();
-    });
+    createParticleScene({ ...config, onDegrade: handleDegrade })
+      .then((scene) => {
+        if (cancelled) {
+          scene.dispose();
+          return;
+        }
+        sceneRef.current = scene;
+        containerRef.current?.appendChild(scene.domElement);
+        // Only the scene instance that actually mounted (not one torn down
+        // mid-load, e.g. by a dev Strict Mode remount) gets to signal that
+        // the hero is ready to reveal.
+        markPreloaderDone();
+      })
+      .catch((err) => {
+        // This previously had no .catch() at all — a rejected scene creation
+        // (e.g. a shader compile failure) was an unhandled promise rejection
+        // that never set useFallback, leaving an empty container and no
+        // console signal pointing at WebGL. Now it's loud and it degrades
+        // cleanly to the same static fallback every other path uses.
+        if (cancelled) return;
+        console.error("[ParticleCanvas] createParticleScene failed — falling back to the static field.", err);
+        markPreloaderDone();
+        setUseFallback(true);
+      });
 
     return () => {
       cancelled = true;

@@ -28,16 +28,36 @@ export function isLowEndDevice(): boolean {
     const canvas = document.createElement("canvas");
     const gl = (canvas.getContext("webgl2") ||
       canvas.getContext("webgl")) as WebGLRenderingContext | null;
-    if (!gl) return true; // no WebGL support at all
+    if (!gl) {
+      // Every fallback decision must be loud — this is the one that used to
+      // be silent and is the leading suspect for the P0 simultaneous-failure
+      // report: no signal ever told us WHY a capable machine landed here.
+      console.error(
+        "[gpu-capability] WebGL unavailable: canvas.getContext('webgl2') and " +
+          "canvas.getContext('webgl') both returned null. Falling back to the static field."
+      );
+      return true;
+    }
 
     const dbg = gl.getExtension("WEBGL_debug_renderer_info");
     const renderer = dbg
       ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)).toLowerCase()
       : "";
     const SOFTWARE_MARKERS = ["swiftshader", "llvmpipe", "software", "microsoft basic render", "d3d11 warp"];
-    if (SOFTWARE_MARKERS.some((m) => renderer.includes(m))) return true;
-  } catch {
-    return true; // any failure probing WebGL is itself a reason to play it safe
+    const matchedMarker = SOFTWARE_MARKERS.find((m) => renderer.includes(m));
+    if (matchedMarker) {
+      console.error(
+        `[gpu-capability] Software renderer detected ("${matchedMarker}" matched in "${renderer}"). ` +
+          "Falling back to the static field."
+      );
+      return true;
+    }
+  } catch (err) {
+    // Previously: `catch { return true }` with no logging — any exception
+    // here, for any reason, silently downgraded a capable device with zero
+    // trace. This is what a client console screenshot needs to catch.
+    console.error("[gpu-capability] WebGL probe threw during capability check:", err);
+    return true;
   }
 
   return false;

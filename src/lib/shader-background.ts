@@ -33,6 +33,18 @@ export function createShaderBackground(
   });
   renderer.setClearColor(0x0b1325, 1);
 
+  // Context loss must not permanently strand this in a dead state — see the
+  // matching handler in particle-scene.ts.
+  const onContextLost = (e: Event) => {
+    e.preventDefault();
+    console.error(`[shader-background] WebGL context lost (variant "${variant}").`);
+  };
+  const onContextRestored = () => {
+    console.warn(`[shader-background] WebGL context restored (variant "${variant}").`);
+  };
+  canvas.addEventListener("webglcontextlost", onContextLost, false);
+  canvas.addEventListener("webglcontextrestored", onContextRestored, false);
+
   const scene = new THREE.Scene();
   const camera = new THREE.Camera(); // matrices unused — vertex shader is fullscreen
   const geometry = new THREE.PlaneGeometry(2, 2);
@@ -109,6 +121,8 @@ export function createShaderBackground(
       mm.revert();
       gsap.ticker.remove(update);
       window.removeEventListener("resize", resize);
+      canvas.removeEventListener("webglcontextlost", onContextLost, false);
+      canvas.removeEventListener("webglcontextrestored", onContextRestored, false);
       geometry.dispose();
       material.dispose();
       renderer.dispose();
