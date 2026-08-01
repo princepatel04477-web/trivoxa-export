@@ -8,10 +8,9 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useNavActive, closeNavOverlay } from "@/hooks/useNavActive";
 import { getLenis } from "@/components/providers/LenisProvider";
 
-const DIGITAL_URL = "https://digital.trivoxagroup.com";
-
-/** Same information architecture as the desktop header (spec §1):
- * six items, with The Group and Businesses as accordions. */
+/** Same information architecture as the desktop header (ORDER 01): logo
+ * (persistent header, not listed here) is home; Group and Businesses are
+ * accordions, Businesses reduced to exactly two items (ORDER 02). */
 const groupLinks = [
   { key: "story", href: "/group/#our-story" },
   { key: "leadership", href: "/group/#leadership" },
@@ -20,22 +19,9 @@ const groupLinks = [
   { key: "commitments", href: "/group/#commitments" },
 ] as const;
 
-const productLinks = [
-  { key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
-  { key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-  { key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
-  { key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
-  { key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
-  { key: "allProductExports", href: "/businesses/product-exports/" },
-] as const;
-
-const serviceLinks = [
-  { key: "technology", href: "/businesses/service-exports/technology/" },
-  { key: "ai", href: "/businesses/service-exports/ai/" },
-  { key: "software", href: "/businesses/service-exports/software/" },
-  { key: "designBranding", href: "/businesses/service-exports/design/" },
-  { key: "digitalMarketing", href: "/businesses/service-exports/marketing/" },
-  { key: "businessSupport", href: "/businesses/service-exports/business-support/" },
+const businessesLinks = [
+  { key: "productExports", href: "/businesses/product-exports/" },
+  { key: "serviceExports", href: "/businesses/service-exports/" },
 ] as const;
 
 type Accordion = "group" | "biz" | null;
@@ -187,12 +173,6 @@ export default function MobileNav() {
     >
       <div className="nav__content">
         <ul>
-          <li>
-            <Link href="/" onClick={closeNav}>
-              {t("home")}
-            </Link>
-          </li>
-
           {/* The Group — accordion */}
           <li className={openSection === "group" ? "opened" : undefined}>
             <button
@@ -230,7 +210,7 @@ export default function MobileNav() {
             </div>
           </li>
 
-          {/* Businesses — accordion with the two divisions */}
+          {/* Businesses — accordion, exactly two items (ORDER 02) */}
           <li className={openSection === "biz" ? "opened" : undefined}>
             <button
               type="button"
@@ -247,24 +227,15 @@ export default function MobileNav() {
               className={`mobile-nav__acc${openSection === "biz" ? " is-open" : ""}`}
               inert={openSection !== "biz"}
             >
-              <div className="mobile-nav__division">
-                <Link href="/businesses/product-exports/" className="mobile-nav__division-title" onClick={closeNav}>
-                  {tm("productExports")}
-                </Link>
-                {sub(productLinks)}
-              </div>
-              <div className="mobile-nav__division">
-                <Link href="/businesses/service-exports/" className="mobile-nav__division-title" onClick={closeNav}>
-                  {tm("serviceExports")}
-                </Link>
-                {sub(serviceLinks)}
-                <a className="mobile-nav__external" href={DIGITAL_URL} target="_blank" rel="noopener noreferrer">
-                  digital.trivoxagroup.com ↗
-                </a>
-              </div>
+              {sub(businessesLinks)}
             </div>
           </li>
 
+          <li>
+            <Link href="/industries/" onClick={closeNav}>
+              {t("industries")}
+            </Link>
+          </li>
           <li>
             <Link href="/global-presence/" onClick={closeNav}>
               {t("globalPresence")}

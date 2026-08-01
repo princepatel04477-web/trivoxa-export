@@ -14,26 +14,14 @@
    ============================================================ */
 
 :root {
-  /* Masthead lockup height. The lockup is 2.048:1, so this reproduces the
-     150px width the three-zone header grid was built around — the bar's
-     optical centring is unchanged. */
-  --logo-h-nav: 73px;
+  /* Masthead lockup height — default state (ORDER 03). */
+  --logo-h-nav: 42px;
+  /* Condensed/scrolled state — Header.tsx toggles `.header--scrolled`. */
+  --logo-h-nav-scrolled: 34px;
 
   /* Footer lockup height — one token, matching the brand column's previous
      200px footprint. */
   --logo-h-footer: 98px;
-}
-
-@media (max-width: 1199px) {
-  :root {
-    --logo-h-nav: 64px;
-  }
-}
-
-@media (max-width: 399px) {
-  :root {
-    --logo-h-nav: 58px;
-  }
 }
 
 .tvx-logo {
@@ -61,6 +49,11 @@
 .tvx-logo--nav {
   height: var(--logo-h-nav);
   width: auto;
+  transition: height 0.3s ease;
+}
+
+.header--scrolled .tvx-logo--nav {
+  height: var(--logo-h-nav-scrolled);
 }
 
 .tvx-logo--footer {

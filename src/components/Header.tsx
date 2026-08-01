@@ -11,9 +11,6 @@ import { Logo } from "@/components/brand/Logo";
 import { HEADER_CONDENSE_AT, navLogoTone } from "@/lib/logo";
 import { useNavActive, toggleNavOverlay } from "@/hooks/useNavActive";
 
-/** External URL of the dedicated Trivoxa Digital site. */
-const DIGITAL_URL = "https://digital.trivoxagroup.com";
-
 /** "The Group" simple dropdown — anchors into /group/ chapters. */
 const groupDropdown = [
   { key: "story", href: "/group/#our-story" },
@@ -23,23 +20,12 @@ const groupDropdown = [
   { key: "commitments", href: "/group/#commitments" },
 ] as const;
 
-/** "Businesses" mega-menu — exactly two columns (spec §1). */
-const productColumn = [
-  { key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
-  { key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-  { key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
-  { key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
-  { key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
-  { key: "allProductExports", href: "/businesses/product-exports/" },
-] as const;
-
-const serviceColumn = [
-  { key: "technology", href: "/businesses/service-exports/technology/" },
-  { key: "ai", href: "/businesses/service-exports/ai/" },
-  { key: "software", href: "/businesses/service-exports/software/" },
-  { key: "designBranding", href: "/businesses/service-exports/design/" },
-  { key: "digitalMarketing", href: "/businesses/service-exports/marketing/" },
-  { key: "businessSupport", href: "/businesses/service-exports/business-support/" },
+/** "Businesses" simple dropdown — exactly two items (ORDER 02). Deep
+ * category/product routes stay live, routable, and in sitemap.xml; they are
+ * only removed from this menu. */
+const businessesDropdown = [
+  { key: "productExports", href: "/businesses/product-exports/" },
+  { key: "serviceExports", href: "/businesses/service-exports/" },
 ] as const;
 
 type OpenMenu = "group" | "biz" | null;
@@ -82,7 +68,7 @@ export default function Header() {
     setOpenMenu(null);
   }
 
-  /** Active-trail detection for the underline + aria-current. */
+  /** Active-trail detection for aria-current (ORDER 02: no more hover-line). */
   const isActive = useCallback(
     (href: string) => {
       const clean = href.replace(/\/$/, "");
@@ -104,7 +90,8 @@ export default function Header() {
   // is kept as a fallback for the reduced-motion path where Lenis is disabled.
   //
   // `condensed` mirrors the same threshold into React state so the logo can
-  // take its tone from it. It flips once per crossing, not per frame.
+  // take its tone AND size (ORDER 03) from it. It flips once per crossing,
+  // not per frame.
   const rootRef = useRef<HTMLDivElement>(null);
   const [condensed, setCondensed] = useState(false);
   useEffect(() => {
@@ -172,15 +159,18 @@ export default function Header() {
   return (
     <div className="header" ref={rootRef}>
       <div className="header-wrapper">
-        {/* Left cluster — first half of the primary nav. */}
+        {/* Left zone — logo only (ORDER 01: replaces the old "Home" item). */}
         <div className="h-left">
-          <ul className="header-links header-links--left d-flex">
-            <li className={isActive("/") && pathname === "/" ? "current-menu-item" : undefined}>
-              <Link href="/" aria-current={pathname === "/" ? "page" : undefined}>
-                {t("home")}
-              </Link>
-            </li>
+          <div className="logo">
+            <Link href="/" aria-label="Trivoxa Group — home">
+              <Logo variant={condensed ? "mark" : "full"} slot="nav" tone={navLogoTone(condensed)} decorative />
+            </Link>
+          </div>
+        </div>
 
+        {/* Centre zone — the full primary nav. */}
+        <div className="h-center">
+          <ul className="header-links header-links--center d-flex">
             {/* The Group — simple dropdown */}
             <li
               className={`has-drop${isActive("/group/") ? " current-menu-item" : ""}${openMenu === "group" ? " menu-active" : ""}`}
@@ -210,7 +200,7 @@ export default function Header() {
               </div>
             </li>
 
-            {/* Businesses — two-column mega-menu */}
+            {/* Businesses — simple dropdown, exactly two items (ORDER 02) */}
             <li
               className={`has-drop${isActive("/businesses/") ? " current-menu-item" : ""}${openMenu === "biz" ? " menu-active" : ""}`}
               onMouseEnter={() => openNow("biz")}
@@ -226,6 +216,23 @@ export default function Header() {
               >
                 {t("businesses")}
               </Link>
+              <div className={`nav-drop${openMenu === "biz" ? " is-open" : ""}`} aria-hidden={openMenu !== "biz"}>
+                <ul>
+                  {businessesDropdown.map((item) => (
+                    <li key={item.key}>
+                      <Link href={item.href} tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
+                        {tm(item.key)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+
+            <li className={isActive("/industries/") ? "current-menu-item" : undefined}>
+              <Link href="/industries/" aria-current={isActive("/industries/") ? "page" : undefined}>
+                {t("industries")}
+              </Link>
             </li>
 
             <li className={isActive("/global-presence/") ? "current-menu-item" : undefined}>
@@ -233,20 +240,7 @@ export default function Header() {
                 {t("globalPresence")}
               </Link>
             </li>
-          </ul>
-        </div>
 
-        {/* Centered logo. Always the full lockup, at the navbar height token —
-            scrolling changes the tone, never the variant or the size. */}
-        <div className="logo">
-          <Link href="/" aria-label="Trivoxa Group — home">
-            <Logo variant="full" slot="nav" tone={navLogoTone(condensed)} decorative />
-          </Link>
-        </div>
-
-        {/* Right cluster — second half of the nav, then utilities. */}
-        <div className="h-right">
-          <ul className="header-links header-links--right d-flex">
             <li className={isActive("/insights/") ? "current-menu-item" : undefined}>
               <Link href="/insights/" aria-current={isActive("/insights/") ? "page" : undefined}>
                 {t("insights")}
@@ -258,6 +252,10 @@ export default function Header() {
               </Link>
             </li>
           </ul>
+        </div>
+
+        {/* Right zone — language switcher + primary CTA only (ORDER 01: mail icon removed). */}
+        <div className="h-right">
           <LanguageSwitcher />
           <Link href="/rfq/" className="primary-button nav-cta" data-analytics="nav-rfq-cta">
             <span className="d-flex">
@@ -272,9 +270,6 @@ export default function Header() {
             className="hamburger d-flex"
             type="button"
             aria-label={t("menu")}
-            // Was hardcoded `undefined`, so the control never reported its own
-            // state — a screen reader announced "menu, button" whether the
-            // overlay was open or closed.
             aria-expanded={navOpen}
             aria-controls="mobile-nav"
             onClick={toggleNavOverlay}
@@ -282,57 +277,6 @@ export default function Header() {
             <div />
             <div />
           </button>
-          <Link className="mobile-contact" href="/rfq/" aria-label={t("requestQuote")}>
-            <div>
-              <img src="/images/icons/envelope-send.svg" alt="" />
-            </div>
-          </Link>
-        </div>
-      </div>
-
-      {/* Businesses mega-menu panel — two columns only (spec §1). */}
-      <div
-        className={`mega-menu d-flex${openMenu === "biz" ? " is-open" : ""}`}
-        aria-hidden={openMenu !== "biz"}
-        onMouseEnter={() => openNow("biz")}
-        onMouseLeave={scheduleClose}
-        onBlur={blurGuard("biz")}
-      >
-        <div className="m-left" />
-        <div className="m-right d-flex">
-          <div className="mega-col">
-            <Link href="/businesses/product-exports/" className="mega-col__title" tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
-              {tm("productExports")}
-            </Link>
-            <ul className="sub-menu">
-              {productColumn.map((link) => (
-                <li key={link.key}>
-                  <Link href={link.href} tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
-                    {tm(link.key)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="mega-col">
-            <Link href="/businesses/service-exports/" className="mega-col__title" tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
-              {tm("serviceExports")}
-            </Link>
-            <ul className="sub-menu">
-              {serviceColumn.map((link) => (
-                <li key={link.key}>
-                  <Link href={link.href} tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
-                    {tm(link.key)}
-                  </Link>
-                </li>
-              ))}
-              <li className="mega-external">
-                <a href={DIGITAL_URL} target="_blank" rel="noopener noreferrer" tabIndex={openMenu === "biz" ? 0 : -1}>
-                  digital.trivoxagroup.com ↗
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

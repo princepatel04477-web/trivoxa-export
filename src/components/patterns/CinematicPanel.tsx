@@ -24,9 +24,9 @@ export interface CinematicPanelProps {
   align?: "left" | "right";
 }
 
-/** Full-bleed 100vh cinematic division panel. Reuses the homepage
- * `.arm-panel` styles (flagship-sections.css); adds a right-aligned
- * variant and an optional lazy video background with still fallback. */
+/** Full-bleed 100vh cinematic division panel. Base `.arm-panel` styles live
+ * in businesses-page.css (right-aligned variant, video bg, corner chips
+ * included). */
 export default function CinematicPanel({
   id,
   eyebrow,

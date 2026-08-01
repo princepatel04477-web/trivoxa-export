@@ -1,8 +1,82 @@
-/* Businesses page — cinematic division panels + pinned process timeline.
-   Panel base styles (.arm-panel*) live in flagship-sections.css; this file
-   adds the businesses-page variants. */
+/* Businesses page — cinematic division panels + pinned process timeline. */
 
-/* ---------- Cinematic panels: right-aligned variant, video bg, corner chips ---------- */
+/* ---------- Cinematic panels: base (ORDER 04 — was entirely missing,
+   collapsing #divisions to near-zero height: this caused Faults 1/2/3/4/5/6
+   simultaneously, since the "cleave" morph stage and every downstream
+   section boundary key off #divisions' real rendered height). No pin exists
+   here — each panel is a full-bleed 100vh block; two panels in normal flow
+   sequence one after another without overlap. ---------- */
+.business-arms {
+  position: relative;
+}
+
+.arm-panel {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 32px;
+  overflow: hidden;
+}
+
+@media (min-width: 1748px) {
+  .arm-panel {
+    padding-left: calc((100% - 1684px) / 2);
+    padding-right: calc((100% - 1684px) / 2);
+  }
+}
+
+.arm-panel__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.arm-panel__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 8%, transparent) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 100%);
+}
+
+.arm-panel__content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  padding-bottom: var(--space-2xl, 96px);
+}
+
+.arm-panel__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-bright, var(--gold));
+  margin-bottom: var(--space-sm, 12px);
+}
+
+.arm-panel__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 var(--space-md, 20px);
+}
+
+.arm-panel__thesis {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--text-2);
+  max-width: 46ch;
+}
+
+/* ---------- Right-aligned variant, video bg, corner chips ---------- */
 .business-arms .arm-panel + .arm-panel {
   margin-top: 0; /* panels butt directly against each other */
 }

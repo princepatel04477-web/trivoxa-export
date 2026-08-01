@@ -5,9 +5,10 @@
   padding: 18px 40px 0;
   width: 100%;
   transform: translateY(-200px);
-  /* Above the global grain overlay (z-index 9999) so nav + language dropdown
-     (a descendant, rides this stacking context) are never dimmed. */
-  z-index: 10000;
+  /* Above the global grain overlay (z-index 9999) and every canvas layer
+     (.gp-canvas is -1) so page content can never paint through the bar
+     (ORDER 04 Fault 1). */
+  z-index: 10001;
 }
 
 .header::before {
@@ -16,7 +17,10 @@
   content: "";
   position: absolute;
   top: 0;
-  opacity: 0;
+  /* Always at least partially opaque/blurred so body copy never reads
+     through the bar pre-scroll (ORDER 04 Fault 1); the scrolled state below
+     brings it to full opacity. */
+  opacity: 0.55;
   left: 0;
   background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, transparent) 0%, color-mix(in srgb, var(--bg) 0%, transparent) 100%);
   z-index: -1;
@@ -30,12 +34,10 @@
   opacity: 1;
 }
 
-/* Three-zone masthead: left nav · centered logo · right nav + utilities.
-   1fr / auto / 1fr keeps the logo optically centered no matter how the two
-   nav clusters differ in width. */
+/* Three-zone masthead (ORDER 01): logo left · nav centre · lang + CTA right. */
 .header .header-wrapper {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: 28px;
 }
@@ -44,22 +46,26 @@
   display: flex;
   align-items: center;
   justify-self: start;
-  justify-content: flex-start;
   min-width: 0;
 }
 
 /* Size and colour come from the logo's own tokens (styles/logo.css) — this
    only places the box. Nothing here may set a width, or the bar drifts out of
    step with the footer again. */
-.header .header-wrapper > .logo {
-  justify-self: center;
+.header .header-wrapper .h-left .logo {
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
 
-.header .header-wrapper > .logo a {
+.header .header-wrapper .h-left .logo a {
   display: block;
+}
+
+.header .header-wrapper .h-center {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
 }
 
 .header .header-wrapper .header-links {
@@ -109,26 +115,19 @@
   font-size: 16px;
   line-height: 21px;
   cursor: pointer;
+  /* ORDER 02: hover/current state is a colour shift only — no drawn line. */
+  transition: color 0.25s ease;
 }
 
-.header .header-wrapper .header-links li::after {
-  position: absolute;
-  width: 100%;
-  content: "";
-  bottom: 15px;
-  left: 0;
-  background-color: var(--advida-accent, var(--gold));
-  height: 1px;
-  opacity: 0;
-  transition: opacity 0.35s ease;
+.header .header-wrapper .header-links li:hover > a,
+.header .header-wrapper .header-links li.current-menu-item > a {
+  color: var(--gold-bright, var(--gold));
 }
 
-.header .header-wrapper .header-links li:hover::after {
-  opacity: 0.6;
-}
-
-.header .header-wrapper .header-links li.current-menu-item::after {
-  opacity: 1;
+.header .header-wrapper .header-links li a:focus-visible {
+  outline: 2px solid var(--gold-bright, var(--gold));
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .header .header-wrapper .h-right {
@@ -460,30 +459,25 @@
 }
 
 @media (max-width: 991px) {
-  /* Mobile drops the centered-logo grid for the conventional
-     logo-left / hamburger-right bar (the side nav clusters are hidden). */
+  /* Mobile drops the three-zone grid for the conventional logo-left /
+     hamburger-right bar — the centre nav is hidden (MobileNav.tsx owns
+     mobile navigation instead), but the logo (still in .h-left) stays. */
   .header .header-wrapper {
     display: flex;
     justify-content: space-between;
   }
-  .header .header-wrapper .h-left {
+  .header .header-wrapper .h-center {
     display: none;
-  }
-  .header .header-wrapper > .logo {
-    justify-self: auto;
-  }
-  .header .header-wrapper .h-right .mobile-contact {
-    display: block;
   }
   .header::before {
     height: 95px;
     /* Backdrop blur repaints on every scrolled frame — too costly on mobile
        GPUs; the denser gradient alone keeps the nav readable. */
+    opacity: 1;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 97%, transparent) 0%, color-mix(in srgb, var(--bg) 85%, transparent) 55%, color-mix(in srgb, var(--bg) 0%, transparent) 100%);
   }
-  .header .header-wrapper .header-links,
   .header .header-wrapper .h-right .nav-cta {
     display: none;
   }
