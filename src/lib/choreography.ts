@@ -39,12 +39,26 @@ import type { SceneConfig } from "./particle-scene";
  * bloom on dark, normal compositing with no bloom on light.
  */
 export const PARTICLE_PALETTE = {
-  // The token globals.css designates for ALL particle rendering.
+  // The token globals.css designates for ALL particle rendering. Home only —
+  // every other page below has its own distinct primary (still an existing
+  // token, never a new colour value), so five pages don't all render the
+  // same field.
   primary: "--gold-particle",
   // Focal nodes run a touch hotter, still inside the documented gold family.
   accent: "--gold-hover",
   ground: "dark",
 } as const;
+
+/** Per-page particle palettes — same accent (gold-hover) as the connective
+ * thread across every page, distinct primary per page so the five inner
+ * pages read apart from each other and from Home. Every value is one of the
+ * existing tokens design-tokens.ts already allows (globals.css); nothing
+ * new is introduced. Home keeps PARTICLE_PALETTE untouched. */
+const GROUP_PALETTE = { primary: "--gold", accent: "--gold-hover", ground: "dark" } as const;
+const BUSINESSES_PALETTE = { primary: "--port-origin-dot", accent: "--gold-hover", ground: "dark" } as const;
+const GLOBAL_PRESENCE_PALETTE = { primary: "--port-dest-dot", accent: "--gold-hover", ground: "dark" } as const;
+const INSIGHTS_PALETTE = { primary: "--success", accent: "--gold-hover", ground: "dark" } as const;
+const CAREERS_PALETTE = { primary: "--text-2", accent: "--gold-hover", ground: "dark" } as const;
 
 /**
  * Home — a deliberate, sparse sequence:
@@ -130,7 +144,7 @@ export const GROUP: Omit<SceneConfig, "onDegrade"> = {
     { trigger: "#looking-ahead", start: "top center", endTrigger: ".group-cta-wrap", end: "top center" },
   ],
   motion: "planar",
-  palette: PARTICLE_PALETTE,
+  palette: GROUP_PALETTE,
   // The lattice sits behind body copy for most of the page, so it is held well
   // below full strength — it is a watermark, not an illustration.
   fieldOpacity: 0.5,
@@ -209,7 +223,7 @@ export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
   motion: "geo",
   routes: true,
   draggable: true,
-  palette: PARTICLE_PALETTE,
+  palette: GLOBAL_PRESENCE_PALETTE,
   fieldOpacity: 0.55,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
@@ -259,7 +273,7 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
   // finished the strokes before the lattice even formed.
   linkEnvelope: { drawFrom: 1.55, drawTo: 3.0, fadeFrom: 3.45, fadeTo: 4.0 },
   motion: "planar",
-  palette: PARTICLE_PALETTE,
+  palette: INSIGHTS_PALETTE,
   // The lowest of the five: article cards sit directly in front of this one, and
   // the network is behind them as texture, not as competition.
   fieldOpacity: 0.42,
@@ -286,10 +300,10 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
  * assembled behind the list of roles you could join. Benefits and Where the Work
  * Happens fall inside the holds either side, so nothing is left unaccompanied.
  *
- * This page runs warmer strictly through accent PRESENCE, not a shifted palette:
- * the accent lands on every figure's head (~14% of a figure by area, ~11% of
- * the pool) against Insights' ~7%. No value is named here: PARTICLE_PALETTE is the
- * same token pair every other page resolves.
+ * The accent lands on every figure's head (~14% of a figure by area, ~11% of
+ * the pool) against Insights' ~7%. Primary is CAREERS_PALETTE (--text-2, a
+ * soft neutral) — distinct from every other page's field so five inner
+ * pages read apart from each other, not just from Home.
  */
 export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
   buildStages: withEagleFinale(buildCareersStages),
@@ -309,7 +323,7 @@ export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
   // organisation visibly wires itself together rather than appearing pre-wired.
   linkEnvelope: { drawFrom: 0.6, drawTo: 3.0, fadeFrom: 3.4, fadeTo: 4.0 },
   motion: "planar",
-  palette: PARTICLE_PALETTE,
+  palette: CAREERS_PALETTE,
   fieldOpacity: 0.46,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
@@ -346,7 +360,7 @@ export const BUSINESSES: Omit<SceneConfig, "onDegrade"> = {
     { trigger: "#why", start: "top center", endTrigger: ".tvx-cta", end: "top center" },
   ],
   motion: "planar",
-  palette: PARTICLE_PALETTE,
+  palette: BUSINESSES_PALETTE,
   fieldOpacity: 0.46,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
