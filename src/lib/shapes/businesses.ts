@@ -301,7 +301,7 @@ export function buildBusinessesStages(ctx: ShapeContext): Shape[] {
     { drift: R * 0.016 }
   );
 
-  // No closing stage here: withEagleFinale appends the shared eagle, so the chain
-  // converges into the brand mark behind the CTA.
+  // `process` is the last stage — no eagle finale follows it anymore (removed
+  // sitewide), so the process chain simply holds through the CTA.
   return [solid, loosened, divisions, process];
 }

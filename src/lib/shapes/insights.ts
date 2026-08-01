@@ -213,9 +213,8 @@ export function buildInsightsStages(ctx: ShapeContext): Shape[] {
   // one the reader is on when the strokes finish arriving (see linkEnvelope).
   lattice.links = web.links;
 
-  // No closing stage here: the shared eagle finale is appended by withEagleFinale
-  // (see src/lib/shapes/eagle.ts), so the lattice dissolves into the brand mark
-  // behind the CTA rather than into a page-specific drift.
+  // `lattice` is the last stage — no eagle finale follows it anymore (removed
+  // sitewide), so the full-density lattice simply holds through the CTA.
   return [point, scattered, web, lattice];
 }
 
