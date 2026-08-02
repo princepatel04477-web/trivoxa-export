@@ -104,3 +104,178 @@
     grid-template-rows: 1fr;
   }
 }
+
+/* ---------- Engagement model: instrument panel ---------- */
+/* This block previously did not exist. DeliveryModelDiagram rendered bare SVG
+   <circle> elements with no fill declared, so they fell back to the UA default
+   of solid black — the three black discs that appeared on every service
+   category page. The rail below is styled explicitly for that reason: it is the
+   fallback whenever the WebGL schematic is not running (reduced motion, low-end
+   device, or scrolled out of view), and it must never be able to paint itself
+   black again. */
+
+.delivery-model {
+  margin-top: var(--space-xl);
+}
+
+.delivery-model__panel {
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-paper) 72%, transparent);
+}
+
+.delivery-model__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-sm);
+}
+
+.delivery-model__kicker {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+
+.delivery-model__label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+
+/* Fixed-aspect stage so the canvas and the static rail occupy exactly the same
+   box — swapping between them never shifts the page. */
+.delivery-model__stage {
+  position: relative;
+  margin-top: var(--space-md);
+  aspect-ratio: 3.1 / 1;
+  min-height: 8rem;
+}
+
+.delivery-model__canvas,
+.delivery-model__canvas > canvas,
+.delivery-model__rail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* The rail is the resting state. Once the schematic reports itself live the
+   rail fades out rather than cutting, so the handover is not a flash. */
+.delivery-model__rail {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.delivery-model.is-live .delivery-model__rail {
+  opacity: 0;
+}
+
+.delivery-model__rail-line {
+  stroke: var(--color-rule);
+  stroke-width: 1;
+}
+
+.delivery-model__rail-ring {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
+.delivery-model__rail-dot {
+  fill: var(--gold);
+  opacity: 0.9;
+}
+
+.delivery-model__nodes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+  margin: var(--space-md) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.delivery-model__node {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  text-align: center;
+}
+
+.delivery-model__node:first-child {
+  text-align: left;
+}
+
+.delivery-model__node:last-child {
+  text-align: right;
+}
+
+.delivery-model__index {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  opacity: 0.75;
+}
+
+.delivery-model__name {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  color: var(--color-ink);
+}
+
+.delivery-model__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--color-rule);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+
+.delivery-model__status {
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+@media (max-width: 720px) {
+  .delivery-model__panel {
+    padding: var(--space-md) var(--space-sm) var(--space-sm);
+  }
+
+  /* The schematic needs horizontal room to read as a flow; below this width the
+     three stages stack and the stage box would only ever show a cramped sliver
+     of the axis, so the whole animated stage is dropped rather than shrunk. */
+  .delivery-model__stage {
+    display: none;
+  }
+
+  .delivery-model__nodes {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+
+  .delivery-model__node,
+  .delivery-model__node:first-child,
+  .delivery-model__node:last-child {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    text-align: left;
+  }
+}
