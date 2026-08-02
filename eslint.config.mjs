@@ -11,6 +11,9 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    // Generated Cloudflare Worker bundle — linting it OOMs the ESLint process.
+    ".open-next/**",
+    ".wrangler/**",
     "next-env.d.ts",
     "docs/**",
     ".claude/**",

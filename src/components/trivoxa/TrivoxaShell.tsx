@@ -13,7 +13,7 @@ import ContactModal from "@/components/ContactModal";
 import SiteFooter from "@/components/SiteFooter";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileStickyCta from "@/components/MobileStickyCta";
-import ShaderBackground from "@/components/ShaderBackground";
+import ShaderBackgroundWrapper from "@/components/ShaderBackgroundWrapper";
 
 /**
  * Shell for every non-home route: fixed header, mobile nav, contact modal,
@@ -35,7 +35,7 @@ export default function TrivoxaShell({
   return (
     <div className="tvx">
       <div className="tvx__bg" aria-hidden />
-      {film ? <ShaderBackground variant={film} /> : null}
+      {film ? <ShaderBackgroundWrapper variant={film} /> : null}
       <Header />
       <MobileNav />
       <ContactModal />

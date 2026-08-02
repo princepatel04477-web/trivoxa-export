@@ -9,7 +9,7 @@ import { autoReplyHtml, salesNotificationHtml } from "@/lib/email/rfq-templates"
 import { rfqSchema } from "@/lib/validation/rfq";
 import { CONTACT } from "@/data/contact";
 
-export async function POST(request: Request) {
+export async function handleRfq(request: Request) {
   let body: unknown;
   try {
     body = await request.json();

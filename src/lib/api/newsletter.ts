@@ -12,7 +12,7 @@ const schema = z.object({
   topics: z.array(z.string().trim().min(1).max(80)).max(5).optional(),
 });
 
-export async function POST(request: Request) {
+export async function handleNewsletter(request: Request) {
   let body: unknown;
   try {
     body = await request.json();

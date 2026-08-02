@@ -15,7 +15,7 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export async function POST(request: Request) {
+export async function handleContact(request: Request) {
   let body: unknown;
   try {
     body = await request.json();
