@@ -15,6 +15,10 @@ export function getLenis(): Lenis | null {
 export default function LenisProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
+  useEffect(() => {
+    sessionStorage.removeItem("trivoxa:chunk-reload");
+  }, [pathname]);
+
   // Lenis + every ScrollTrigger outlive client-side navigations (this provider
   // sits in the root layout), so without this the new page inherits the old
   // page's scroll offset and stale trigger positions — content gated behind

@@ -22,7 +22,9 @@ export function isLowEndDevice(): boolean {
   // that as "unknown, assume mid-tier" rather than penalizing those browsers.
   const memory = nav.deviceMemory ?? 4;
 
-  if (cores <= 2 || memory <= 2) return true;
+  const isCoarsePointer =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches;
 
   try {
     const canvas = document.createElement("canvas");
@@ -59,6 +61,11 @@ export function isLowEndDevice(): boolean {
     console.error("[gpu-capability] WebGL probe threw during capability check:", err);
     return true;
   }
+
+  // Do not let privacy-reduced CPU/RAM values alone disable desktop WebGL.
+  // Brave/Safari-style fingerprinting can under-report these while the GPU is
+  // perfectly usable, which was surfacing the wire-style fallback on MacBook.
+  if (isCoarsePointer && (cores <= 2 || memory <= 2)) return true;
 
   return false;
 }

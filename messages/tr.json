@@ -154,5 +154,1146 @@
       "eyebrow": "Görüşler",
       "heading": "Küresel ticareti yönlendiren bakış açıları"
     }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "Hakkımızda",
+      "title": "Surat'taki Bir Üretim Sahasından İnşa Edildik.",
+      "description": "Trivoxa Group bir ticaret şirketi olarak yola çıkmadı. Bir tekstil üreticisinin üretim sahasında başladı ve bu disiplini uluslararası ticarete taşıdı."
+    },
+    "origin": {
+      "eyebrow": "Kökenimiz",
+      "title": "Tek Bir Fabrikadan Büyüyen Bir İhracat Grubuna.",
+      "lead": "Trivoxa Group, Surat, Gujarat merkezli dokuma tekstil üreticisi Shiveshwar Textiles ile stratejik bir ortaklık içinde kuruldu. Üretim sahalarını yönetmekle geçen yıllar — dokuma tezgâhlarını idare etmek, teslimat sürelerine bağlı kalmak, kalite kontrollerine hesap vermek — şirketin ihracata yaklaşımını şekillendirdi: önce güvenilirlik, sonra her şey.\n\nAlıcı taleplerinin tekstilin ötesine geçip sağlık, yapı malzemeleri, tarım ve mühendislik ürünlerine yayılmasıyla birlikte Trivoxa Group, aynı üretim disiplinini yeni kategorilere taşımak üzere kuruldu — kendi bünyesinde üretim yapmak yerine incelemeden geçirilmiş ortaklar aracılığıyla tedarik sağlıyoruz, ancak her sevkiyatı kurucu üretim ortağımızın adını üzerine inşa ettiği standarda tabi tutuyoruz."
+    },
+    "quote": {
+      "text": "Bir ticarethane olmak için yola çıkmadık. Amacımız, Surat'ta verilen bir üretim sözünün Rotterdam'daki bir depoya ulaştığında hâlâ geçerli olmasını sağlamaktı.",
+      "cite": "— Trivoxa Group"
+    },
+    "info": {
+      "eyebrow": "Şirket ve İletişim",
+      "title": "Bize Nasıl Ulaşılır.",
+      "addressLabel": "Kayıtlı Adres",
+      "address": "Surat, Gujarat, Hindistan",
+      "emailLabel": "E-posta"
+    },
+    "cta": {
+      "title": "Grubumuz Hakkında Bir Sorunuz mu Var?",
+      "description": "Bize ulaşın, ekibimiz bir iş günü içinde size geri dönüş yapacaktır.",
+      "ctaContact": "Ekibimizle İletişime Geçin",
+      "ctaGroup": "Grubu Keşfedin"
+    }
+  },
+  "businesses": {
+    "hero": {
+      "eyebrow": "İş Alanlarımız",
+      "title": "Modern İş Dünyası İçin Küresel Çözümler.",
+      "description": "Trivoxa Group, işletmelerin uluslararası pazarlarda büyümesine yardımcı olan entegre ürün tedariki ve profesyonel hizmet çözümleri sunar. Güvenilir ortaklıklar, üretim uzmanlığı ve mükemmelliğe olan bağlılığımız sayesinde kurumları büyümek için ihtiyaç duydukları ürün, hizmet ve fırsatlarla buluşturuyoruz.",
+      "ctaQuote": "Teklif İsteyin",
+      "ctaDivisions": "İş Kollarımızı Keşfedin"
+    },
+    "overview": {
+      "eyebrow": "İş Alanlarımız",
+      "title": "İki İş Kolu. Mükemmelliğe Ortak Bir Bağlılık.",
+      "p1": "Trivoxa Group, küresel pazarlardaki kurumları desteklemek üzere tasarlanmış iki tamamlayıcı iş kolu üzerinden faaliyet gösterir.",
+      "p2": "Ürün İhracatı Bölümümüz, uluslararası alıcıları güvenilir üreticiler ve özenle seçilmiş Hindistan menşeli ürünlerle buluştururken, Hizmet İhracatı Bölümümüz teknoloji, tasarım ve iş çözümleri sunan yetkin profesyonellere erişim sağlar.",
+      "p3": "Bu iki iş kolu bir araya geldiğinde, üretim gücünü, profesyonel uzmanlığı ve uzun vadeli ortaklığı bir araya getiren entegre çözümler sunmamızı mümkün kılar."
+    },
+    "division1": {
+      "eyebrow": "İş Kolu 01",
+      "title": "ÜRÜN İHRACATI",
+      "description": "Hindistan genelindeki güvenilir üretim ortakları ağımız aracılığıyla yüksek kaliteli ürünleri tedarik edip teslim ediyoruz. Endüstriyel malzemeler ve tekstilden sağlık ürünleri ve tüketici mallarına kadar odağımız, küresel alıcıları uluslararası beklentileri karşılayan güvenilir tedarik çözümleriyle buluşturmaktır.",
+      "cta": "Ürün İhracatını Keşfedin"
+    },
+    "division2": {
+      "eyebrow": "İş Kolu 02",
+      "title": "HİZMET İHRACATI",
+      "description": "Kurumların teknoloji, yazılım geliştirme, yapay zekâ, markalaşma, dijital pazarlama ve iş destek hizmetleri aracılığıyla büyümesini hızlandırmalarına yardımcı oluyoruz. İşletmeleri Hindistan'ın yetkin profesyonelleriyle buluşturarak, modern iş zorluklarına özel pratik çözümler sunuyoruz.",
+      "cta": "Hizmet İhracatını Keşfedin"
+    },
+    "process": {
+      "eyebrow": "Sürecimiz",
+      "title": "Küresel İş Dünyasına Yapılandırılmış Bir Yaklaşım.",
+      "lead": "Her başarılı ortaklık, anlayışla başlar. Sürecimiz, yolculuğun her aşamasında netlik, kalite ve güven sağlamak üzere tasarlanmıştır.",
+      "steps": {
+        "step1Title": "İhtiyaçlarınızı Anlıyoruz",
+        "step1Desc": "İş hedeflerinizi, teknik özelliklerinizi ve ticari beklentilerinizi anlayarak başlıyoruz.",
+        "step2Title": "Doğru Çözümü Öneriyoruz",
+        "step2Desc": "İhtiyaçlarınız doğrultusunda en uygun ürünleri, üretim ortaklarını veya profesyonel hizmet ekiplerini belirliyoruz.",
+        "step3Title": "Üretimi veya Uygulamayı Koordine Ediyoruz",
+        "step3Desc": "Süreç boyunca net bir iletişim sürdürerek tedarik, üretim veya proje uygulama sürecini yönetiyoruz.",
+        "step4Title": "Kaliteyi Doğruluyoruz",
+        "step4Desc": "Her çözüm, kaliteye odaklı koordinasyon ve üzerinde mutabık kalınan gereksinimlere gösterilen özenle desteklenir.",
+        "step5Title": "Güvenle Teslim Ediyoruz",
+        "step5Desc": "Belgelendirme ve lojistikten proje teslimatına ve devam eden desteğe kadar, baştan sona güvenilir bir deneyim sağlamak için çalışıyoruz."
+      }
+    },
+    "why": {
+      "eyebrow": "Neden Trivoxa",
+      "title": "Deneyim Üzerine Kurulu. Ortaklığa Odaklı.",
+      "strengths": {
+        "s1Title": "Üretim Temeli",
+        "s1Desc": "Kurucu stratejik ortağımız Shiveshwar Textiles'in üretim uzmanlığı üzerine inşa edilmiştir.",
+        "s2Title": "Güvenilir Ortak Ağı",
+        "s2Desc": "Özenle seçilmiş üreticiler, profesyoneller ve çözüm sağlayıcılardan oluşan büyüyen bir ekosistem.",
+        "s3Title": "Kalite Odaklı Yaklaşım",
+        "s3Desc": "Her proje; kaliteye, güvenilirliğe ve uzun vadeli değere gösterilen özenle yürütülür.",
+        "s4Title": "Küresel Bakış Açısı",
+        "s4Desc": "Küresel ticaret için tasarlanmış çözümlerle uluslararası pazarlardaki işletmeleri destekliyoruz.",
+        "s5Title": "Ölçeklenebilir Çözümler",
+        "s5Desc": "Müşterilerimizin gelişen ihtiyaçlarıyla birlikte büyüyen esnek yetkinlikler.",
+        "s6Title": "Uzun Vadeli İlişkiler",
+        "s6Desc": "Sürdürülebilir başarının, tek seferlik işlemlerle değil, kalıcı ortaklıklarla elde edildiğine inanıyoruz."
+      }
+    },
+    "cta": {
+      "title": "Küresel İşi Birlikte İnşa Edelim.",
+      "description": "İster ürün tedarik ediyor, ister profesyonel uzmanlık arıyor, ister yeni uluslararası fırsatları değerlendiriyor olun, Trivoxa Group güvenle ilerlemenize yardımcı olmaya hazır.",
+      "ctaQuote": "Teklif İsteyin",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    }
+  },
+  "industries": {
+    "hero": {
+      "eyebrow": "Sektörler",
+      "title": "Sektörel Uzmanlık. Küresel Fırsatlar.",
+      "description": "Her sektörün kendine özgü zorlukları, standartları ve fırsatları vardır. Trivoxa Group; uluslararası pazarlardaki işletmelerin gelişen ihtiyaçlarına özel çözümler sunmak için üretim uzmanlığını, stratejik tedariki ve profesyonel hizmetleri bir araya getirir.",
+      "ctaExplore": "Sektörleri Keşfedin",
+      "ctaQuote": "Teklif İsteyin"
+    },
+    "overview": {
+      "eyebrow": "Sektörlerimiz",
+      "title": "Bilgi, Ortaklık ve Küresel Çözümlerle Sektörlere Destek.",
+      "p1": "Trivoxa'da, başarılı ortaklıkların hizmet verdiğimiz sektörleri anlamakla başladığına inanıyoruz.",
+      "p2": "Her sektörün kendine özgü operasyonel gereksinimleri, kalite standartları ve ticari beklentileri vardır. Üretim uzmanlığını, uluslararası ticaret deneyimini ve profesyonel hizmetleri bir araya getirerek, sektöre özgü zorlukları ele alırken uzun vadeli iş değeri yaratan çözümler sunuyoruz.",
+      "p3": "İster üreticileri, dağıtıcıları, perakendecileri, sağlık kurumlarını isterse teknoloji odaklı işletmeleri destekliyor olalım, hedefimiz aynı kalıyor: ortaklarımızın giderek daha bağlantılı hale gelen küresel pazarda güvenle büyümesine yardımcı olmak."
+    },
+    "list": {
+      "eyebrow": "Hizmet Verdiğimiz Sektörler",
+      "title": "Çeşitli Sektörlerde Çözümler.",
+      "lead": "Trivoxa Group, güvenilir ortaklıklar, sorumlu tedarik ve özel iş çözümleri aracılığıyla giderek büyüyen bir sektör portföyünü destekliyor."
+    },
+    "items": {
+      "textile-apparel": {
+        "name": "Tekstil ve Giyim",
+        "description": "Üreticileri, markaları, toptancıları ve tedarik şirketlerini kumaşlar, ev tekstili, giyim aksesuarları ve özelleştirilmiş tedarik çözümleriyle destekliyoruz.",
+        "buyerTypes": {
+          "b1": "Giyim ve moda markaları",
+          "b2": "Ev ve iç mekân perakendecileri",
+          "b3": "Toptancılar ve distribütörler",
+          "b4": "Tedarik ve satın alma şirketleri"
+        },
+        "complianceNote": "Alıcılar genellikle kumaş bileşimi etiketlemesi ve AB/ABD'ye yönelik sevkiyatlar için kısıtlı madde belgelendirmesi (REACH, CPSIA) talep eder. Üretim ortaklarımızın her sipariş için sağlayabileceği belgeleri biz koordine ediyoruz."
+      },
+      "healthcare-pharmaceuticals": {
+        "name": "Sağlık ve İlaç",
+        "description": "Sorumlu tedarik ve kalite odaklı üretim ortaklıkları aracılığıyla güvenilir ilaç ürünlerine ve sağlık çözümlerine erişim sağlıyoruz.",
+        "buyerTypes": {
+          "b1": "İlaç distribütörleri",
+          "b2": "Sağlık ürünü ithalatçıları",
+          "b3": "Eczane zincirleri ve toptancılar",
+          "b4": "Nutrasötik markalar"
+        },
+        "complianceNote": "İlaç ürünü ihracatı, varış ülkesinin ithalat mevzuatına tabidir. Alıcılar, kendi ülkelerindeki ithalat lisanslamasını teyit etmekten sorumludur."
+      },
+      "building-materials": {
+        "name": "Yapı Malzemeleri",
+        "description": "Konut, ticari ve altyapı projeleri için doğal taş, mermer, granit, seramik ürünler ve inşaat malzemeleri tedarik ediyoruz.",
+        "buyerTypes": {
+          "b1": "İnşaat müteahhitleri",
+          "b2": "Mimarlar ve tasarımcılar",
+          "b3": "Yapı malzemesi distribütörleri",
+          "b4": "Altyapı proje geliştiricileri"
+        },
+        "complianceNote": "Taş ve fayans sevkiyatları genellikle boyutsal tolerans sertifikaları ve AB'ye yönelik gönderiler için üreticiden CE işareti belgelendirmesi gerektirir. Her sipariş için ilgili belgeleri biz koordine ediyoruz."
+      },
+      "furniture-interiors": {
+        "name": "Mobilya ve İç Mekân",
+        "description": "İşletmeleri konut, ticari ve konaklama ortamları için kaliteli mobilya ve iç mekân çözümleriyle buluşturuyoruz.",
+        "buyerTypes": {
+          "b1": "Ağırlama ve otel grupları",
+          "b2": "Ticari iç mekân tasarımcıları",
+          "b3": "Mobilya perakendecileri ve distribütörleri"
+        },
+        "complianceNote": "Masif ahşap mobilyalar, standart ihracat belgelendirmesinin yanı sıra genellikle ambalaj için ISPM 15 fümigasyon sertifikasyonu ile sevk edilir."
+      },
+      "agriculture-food": {
+        "name": "Tarım ve Gıda",
+        "description": "Uluslararası alıcıları özenle tedarik edilmiş tarım ürünleri, taze ürünler, baharatlar ve işlenmiş gıda çözümleriyle destekliyoruz.",
+        "buyerTypes": {
+          "b1": "Gıda ithalatçıları ve distribütörleri",
+          "b2": "Baharat ve içerik toptancıları",
+          "b3": "Gıda üreticileri",
+          "b4": "Perakende ve yiyecek-içecek hizmeti alıcıları"
+        },
+        "complianceNote": "Hindistan'dan yapılan gıda ve tarım ürünü ihracatı FSSAI ve APEDA tarafından düzenlenir. Alıcılar, sipariş vermeden önce sevkiyatlarına uygulanacak özel kayıtları ve bitki sağlığı sertifikalarını teyit etmelidir."
+      },
+      "engineering-industrial": {
+        "name": "Mühendislik ve Sanayi",
+        "description": "Endüstriyel büyümeyi ve altyapı gelişimini destekleyen endüstriyel ürünler, mühendislik bileşenleri ve üretim çözümleri sunuyoruz.",
+        "buyerTypes": {
+          "b1": "Endüstriyel ekipman distribütörleri",
+          "b2": "OEM üreticileri",
+          "b3": "Altyapı ve inşaat firmaları",
+          "b4": "Bakım ve onarım alıcıları"
+        },
+        "complianceNote": "Makine ve bileşenler genellikle malzeme test sertifikalarıyla ve uygun olan durumlarda üretici tarafından sağlanan CE veya UL uygunluk belgeleriyle sevk edilir."
+      },
+      "technology": {
+        "name": "Teknoloji",
+        "description": "Modern işletmeler için yazılım geliştirme, yapay zekâ, dijital dönüşüm ve teknoloji çözümleri sunuyoruz.",
+        "buyerTypes": {
+          "b1": "Startuplar ve büyüyen şirketler",
+          "b2": "Yerleşik kurumsal işletmeler",
+          "b3": "Teslimat kapasitesi arayan ajanslar"
+        },
+        "complianceNote": "İş birlikleri; net kapsamlar, fikri mülkiyet sahiplik koşulları ve her müşterinin yargı bölgesine uygun veri işleme anlaşmaları etrafında yapılandırılır."
+      },
+      "retail-consumer-goods": {
+        "name": "Perakende ve Tüketim Ürünleri",
+        "description": "Perakendecilerin, dağıtıcıların ve tüketici markalarının tedarik zincirlerini ölçeklenebilir tedarik ve iş çözümleriyle güçlendirmelerine yardımcı oluyoruz.",
+        "buyerTypes": {
+          "b1": "Perakende zincirleri",
+          "b2": "E-ticaret markaları",
+          "b3": "Distribütörler ve toptancılar"
+        },
+        "complianceNote": "Tüketim ürünü gereksinimleri kategoriye göre değişir — etiketleme, güvenlik işaretleri ve sertifikasyon ihtiyaçları, üretim başlamadan önce varış pazarına göre teyit edilir."
+      },
+      "jewellery-precious-products": {
+        "name": "Mücevher ve Değerli Ürünler",
+        "description": "Güvenilir üretim ortaklıkları aracılığıyla küresel alıcıları özenle tedarik edilmiş mücevher ve değerli ürünlerle buluşturuyoruz.",
+        "buyerTypes": {
+          "b1": "Mücevher perakendecileri ve distribütörleri",
+          "b2": "Toptan satış ve ihracat şirketleri",
+          "b3": "Özel etiketli mücevher markaları"
+        },
+        "complianceNote": "Değerli metal ve değerli taş ihracatı genellikle ayar damgalaması, saflık sertifikasyonu ve uygun olan durumlarda Kimberley Process belgelendirmesine tabidir. Alıcılar, sipariş vermeden önce varış pazarları için geçerli özel sertifikasyon gereksinimlerini teyit etmelidir."
+      }
+    },
+    "challenges": {
+      "eyebrow": "Sektörünüzü Anlamak",
+      "title": "Her Sektörün Farklı Zorlukları Vardır. Her Çözüm de Farklı Olmalıdır.",
+      "p1": "Hiçbir iki sektör tam olarak aynı şekilde işlemez.",
+      "p2": "Mevzuata uyumdan ve kalite güvencesinden tedarik zinciri güvenilirliğine, üretim verimliliğine ve değişen pazar beklentilerine kadar her sektör kendine özgü fırsatlar ve zorluklar sunar.",
+      "p3": "Trivoxa'da, müşterilerimizin operasyonel, teknik ve ticari hedefleriyle uyumlu çözümler önermeden önce bu gerçekleri anlamakla işe başlıyoruz."
+    },
+    "solutions": {
+      "eyebrow": "Yetkinliklerimiz",
+      "title": "Sektörel Gereksinimlere Göre Tasarlanmış Çözümler.",
+      "lead": "Yetkinliklerimiz, ürün tedarik etmenin veya hizmet sunmanın ötesine geçer. İşletmelerle birlikte operasyonel verimliliği, uluslararası büyümeyi ve uzun vadeli başarıyı destekleyen pratik çözümler geliştiriyoruz.",
+      "items": {
+        "i1": "Stratejik Ürün Tedariki",
+        "i2": "Profesyonel Hizmet Çözümleri",
+        "i3": "Üretim Ortaklıkları",
+        "i4": "Kalite Koordinasyonu",
+        "i5": "İhracat Belgelendirmesi",
+        "i6": "Lojistik Koordinasyonu",
+        "i7": "Teknoloji Entegrasyonu",
+        "i8": "Uzun Vadeli İş Desteği"
+      }
+    },
+    "approach": {
+      "eyebrow": "Yaklaşımımız",
+      "title": "Her Sektörde Güçlü Ortaklıklar İnşa Etmek.",
+      "lead": "Her başarılı ortaklık; anlayış, iş birliği ve uzun vadeli bağlılık üzerine kurulu yapılandırılmış bir yaklaşımı takip eder.",
+      "steps": {
+        "step1Title": "Sektörel Gereksinimleri Anlıyoruz",
+        "step1Desc": "En uygun çözümü önermeden önce işinizi, teknik özelliklerinizi, uyumluluk gereksinimlerinizi ve ticari hedeflerinizi anlayarak başlıyoruz.",
+        "step2Title": "Doğru Ortakları Bir Araya Getiriyoruz",
+        "step2Desc": "Güvenilir üreticilerden, yetkin profesyonellerden, lojistik sağlayıcılardan ve teknoloji uzmanlarından oluşan ağımız, sektörünüze özel çözümler oluşturmamızı sağlar.",
+        "step3Title": "Güvenilir Çözümler Sunuyoruz",
+        "step3Desc": "İster ürün tedarikini koordine ediyor ister profesyonel hizmetler sunuyor olalım, her aşamada kaliteye, şeffaflığa ve güvenilir uygulamaya odaklanıyoruz.",
+        "step4Title": "Uzun Vadeli İlişkiler Kuruyoruz",
+        "step4Desc": "En güçlü iş ilişkilerinin güven, tutarlı performans ve sürdürülebilir büyümeye ortak bir bağlılıkla inşa edildiğine inanıyoruz."
+      }
+    },
+    "why": {
+      "eyebrow": "Neden Trivoxa",
+      "title": "Deneyim Üzerine Kurulu. Ortaklıkla Yönlendirilen.",
+      "lead": "İşletmeler Trivoxa'yı tercih ediyor çünkü pratik sektör bilgisini uluslararası iş dünyasına yönelik uzun vadeli bir yaklaşımla birleştiriyoruz.",
+      "strengths": {
+        "s1Title": "Üretim Temeli",
+        "s1Desc": "Kurucu stratejik ortağımız Shiveshwar Textiles'in üretim uzmanlığı üzerine inşa edilmiştir.",
+        "s2Title": "Sektörel Anlayış",
+        "s2Desc": "Her sektörün operasyonel gerçekleri etrafında geliştirilen çözümler.",
+        "s3Title": "Güvenilir Ağ",
+        "s3Desc": "Üreticiler, teknoloji sağlayıcıları, lojistik uzmanları ve iş profesyonellerinden oluşan giderek büyüyen bir ekosistem.",
+        "s4Title": "Kalite Odaklı Operasyonlar",
+        "s4Desc": "Tutarlılığa, güvenilirliğe ve sürekli iyileştirmeye bağlılık.",
+        "s5Title": "Küresel Bakış Açısı",
+        "s5Desc": "Uluslararası tedarik, profesyonel hizmetler ve küresel ortaklıklar aracılığıyla işletmeleri destekliyoruz.",
+        "s6Title": "Uzun Vadeli İlişkiler",
+        "s6Desc": "Bireysel projelerin çok ötesinde değer yaratmaya devam eden ortaklıklar inşa etmeye odaklanıyoruz."
+      }
+    },
+    "lookingAhead": {
+      "eyebrow": "İleriye Bakış",
+      "title": "Hizmet Verdiğimiz Sektörlerle Birlikte Büyümek.",
+      "p1": "Sektörler gelişmeye devam ediyor, Trivoxa da öyle.",
+      "p2": "Yetkinliklerimizi genişletmeye, uluslararası ortaklıkları güçlendirmeye, inovasyonu benimsemeye ve yükselen sektörleri sorumlu iş uygulamaları ve ileriye dönük çözümlerle desteklemeye kararlıyız.",
+      "p3": "Büyümeye devam ederken odağımız, ortaklarımız için sürdürülebilir değer yaratmaya ve daha güçlü sektörlere ve daha bağlantılı küresel pazarlara katkıda bulunmaya devam ediyor."
+    },
+    "cta": {
+      "title": "Sektörel Çözümleri Birlikte İnşa Edelim.",
+      "description": "İster güvenilir tedarik, ister profesyonel uzmanlık, ister uzun vadeli bir uluslararası iş ortağı arıyor olun, Trivoxa işinizi güvenle ileriye taşımaya hazır.",
+      "ctaQuote": "Teklif İsteyin",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    }
+  },
+  "globalPresencePage": {
+    "hero": {
+      "eyebrow": "Küresel Varlık",
+      "title": "Sınırlar Arasında Fırsatları Birleştiriyoruz.",
+      "description": "Uluslararası ticaret; güven, iş birliği ve güçlü ilişkiler üzerine kuruludur. Genişleyen tedarikçi, ortak ve müşteri ağı sayesinde Trivoxa Group, kurumların uluslararası pazarlarda güvenle büyümesini sağlayan anlamlı bağlantılar kuruyor.",
+      "ctaConversation": "Görüşmeye Başlayın",
+      "ctaQuote": "Teklif İsteyin"
+    },
+    "overview": {
+      "eyebrow": "Küresel Yaklaşımımız",
+      "title": "Tek Bir Vizyon. Pazarlar Arasında Bağlantılı.",
+      "lead": "Küresel yaklaşımımız basit bir inanca dayanır: anlamlı iş, sınır ötesi iş birliği ve uzun vadeli ilişkiler yoluyla büyür.\n\nPazarları birbirine bağlıyor, uluslararası ticareti basitleştiriyor; üreticileri, profesyonelleri ve alıcıları güven ve ortak başarıya odaklanan bir uluslararası iş felsefesi doğrultusunda tek, güvenilir bir ağda bir araya getiriyoruz."
+    },
+    "network": {
+      "eyebrow": "Etkileşimli Küresel Ağ",
+      "heading": "Tek Bağlantılı Dünya.",
+      "lead": "Birlikte çalıştığımız her ortak, liman ve alıcı bu küre üzerinde bir yerde bulunuyor — dönen tek bir ağ. Etrafına bakmak için sürükleyin; bölgelerin aydınlandığını ve ticaret hatlarının aralarında çizildiğini görmek için kaydırmaya devam edin."
+    },
+    "regionsSection": {
+      "eyebrow": "Hizmet Verdiğimiz Bölgeler",
+      "title": "{count} Küresel Bölgede Varlık Oluşturuyoruz.",
+      "lead": "Sınırları saymak yerine, ortaklarımızın faaliyet gösterdiği ve büyüdüğü bölgelerde kalıcı ilişkiler kurmaya odaklanıyoruz."
+    },
+    "regionItems": {
+      "europe": "Yerleşik ve gelişmekte olan Avrupa pazarları için tekstil, yapı malzemeleri ve profesyonel hizmetler.",
+      "middle-east": "Hızla büyüyen Körfez ve bölgesel pazarlar için yapı malzemeleri, tarım ve tüketim ürünleri.",
+      "africa": "Altyapı ve kalkınmayı destekleyen tarım, ilaç ve endüstriyel ürünler.",
+      "north-america": "Kaliteye önem veren talepkâr alıcılar için tekstil, ev eşyaları ve teknoloji hizmetleri.",
+      "south-america": "Genişleyen bölgesel tedarik zincirleri için tedarik ortaklıkları ve tüketim ürünleri.",
+      "asia-pacific": "APAC genelinde üretim iş birliği, teknoloji hizmetleri ve sınır ötesi ticaret."
+    },
+    "statsSection": {
+      "eyebrow": "Rakamlarla Varlığımız",
+      "title": "Dürüstçe Ölçülen Ağ.",
+      "regionsServed": "Hizmet verilen bölgeler",
+      "industriesCovered": "Kapsanan sektörler",
+      "exportPorts": "İhracat limanları",
+      "responseWindow": "Yanıt süresi (IST)"
+    },
+    "ports": {
+      "eyebrow": "İhracat Limanları",
+      "title": "Sevkiyatların Çıkış Noktaları.",
+      "lead": "Her sevkiyat, varış noktasından bağımsız olarak, köklü Hindistan ihracat limanları üzerinden koordine edilir.",
+      "mundraRole": "Kargo hacmine göre Hindistan'ın en büyük ticari limanı",
+      "mundraDetail": "Kutch Körfezi'nde her hava koşuluna uygun, derin su çekimli bir liman — Gujarat'tan yapılan konteyner ve dökme yük ihracatının iş atı.",
+      "kandlaRole": "Kuru ve sıvı dökme yük için başlıca kapı",
+      "kandlaDetail": "Deendayal Limanı, tarım emtiası ve dökme yük ihracatının merkezidir — baharat, tahıl ve hint yağı sevkiyatları için doğal bir seçimdir.",
+      "nhavaShevaRole": "Hindistan'ın en büyük konteyner limanı",
+      "nhavaShevaDetail": "Hindistan'ın konteynerli ticaretinin yaklaşık yarısını elinde bulundurur — Avrupa ve Amerika sevkiyatları için varsayılan koridordur."
+    },
+    "ecosystem": {
+      "eyebrow": "Ekosistemimiz",
+      "title": "Trivoxa Dünyayı Nasıl Birbirine Bağlıyor.",
+      "lead": "Üretim ortaklarından küresel alıcılara kadar, ekosistemimiz karmaşık uluslararası ticareti sorunsuz iş ilişkilerine dönüştürür.",
+      "items": {
+        "e1Title": "Üretim Ortakları",
+        "e1Desc": "Shiveshwar Textiles öncülüğündeki güvenilir üreticiler.",
+        "e2Title": "Ürün İhracatı Bölümü",
+        "e2Desc": "Dünya çapında tedarik edilip teslim edilen fiziksel ürünler.",
+        "e3Title": "Hizmet İhracatı Bölümü",
+        "e3Desc": "Teknoloji, tasarım ve profesyonel ekipler.",
+        "e4Title": "Lojistik Ortakları",
+        "e4Desc": "Koordineli ihracat, belgelendirme ve teslimat.",
+        "e5Title": "Küresel Alıcılar",
+        "e5Desc": "Uluslararası pazarlarda hizmet verdiğimiz kurumlar.",
+        "e6Title": "Uzun Vadeli Ortaklıklar",
+        "e6Desc": "Kalıcı olmak ve büyümek üzere inşa edilmiş ilişkiler."
+      }
+    },
+    "tradeOps": {
+      "eyebrow": "Ticaret ve Operasyonlar",
+      "title": "Uluslararası İşi Uçtan Uca Yönetmek.",
+      "lead": "Ortaklarımızın büyümeye odaklanabilmesi için küresel ticaretin pratik gerçeklerini biz koordine ediyoruz.",
+      "items": {
+        "o1": "Küresel Tedarik",
+        "o2": "İhracat Koordinasyonu",
+        "o3": "Belgelendirme",
+        "o4": "Kalite Güvencesi",
+        "o5": "Tedarik Zinciri Yönetimi",
+        "o6": "Uluslararası İletişim"
+      }
+    },
+    "growing": {
+      "eyebrow": "Sınırlar Arasında Büyüme",
+      "title": "Net Bir Hedef, Sorumlu Bir Şekilde İnşa Edildi.",
+      "lead": "Erişimimizi abartmak yerine, gerçek ve kalıcı değer yaratan büyümeye odaklanıyoruz.",
+      "items": {
+        "g1": "Genişleyen Ortaklıklar",
+        "g2": "Gelişmekte Olan Pazarlar",
+        "g3": "Yeni Sektörler",
+        "g4": "Küresel İş Birliği",
+        "g5": "Uzun Vadeli Büyüme"
+      }
+    },
+    "why": {
+      "eyebrow": "Neden Trivoxa",
+      "title": "Küresel İşletmeler Neden Trivoxa'yı Seçiyor.",
+      "statements": {
+        "w1Title": "Küresel İş Bakış Açısı",
+        "w1Desc": "Sunduğumuz her çözümü şekillendiren uluslararası bir bakış açısı.",
+        "w2Title": "Üretim Mirası",
+        "w2Desc": "Kurucu üretim ortağımızdan gelen gerçek üretim bilgisi.",
+        "w3Title": "Güvenilir Ortak Ağı",
+        "w3Desc": "Dünya çapında incelemeden geçirilmiş ortaklardan oluşan büyüyen bir ekosistem.",
+        "w4Title": "Sınır Ötesi Uzmanlık",
+        "w4Desc": "Uluslararası ticaret ve uyumluluk konusunda gezinme deneyimi.",
+        "w5Title": "Profesyonel İletişim",
+        "w5Desc": "Farklı zaman dilimlerinde net ve güvenilir koordinasyon.",
+        "w6Title": "Uzun Vadeli İlişkiler",
+        "w6Desc": "Pazarlar ve yıllar boyunca büyümek üzere tasarlanmış ortaklıklar."
+      }
+    },
+    "cta": {
+      "title": "Sınırlar Arasında Bağlantı Kuralım.",
+      "description": "İşiniz nereye yönelirse yönelsin, Trivoxa Group uluslararası pazarlarda tedarik yapmanıza, büyümenize ve kalıcı ortaklıklar kurmanıza yardımcı olmaya hazır.",
+      "ctaConversation": "Görüşmeye Başlayın",
+      "ctaQuote": "Teklif İsteyin"
+    }
+  },
+  "contact": {
+    "hero": {
+      "eyebrow": "İletişim",
+      "title": "Geleceği Birlikte İnşa Edelim.",
+      "description": "İster ürün tedarik etmek, ister uluslararası pazarlara açılmak, ister uzun vadeli bir iş ortaklığı kurmak isteyin, ekibimiz güvenle ilerlemenize yardımcı olmaya hazır.",
+      "ctaContact": "Bize Ulaşın",
+      "ctaQuote": "Teklif İsteyin"
+    },
+    "help": {
+      "eyebrow": "Size Nasıl Yardımcı Olabiliriz?",
+      "title": "Başlamak İstediğiniz Yeri Seçin."
+    },
+    "inquiries": {
+      "productExport": {
+        "name": "Ürün İhracatı Talebi",
+        "description": "Üretim ağımız üzerinden ürün tedarik edin — HS kodlarına ve minimum sipariş miktarlarına (MOQ) göre teklif alın."
+      },
+      "serviceExport": {
+        "name": "Hizmet İhracatı Talebi",
+        "description": "Teknoloji, yapay zekâ, yazılım, tasarım, pazarlama ve iş destek hizmetleri."
+      },
+      "supplier": {
+        "name": "Tedarikçi ve Üretim Ortaklığı",
+        "description": "Üretici veya çözüm sağlayıcı olarak ortak ağımıza katılın."
+      },
+      "partnership": {
+        "name": "Stratejik Ortaklık",
+        "description": "Dağıtım, yatırım, ortak girişim ve tavsiye ortaklıkları."
+      },
+      "careers": {
+        "name": "Kariyer Fırsatları",
+        "description": "Grup genelindeki açık pozisyonlar ve açık başvurular."
+      },
+      "general": {
+        "name": "Genel Bilgi Talebi",
+        "description": "Başka bir konu — talebinizi doğru kişiye yönlendireceğiz."
+      }
+    },
+    "formHeading": "Bize birkaç satır yazın, sizinle iletişime geçelim.",
+    "info": {
+      "emailLabel": "E-posta",
+      "businessLabel": "İş Alanı",
+      "businessValue": "Ürün İhracatı ve Hizmet İhracatı",
+      "foundationLabel": "Temel",
+      "foundationValue": "{relationship} Shiveshwar Textiles tarafından destekleniyor",
+      "foundationRelationship": "Kurucu stratejik üretim ortağımız",
+      "followLabel": "Takip Edin",
+      "followValue": "LinkedIn · Instagram · X · YouTube",
+      "microcopy": "Trivoxa Group, iş faaliyetlerini Surat, Gujarat, Hindistan'dan koordine ederken küresel ölçekte faaliyet gösterir."
+    }
+  },
+  "footer": {
+    "tagline": "Küresel Ticaretin Geleceğini İnşa Ediyoruz — Her Seferinde Bir Ortaklık.",
+    "headquartersLabel": "Genel Merkez",
+    "headquartersValue": "Surat, Gujarat, Hindistan",
+    "servingLabel": "Alıcılara hizmet verdiğimiz bölgeler",
+    "columns": {
+      "theGroup": "Grup",
+      "productExports": "Ürün İhracatı",
+      "serviceExports": "Hizmet İhracatı",
+      "explore": "Keşfedin",
+      "allProductExports": "Tüm Ürün İhracatı"
+    },
+    "links": {
+      "compliance": "Uyumluluk",
+      "requestQuote": "Teklif İsteyin"
+    },
+    "newsletter": {
+      "title": "Haberdar Olun",
+      "copy": "Küresel ticaret ve iş dünyasına dair üç aylık bülten.",
+      "placeholder": "E-posta adresiniz",
+      "emailAriaLabel": "E-posta adresi",
+      "subscribeAriaLabel": "Abone Ol",
+      "thanks": "Teşekkürler — listeye eklendiniz.",
+      "errorGeneric": "Şu anda abone olunamadı — lütfen tekrar deneyin.",
+      "responseNote": "24 iş saati içinde yanıt verilir (IST)"
+    },
+    "legal": {
+      "privacy": "Gizlilik",
+      "terms": "Şartlar",
+      "antiCorruption": "Yolsuzlukla Mücadele Politikası",
+      "cookiePreferences": "Çerez Tercihleri"
+    },
+    "copyright": "© Trivoxa Group 2026",
+    "parentCredit": "Shiveshwar Textiles'in üretim mirası üzerine kurulmuş bir girişim"
+  },
+  "contactForm": {
+    "fullNamePlaceholder": "Ad Soyad",
+    "fullNameAria": "Ad soyad",
+    "companyNamePlaceholder": "Şirket Adı",
+    "companyNameAria": "Şirket adı",
+    "emailPlaceholder": "E-posta adresiniz",
+    "emailAria": "E-posta adresiniz",
+    "messagePlaceholder": "Size nasıl yardımcı olabiliriz?",
+    "messageAria": "Size nasıl yardımcı olabiliriz?",
+    "sendNow": "Şimdi Gönder",
+    "sending": "Gönderiliyor…",
+    "successMessage": "Mesaj gönderildi — ekibimiz 24 iş saati içinde (IST) sizinle iletişime geçecektir.",
+    "errorGeneric": "Mesajınız gönderilirken bir sorun oluştu. Lütfen tekrar deneyin.",
+    "errorValidation": "Lütfen formu kontrol edip tekrar deneyin"
+  },
+  "common": {
+    "whatsappAria": "WhatsApp'ta sohbet edin",
+    "exportServicesFallback": "ihracat hizmetleriniz"
+  },
+  "careers": {
+    "hero": {
+      "eyebrow": "Kariyer",
+      "title": "Sıradakini Bizimle İnşa Edin.",
+      "description": "Her büyük kurum, kendisinden daha büyük bir şey yaratmaya inanan insanlar tarafından inşa edilir.\n\nTrivoxa'da; merak, dürüstlük, inovasyon ve sürekli büyümeyle şekillenen bir kültür inşa ediyoruz — hırslı insanların küresel sektörlerde anlamlı bir etki yaratmak için bir araya geldiği bir kültür.",
+      "ctaExplore": "Fırsatları Keşfedin",
+      "ctaContact": "Bize Ulaşın"
+    },
+    "culture": {
+      "eyebrow": "Kültürümüz",
+      "title": "Hırslı İnsanlar İçin İnşa Edilmiş Bir Kültür.",
+      "lead": "Bir üretim mirasının disiplinini, büyüyen bir uluslararası işletmenin enerjisiyle birleştiriyoruz — anlamlı ve kalıcı işler yapmak için bir yer.",
+      "values": {
+        "v1Title": "Merak",
+        "v1Desc": "Girdiğimiz her pazarda daha iyi sorular soruyor ve öğrenmeye aç kalmayı sürdürüyoruz.",
+        "v2Title": "Dürüstlük",
+        "v2Desc": "Doğru olanı yapıyoruz — ortaklarımızla, müşterilerimizle ve birbirimizle.",
+        "v3Title": "İnovasyon",
+        "v3Desc": "Yeni fikirleri, teknolojiyi ve sürekli iyileştirmeyi benimsiyoruz.",
+        "v4Title": "Sürekli Büyüme",
+        "v4Desc": "Kendilerinden daha büyük bir şey inşa etmek isteyen insanlara yatırım yapıyoruz."
+      }
+    },
+    "photoEssay": {
+      "eyebrow": "İşin Yapıldığı Yer",
+      "title": "Fabrika Sahasından Küresel Pazarlara.",
+      "caption1": "Fabrika dış cephesi — Shiveshwar Textiles",
+      "caption2": "Dokuma sahası",
+      "caption3": "Kalite kontrolü"
+    },
+    "voices": {
+      "v1Quote": "Trivoxa'daki liderlik; uzun vadeli düşünme, sorumlu karar alma ve sürekli iyileştirme taahhüdüyle şekillenir.",
+      "v1Role": "Kurucu ve Genel Müdür",
+      "v2Quote": "Güven üzerine kurulu, dürüstlükle yönlenen ve müşterilerimiz, ortaklarımız ve topluluklarımız için anlamlı değer yaratmaya adanmış bir kurum inşa ediyoruz.",
+      "v2Role": "Kurucu Ortak, İş Geliştirme",
+      "v3Quote": "Trivoxa büyüdükçe, liderliğimiz inovasyonu ve yeni fırsatları benimserken kurumumuzu tanımlayan ilkeleri korumaya devam edecek.",
+      "v3Role": "Kurucu Ortak, Teknoloji ve İnovasyon"
+    },
+    "areas": {
+      "eyebrow": "Nerede Yer Alırsınız",
+      "title": "Büyüdüğümüz Alanlar.",
+      "lead": "Trivoxa sektörler ve pazarlar genelinde büyürken; ticaret, teknoloji ve ortaklıklar alanında ekipler kuruyoruz.",
+      "a1Title": "Küresel Ticaret ve Tedarik",
+      "a1Desc": "Ürün ihracatını, tedarikçi ilişkilerini ve uluslararası lojistiği koordine edin.",
+      "a2Title": "Teknoloji ve Hizmetler",
+      "a2Desc": "Hizmet ihracatı bölümümüz için yazılım, yapay zekâ, tasarım ve dijital teslimat.",
+      "a3Title": "İş Geliştirme ve Ortaklıklar",
+      "a3Desc": "Büyüme, müşteri ilişkileri ve uzun vadeli ortaklık geliştirme."
+    },
+    "benefits": {
+      "eyebrow": "Neler Kazanırsınız",
+      "title": "Büyüme Etrafında Şekillenen Avantajlar.",
+      "b1Title": "Uluslararası Deneyim",
+      "b1Desc": "İlk günden itibaren altı küresel bölgedeki alıcılar, üreticiler ve ortaklarla doğrudan çalışın.",
+      "b2Title": "Erken Sorumluluk",
+      "b2Desc": "Küçük ekipler ve büyüyen bir grup, gerçek sorumluluk anlamına gelir — sahip olduğunuz koridorlar, müşteriler ve ürünler.",
+      "b3Title": "İki Dünya, Tek Şirket",
+      "b3Desc": "Fiziksel ticaret ve dijital hizmetler tek bir çatı altında — ilgi alanlarınız geliştikçe aralarında geçiş yapın.",
+      "b4Title": "Öğrenme Bir Standart",
+      "b4Desc": "İhracat uyumluluğu, teknoloji, müzakere — grup, işin gerektirdiği becerilere yatırım yapar.",
+      "b5Title": "Net Bir Büyüme Yolu",
+      "b5Desc": "Katkı sağlayan → koordinatör → koridor veya alan lideri; kıdeme göre değil, açıkça işe göre değerlendirilir.",
+      "b6Title": "Kalıcı Olmak Üzere İnşa Edildi",
+      "b6Desc": "Bilinçli olarak büyütülen, uzun vadeli bir şirket — buradaki kariyerler projelerle değil, yıllarla ölçülür."
+    },
+    "opportunities": {
+      "eyebrow": "Güncel Fırsatlar",
+      "title": "Trivoxa'daki Açık Pozisyonlar."
+    },
+    "jobBoard": {
+      "emptyStatus": "Şu anda listelenen açık bir pozisyon bulunmuyor.",
+      "emptyTiming": "Açık başvuruları sabit bir işe alım döngüsüne bağlı kalmadan sürekli olarak değerlendiriyoruz.",
+      "emptyAction": "Açık Başvuru Gönderin",
+      "tableRole": "Pozisyon",
+      "tableDepartment": "Departman",
+      "tableLocation": "Konum",
+      "tableType": "Tür",
+      "viewRole": "Pozisyonu Görüntüle →",
+      "closeLabel": "Kapat ✕",
+      "responsibilitiesLabel": "Sorumluluklar",
+      "requirementsLabel": "Gereksinimler",
+      "niceToHaveLabel": "Artı Değer Sağlayan",
+      "applyLabel": "Bu Pozisyona Başvurun"
+    },
+    "hiringProcess": {
+      "eyebrow": "İşe Alım Süreci",
+      "title": "Başvurudan Aramıza Katılmaya.",
+      "s1Title": "Başvuru",
+      "s1Desc": "Açık bir pozisyon için başvurunuzu gönderin — ya da açık bir başvuruyla kendinizi tanıtın.",
+      "s2Title": "Değerlendirme",
+      "s2Desc": "Ekibimiz deneyiminizi pozisyon ve ekibin ihtiyaçlarına göre değerlendirir.",
+      "s3Title": "Görüşme",
+      "s3Desc": "Geçmişiniz, ilgi alanlarınız ve çalışma tarzınız hakkında bir sohbet.",
+      "s4Title": "Değerlendirme Çalışması",
+      "s4Desc": "Her iki tarafa da fayda sağlayan, pozisyona uygun pratik bir uygulama.",
+      "s5Title": "Son Görüşme",
+      "s5Desc": "Beklentiler, büyüme yolu ve karşılıklı açık sorular.",
+      "s6Title": "Teklif",
+      "s6Desc": "Pozisyon, ücret ve başlangıç detaylarını içeren net, yazılı bir teklif.",
+      "s7Title": "Trivoxa'ya Hoş Geldiniz",
+      "s7Desc": "Ekibe ve genel gruba yapılandırılmış bir uyum süreci."
+    },
+    "cta": {
+      "title": "Kalıcı Olmak Üzere İnşa Edilmiş Bir Şirketle Büyüyün.",
+      "description": "Değerlerimizi paylaşan yetenekli insanlarla tanışmaktan her zaman memnuniyet duyarız. Kendinizi tanıtın ve nasıl katkı sağlamak istediğinizi bize anlatın.",
+      "ctaContact": "Bize Ulaşın",
+      "ctaGroup": "Grup Hakkında Bilgi Edinin"
+    }
+  },
+  "compliance": {
+    "hero": {
+      "eyebrow": "Uyumluluk",
+      "title": "Sertifikalar ve Standartlar.",
+      "description": "Operasyonel lisanslama aktiftir. Sektöre özgü sertifikalar, ilerledikçe burada listelenecek şekilde açık bir takvimle temin edilmektedir."
+    },
+    "active": "Aktif",
+    "inProgress": "Devam Ediyor",
+    "footnote": "Operasyonel lisanslama (IEC, GST) aktiftir. Sektör sertifikaları, yukarıda gösterilen hedef tarihlerle temin edilmektedir. Her belge tamamlandığında; kayıt numarası, düzenleyen kurum, tüzel kişilik adı ve geçerlilik süresiyle birlikte, doğrulanabilir bir belgeye bağlı olarak burada yayımlanacaktır.",
+    "cta": {
+      "title": "Sipariş Vermeden Önce Doğrulamak mı İstiyorsunuz?",
+      "description": "Sipariş vermeden önce bir fabrika denetimi veya saha ziyareti talep edin — doğrudan desteklediğimiz standart bir sipariş öncesi adım.",
+      "ctaAudit": "Fabrika Denetimi / Saha Ziyareti Talep Edin",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    }
+  },
+  "insightsPage": {
+    "hero": {
+      "eyebrow": "Görüşler",
+      "title": "Küresel Ticareti Yönlendiren Bakış Açıları.",
+      "description": "Pazarlar gelişiyor. Sektörler dönüşüyor. Her gün yeni fırsatlar ortaya çıkıyor.\n\nGörüşlerimiz; kurumların bilinçli kararlar almasına yardımcı olmak için küresel ticareti, tedarik stratejilerini, yükselen sektörleri, pazar istihbaratını ve iş inovasyonunu ele alıyor.",
+      "ctaExplore": "Görüşleri Keşfedin",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    },
+    "categories": {
+      "eyebrow": "Kategoriler",
+      "title": "Küresel Ticarette Bilgi Birikimi.",
+      "lead": "Ortakların güvenle karar almasına yardımcı olmak için oluşturulmuş üç odaklı düşünce akışı.",
+      "c1": "İhracat Rehberi",
+      "c2": "Pazar İstihbaratı",
+      "c3": "Sektörel Görüşler"
+    },
+    "featured": {
+      "eyebrow": "Hazırlanıyor",
+      "title": "İlk Yayınlayacağımız İçeriğe Oy Verin.",
+      "lead": "İlk görüş dalgası şu anda yazılıyor. İstediğiniz konuları seçin, e-postanızı bırakın; okuma listeniz ve oylarınız doğrudan ekibimize ulaşsın."
+    },
+    "topics": {
+      "t1Title": "Bağlantılı Bir Ekonomide Küresel Tedarikte Yol Almak",
+      "t1Category": "Pazar İstihbaratı",
+      "t1Reading": "~8 dk okuma",
+      "t1Desc": "Modern işletmeler dayanıklı, sınır ötesi tedarik zincirlerini nasıl kuruyor.",
+      "t2Title": "Tekstil ve Giyim İhracatının Geleceği",
+      "t2Category": "Sektörel Görüşler",
+      "t2Reading": "~6 dk okuma",
+      "t2Desc": "Kumaş inovasyonu, kalite ve talep bundan sonra nereye gidiyor.",
+      "t3Title": "Hizmet İhracatı: Büyüme Motoru Olarak Teknoloji",
+      "t3Category": "İhracat Rehberi",
+      "t3Reading": "~7 dk okuma",
+      "t3Desc": "Yazılım, yapay zekâ ve tasarımın uluslararası ticareti neden yeniden şekillendirdiği.",
+      "t4Title": "Bir HS Kodunu Okumak: Alıcılar İçin Saha Rehberi",
+      "t4Category": "İhracat Rehberi",
+      "t4Reading": "~5 dk okuma",
+      "t4Desc": "O rakamların sizi gerçekte neye bağladığı — vergiler, belgelendirme ve uyumluluk.",
+      "t5Title": "Mundra mı Nhava Sheva mı: İhracat Koridorunuzu Seçmek",
+      "t5Category": "Pazar İstihbaratı",
+      "t5Reading": "~6 dk okuma",
+      "t5Desc": "Liman seçiminin Hindistan menşeli kargolar için teslimat süresini, maliyeti ve riski nasıl şekillendirdiği.",
+      "t6Title": "İlaç İhracatı ve Varış Ülkesi Lisanslaması",
+      "t6Category": "Sektörel Görüşler",
+      "t6Reading": "~9 dk okuma",
+      "t6Desc": "İlk kez ilaç ithal edecek bir alıcının erkenden çıkarması gereken mevzuat haritası."
+    },
+    "teaser": {
+      "voteWant": "Bunu okumak istiyorum",
+      "voteOn": "Okuma listenizde",
+      "thanksBase": "Teşekkürler — listeye eklendiniz",
+      "thanksVoteSingle": " ve oyunuz ekibimize ulaştı",
+      "thanksVotePlural": " ve oylarınız ekibimize ulaştı",
+      "thanksEnd": ". Bunlar yayınlandığında ilk gönderim gelen kutunuza düşecek.",
+      "notifyLeadNone": "İlk görüşler yayınlandığında haberdar olun:",
+      "notifyLeadSingle": "Bu konu yayınlandığında haberdar olun:",
+      "notifyLeadPlural": "Bu konular yayınlandığında haberdar olun:",
+      "emailPlaceholder": "İş e-postanız",
+      "emailAria": "E-posta adresi",
+      "notifyMe": "Beni bilgilendirin",
+      "sending": "Gönderiliyor…",
+      "errorGeneric": "Şu anda abone olunamadı — lütfen tekrar deneyin."
+    },
+    "cta": {
+      "title": "Görüşü Fırsata Dönüştürün.",
+      "description": "Aklınızda bir pazar, ürün veya hizmet mi var? Ekibimiz, bakış açısından ortaklığa geçmenize yardımcı olmaya hazır.",
+      "ctaQuote": "Teklif İsteyin",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    }
+  },
+  "thankYou": {
+    "hero": {
+      "eyebrow": "Mesajınız Alındı",
+      "title": "Bize Ulaştığınız İçin Teşekkürler.",
+      "description": "Bir ihracat uzmanı bir iş günü içinde size dönüş yapacaktır. Bu süre zarfında nelerin tedarikini yaptığımızı ve nerelerde faaliyet gösterdiğimizi keşfedebilirsiniz."
+    },
+    "whatNext": {
+      "eyebrow": "Sırada Ne Var",
+      "title": "Sizi Neler Bekliyor.",
+      "s1": "Ekibimiz mesajınızı inceler ve doğru uzmana yönlendirir.",
+      "s2": "Bir iş günü içinde size e-posta yoluyla geri dönüş yapılacaktır.",
+      "s3": "Talebiniz tedarikle ilgiliyse, RFQ'yu resmileştirmek için sonraki adımlarla size geri döneceğiz."
+    },
+    "whileWait": {
+      "eyebrow": "Beklerken",
+      "title": "Trivoxa Group'u Keşfedin.",
+      "linkProduct": "Ürün İhracatını Keşfedin →",
+      "linkIndustries": "Hizmet Verdiğimiz Sektörlere Göz Atın →",
+      "linkHome": "Ana Sayfaya Dön →"
+    }
+  },
+  "rfqPage": {
+    "hero": {
+      "eyebrow": "Teklif Talebi",
+      "title": "Bize Teklif Talebinizi Gönderin",
+      "description": "Yolunuzu seçin — ürün tedariki, hizmetler veya ortaklık. Gerçek HS kodları, gerçek teslimat süreleri. Ekibimiz 24 iş saati içinde (IST) yanıt verir."
+    },
+    "quickLinks": {
+      "label": "Genel bir sorunuz mu var?",
+      "contact": "Bize ulaşın →",
+      "whatsapp": "WhatsApp ↗",
+      "linkedin": "LinkedIn ↗",
+      "calendar": "Görüşme planlayın ↗"
+    },
+    "nextSteps": {
+      "eyebrow": "Sırada Ne Var",
+      "title": "Teklif Talebinden Siparişe Üç Adım.",
+      "s1Title": "İnceleme",
+      "s1Desc": "Tedarik ekibimiz talebinizi mevcut fabrika kapasitesine göre değerlendirir — 24 iş saati içinde (IST).",
+      "s2Title": "Teklif",
+      "s2Desc": "Fiyatlandırma, teslimat süresi ve ödeme koşullarını içeren resmi bir teklif alırsınız.",
+      "s3Title": "Onay",
+      "s3Desc": "Onaylandıktan sonra proforma fatura düzenler ve üretim planlamasına başlarız."
+    },
+    "whereWeAre": {
+      "eyebrow": "Nerede Olduğumuz",
+      "title": "Surat, Gujarat — Hindistan'ın İhracat Koridoru.",
+      "note": "Merkezimiz Surat'ta olup Mundra, Kandla ve Nhava Sheva limanlarına erişimimiz bulunuyor — yanıt süresi 24 iş saati, IST."
+    },
+    "form": {
+      "pathsAriaLabel": "Ne hakkında görüşmek istersiniz?",
+      "presetProductsNote": "İlgilenilen ürünler:",
+      "steps": {
+        "company": "Şirket",
+        "product": "Ürün",
+        "terms": "Koşullar"
+      },
+      "paths": {
+        "productTitle": "Ürün İhracatı Teklif Talebi",
+        "productDesc": "HS kodları, minimum sipariş miktarları ve resmi bir teklifle ürün tedarik edin.",
+        "serviceTitle": "Hizmet İş Birliği",
+        "serviceDesc": "Trivoxa Digital'den teknoloji, yapay zekâ, yazılım, tasarım veya pazarlama.",
+        "partnershipTitle": "Ortaklık",
+        "partnershipDesc": "Grup ile üretim, lojistik veya dağıtım ortaklıkları.",
+        "auditTitle": "Fabrika Denetimi / Saha Ziyareti",
+        "auditDesc": "Sipariş vermeden önce tedarikçi denetimi veya saha ziyareti talep edin.",
+        "careerTitle": "Kariyer",
+        "careerDesc": "Ekibe katılın — açık alanları görün ve başvurunuzu gönderin."
+      },
+      "changeEnquiryType": "← Talep türünü değiştir",
+      "fields": {
+        "companyName": "Şirket Adı",
+        "contactName": "İletişim Kişisi",
+        "businessEmail": "İş E-postası",
+        "whatsappNumber": "WhatsApp Numarası",
+        "countryOfImport": "İthalat Ülkesi",
+        "destinationPort": "Varış Limanı",
+        "productCategory": "Ürün Kategorisi",
+        "hsCode": "HS Kodu",
+        "quantity": "Miktar",
+        "unit": "Birim",
+        "targetPriceBand": "Hedef Fiyat Aralığı (isteğe bağlı)",
+        "targetPriceBandPlaceholder": "örn. 2,10–2,40 $ / kg",
+        "preferredIncoterm": "Tercih Edilen Incoterm",
+        "deliveryFrom": "Teslimat Aralığı — Başlangıç",
+        "deliveryTo": "Teslimat Aralığı — Bitiş",
+        "sampleRequired": "Numune Gerekli mi",
+        "yes": "Evet",
+        "no": "Hayır",
+        "additionalNotes": "Ek Notlar",
+        "specSheets": "Teknik Şartname / Çizimler (en fazla {max} dosya, toplam {mb} MB)",
+        "yourName": "Adınız",
+        "companyOptional": "Şirket (isteğe bağlı)"
+      },
+      "presetNote": "Katalog seçiminizden: {products} — detaylar tedarik ekibimiz için notlara aktarıldı.",
+      "catalogHelper": "{category} için katalog referansı: tipik MOQ {moq} · teslimat süresi {leadTime} · HS {hsCode}. MOQ altındaki miktarlar duruma göre fiyatlandırılır — yine de gönderin, size bilgi verelim.",
+      "certHelper": "{category} için sertifikasyon durumu: {statuses}. Talebinizi şimdiden kaydedebiliriz; ihracat, sertifikasyonun tamamlanmasına bağlıdır. Bkz.",
+      "complianceLink": "uyumluluk durumumuzun tamamı →",
+      "attachmentsMax": "En fazla {max} dosya.",
+      "attachmentsSizeError": "Eklerin toplam boyutu 4 MB'ın altında kalmalıdır.",
+      "removeFileAria": "{filename} dosyasını kaldır",
+      "back": "Geri",
+      "continue": "Devam Et",
+      "submitRfq": "Teklif Talebini Gönder",
+      "submitting": "Gönderiliyor…",
+      "submitFailedFallback": "Gönderim başarısız oldu. Lütfen tekrar deneyin.",
+      "errorGeneric": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
+    },
+    "confirm": {
+      "eyebrow": "Teklif Talebi Alındı",
+      "referenceLabel": "Referans #{reference}",
+      "respondNote": "Ekibimiz, verdiğiniz e-posta ve WhatsApp numarası üzerinden 24 iş saati içinde (IST) yanıt verir.",
+      "whatHappensNext": "Sırada Ne Var",
+      "s1": "Tedarik ekibimiz talebinizi mevcut fabrika kapasitesine göre değerlendirir.",
+      "s2": "Fiyatlandırma, teslimat süresi ve ödeme koşullarını içeren resmi bir teklif alırsınız.",
+      "s3": "Onaylandıktan sonra proforma fatura düzenler ve üretim planlamasına başlarız.",
+      "browseMore": "Diğer Sektörlere Göz Atın"
+    },
+    "career": {
+      "eyebrow": "Kariyer",
+      "title": "Sizden haber almaktan memnuniyet duyarız.",
+      "description": "Açık alanlar, kültürümüz ve başvuru formu kariyer sayfamızda yer alıyor.",
+      "back": "Geri",
+      "goToCareers": "Kariyer Sayfasına Gidin →"
+    },
+    "inquiry": {
+      "serviceTitle": "Hizmet İş Birliği",
+      "partnershipTitle": "Ortaklık",
+      "auditTitle": "Fabrika Denetimi / Saha Ziyareti",
+      "servicePrompt": "Neyi inşa etmek veya başarmak istiyorsunuz?",
+      "partnershipPrompt": "Ne tür bir ortaklık düşünüyorsunuz?",
+      "auditPrompt": "Hangi tesis veya ürün hattı, ve ne zaman ziyaret etmek ya da denetlemek istersiniz?",
+      "yourName": "Adınız",
+      "companyOptional": "Şirket (isteğe bağlı)",
+      "businessEmail": "İş E-postası",
+      "errorValidation": "Lütfen adınızı, geçerli bir e-posta adresinizi ve talebinizle ilgili birkaç cümle ekleyin.",
+      "errorGeneric": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+      "sendEnquiry": "{title} Talebini Gönder",
+      "sending": "Gönderiliyor…",
+      "enquiryReceived": "{title} Talebi Alındı",
+      "respondNote": "Ekibimiz 24 iş saati içinde (IST) yanıt verir.",
+      "exploreServiceExports": "Hizmet İhracatını Keşfedin",
+      "seeCompliance": "Uyumluluk Durumumuzu İnceleyin",
+      "aboutGroup": "Grup Hakkında"
+    }
+  },
+  "group": {
+    "hero": {
+      "eyebrow": "Grup",
+      "title": "Kalıcı Olmak Üzere Tasarlanmış Bir Kurum İnşa Etmek.",
+      "description": "Trivoxa Group, güçlü bir üretim temeli üzerine kurulu ve küresel bir vizyonla yönlendirilen uluslararası bir iş grubudur. Güvenilir ortaklıklar, stratejik tedarik ve profesyonel hizmetler aracılığıyla işletmeleri fırsatlarla buluştururken uluslararası pazarlarda kalıcı değer yaratıyoruz.",
+      "ctaStory": "Hikâyemizi Keşfedin"
+    },
+    "whoWeAre": {
+      "eyebrow": "Biz Kimiz",
+      "title": "Güven, Amaç ve Uzun Vadeli Vizyon Üzerine Kurulu Küresel Bir İş Grubu.",
+      "p1": "Trivoxa Group, küresel işletmeleri güvenilir ürünler, stratejik tedarik çözümleri ve profesyonel hizmetlerle buluşturmaya adanmış uluslararası bir iş grubudur.",
+      "p2": "{relationship} {name}'in üretim uzmanlığı üzerine kurulan yapımızla, sektör bilgisini uluslararası ticarete yönelik ileriye dönük bir yaklaşımla birleştiriyoruz. Güvenilir üreticileri, yetkin profesyonelleri ve küresel ortakları bir araya getirerek; kurumların daha güçlü tedarik zincirleri kurmasına, yeni fırsatlara erişmesine ve sürdürülebilir büyüme elde etmesine yardımcı oluyoruz.",
+      "p3": "Trivoxa'da, anlamlı işin güven, kalite ve tek bir işlemin çok ötesine uzanan ilişkiler üzerine kurulduğuna inanıyoruz."
+    },
+    "foundation": {
+      "eyebrow": "Temelimiz",
+      "title": "Üretim Mükemmelliği Üzerine Kurulu. Küresel Fırsattan İlham Alıyor.",
+      "p1": "Her büyük kurum güçlü bir temel üzerine kurulur.",
+      "p2": "Trivoxa Group, dokuma tekstil üretiminde ve kalite odaklı operasyonlarda geniş uzmanlığa sahip bir üretim şirketi olan Shiveshwar Textiles ile stratejik bir ortaklık içinde kuruldu.",
+      "p3": "Bu üretim mirası bize pratik sektör bilgisi, üretim süreçlerine dair derin bir anlayış ve küresel pazarlara güvenilir çözümler sunma taahhüdü kazandırıyor.",
+      "p4": "Trivoxa yeni sektörlere ve iş hizmetlerine açılmaya devam ederken, temelimiz başından beri bize yol gösteren ilkelere sıkı sıkıya bağlı kalmaya devam ediyor — kalite, güvenilirlik, dürüstlük ve uzun vadeli ortaklıklar.",
+      "photo1Caption": "Fabrika Dış Cephesi",
+      "photo2Caption": "Dokuma Sahası",
+      "photo3Caption": "Kalite Kontrolü",
+      "auditCta": "Fabrika Denetimi / Saha Ziyareti Talep Edin →"
+    },
+    "ourStory": {
+      "eyebrow": "Hikâyemiz",
+      "title": "Sınırların Ötesinde Fırsatlar Yaratmak.",
+      "p1": "Trivoxa, küresel talep ile Hindistan'ın olağanüstü yetkinlikleri arasındaki boşluğu kapatma vizyonuyla kuruldu.",
+      "p2": "Dünya genelindeki işletmelerin yalnızca ürünlere değil; ihtiyaçlarını anlayabilen, onları güvenilir üretimle buluşturabilen ve uluslararası ticaretin her aşamasında destek olabilen güvenilir bir ortağa ihtiyaç duyduğunun farkındaydık.",
+      "p3": "Bu amaç doğrultusunda Trivoxa, ticaretin ötesine uzanan ve dünya genelindeki ortaklar için sürdürülebilir iş büyümesine katkıda bulunan uzun vadeli ilişkiler kurmak üzere kuruldu."
+    },
+    "journey": {
+      "eyebrow": "Yolculuk",
+      "title": "Grup Nasıl Şekillendi.",
+      "s1Title": "Üretim Temelleri",
+      "s1Desc": "Shiveshwar Textiles, dokuma tekstil üretiminde ve kalite odaklı operasyonlarda derin bir uzmanlık geliştirir.",
+      "s2Title": "Uluslararası Bir Vizyon",
+      "s2Desc": "Kurucular, Hindistan'ın üretim yetkinliğine güvenilir bir ortak arayan küresel talebi fark eder.",
+      "s3Title": "Trivoxa Group Kuruldu",
+      "s3Desc": "Küresel alıcılar ile Hindistan üretimini birbirine bağlamak üzere uluslararası iş kolu kurulur.",
+      "s4Title": "İki İhracat Bölümü",
+      "s4Desc": "Ürün İhracatı ve Hizmet İhracatı (Trivoxa Digital), grubun operasyonel kolları olarak faaliyete geçer.",
+      "s5Title": "Büyüyen Küresel Ortaklıklar",
+      "s5Desc": "Ağ; sektörler, bölgeler ve uzun vadeli müşteri ilişkileri genelinde genişler."
+    },
+    "vision": {
+      "eyebrow": "Vizyonumuz",
+      "statement": "Küresel ticaret, inovasyon ve kalıcı ortaklıklar yoluyla kalıcı değer yaratarak dünyanın en güvenilir uluslararası iş gruplarından biri olmak.",
+      "support": "Vizyonumuz, gelecek nesiller için sektörler ve uluslararası pazarlar genelinde fırsatlar yaratmaya devam eden bir kurum inşa etmektir."
+    },
+    "philosophy": {
+      "eyebrow": "Felsefemiz",
+      "title": "Trivoxa Yolu",
+      "lead": "Aldığımız her karar, kim olduğumuzu ve ilişkilerimizi nasıl kurduğumuzu tanımlayan ilkelerle yönlendirilir.",
+      "p1Title": "Vizyon",
+      "p1Desc": "Bugünün fırsatlarının ötesini düşünür ve yarın için inşa ederiz.",
+      "p2Title": "Dürüstlük",
+      "p2Desc": "Güven; dürüstlük, şeffaflık ve tutarlılıkla kazanılır.",
+      "p3Title": "Mükemmellik",
+      "p3Desc": "Sunduğumuz her şeyde en yüksek standartları hedefleriz.",
+      "p4Title": "İnovasyon",
+      "p4Desc": "Yeni fikirleri, teknolojiyi ve sürekli iyileştirmeyi benimsiyoruz.",
+      "p5Title": "Ortaklık",
+      "p5Desc": "Sürdürülebilir başarının birlikte yaratıldığına inanıyoruz.",
+      "p6Title": "Etki",
+      "p6Desc": "Başarıyı; ortaklarımız, topluluklarımız ve gelecek nesiller için yarattığımız kalıcı değerle ölçüyoruz."
+    },
+    "leadership": {
+      "eyebrow": "Liderlik",
+      "f1Role": "Kurucu ve Genel Müdür",
+      "f1Message": "Trivoxa'daki liderlik; uzun vadeli düşünme, sorumlu karar alma ve sürekli iyileştirme taahhüdüyle şekillenir.",
+      "f2Role": "Kurucu Ortak, İş Geliştirme",
+      "f2Message": "Sorumluluğumuz iş büyümesinin çok ötesine uzanıyor. Güven üzerine kurulu, dürüstlükle yönlenen ve müşterilerimiz, ortaklarımız ve topluluklarımız için anlamlı değer yaratmaya adanmış bir kurum inşa ediyoruz.",
+      "f3Role": "Kurucu Ortak, Teknoloji ve İnovasyon",
+      "f3Message": "Trivoxa büyüdükçe, liderliğimiz küresel pazarlarda inovasyonu ve yeni fırsatları benimserken kurumumuzu tanımlayan ilkeleri korumaya devam edecek."
+    },
+    "ecosystem": {
+      "eyebrow": "Ekosistemimiz",
+      "title": "Tek Bağlantılı Ağ. Sonsuz Fırsatlar.",
+      "lead": "Trivoxa Group; üretim uzmanlığını, stratejik tedariki, teknolojiyi, lojistiği ve profesyonel hizmetleri tek bir entegre iş ekosisteminde bir araya getirir.",
+      "e1Title": "Ürün İhracatı Bölümü",
+      "e1Desc": "Güvenilir üretim ortakları aracılığıyla kaliteli ürünlerin tedarik edilip teslim edilmesi.",
+      "e2Title": "Hizmet İhracatı Bölümü",
+      "e2Desc": "Yetkin ekipler tarafından sunulan teknoloji, tasarım ve profesyonel hizmetler.",
+      "e3Title": "Üretim Ağı",
+      "e3Desc": "Shiveshwar Textiles öncülüğünde ve büyüyen bir ortak tabanına dayanır.",
+      "e4Title": "Teknoloji Ortakları",
+      "e4Desc": "Dijital dönüşümü ve otomasyonu mümkün kılan uzmanlar.",
+      "e5Title": "Lojistik Ortakları",
+      "e5Desc": "Koordineli ihracat, belgelendirme ve tedarik zinciri teslimatı.",
+      "e6Title": "Küresel Müşteri Ağı",
+      "e6Desc": "Uluslararası pazarlarda hizmet verdiğimiz alıcılar ve kurumlar."
+    },
+    "partners": {
+      "eyebrow": "Stratejik Ortaklar",
+      "title": "Güvenilir Ortaklıklarla Büyümek.",
+      "lead": "Güçlü ortaklıklar, sürdürülebilir işin temelidir.",
+      "foundingTitle": "Kurucu Üretim Ortağı — {name}",
+      "p1": "Trivoxa Group'un {relationship} olan {name}, kaliteye ve güvenilirliğe olan bağlılığımızı destekleyen üretim uzmanlığını ve sektör deneyimini sağlar.",
+      "p2": "{name} ile birlikte; değerlerimizi paylaşan güvenilir üreticiler, lojistik sağlayıcılar, teknoloji ortakları ve sektör uzmanlarıyla ilişkiler kurmaya devam ediyoruz.",
+      "growthNote": "Ortak ağımız; üretim, lojistik ve teknoloji alanlarında büyümeye devam ediyor."
+    },
+    "commitments": {
+      "eyebrow": "Taahhütlerimiz",
+      "title": "Her İlişkiye Olan Taahhüdümüz.",
+      "lead": "Her ortaklık güvenle başlar ve tutarlı eylemlerle güçlenir. İşimizi sorumlu bir şekilde yürütmeye, güvenilir çözümler sunmaya ve dünya genelindeki ortaklarımıza hizmet etme biçimimizi sürekli iyileştirmeye kararlıyız.",
+      "tableNum": "#",
+      "tableCommitment": "Taahhüt",
+      "tableDescription": "Kısa Açıklama",
+      "c1Name": "Etik İş Uygulamaları",
+      "c1Desc": "Her ilişkiyi dürüstlük, adalet ve hesap verebilirlikle yürütmek.",
+      "c2Name": "Sorumlu Tedarik",
+      "c2Desc": "Kalite ve adil uygulama standartlarımızı paylaşan üreticilerle ortaklık kurmak.",
+      "c3Name": "Taviz Verilmeyen Kalite",
+      "c3Desc": "Her ürünü ve hizmeti güvenilmeye değer bir standartta tutmak.",
+      "c4Name": "Şeffaf İletişim",
+      "c4Desc": "Ortaklarımızı net, tutarlı ve dürüst bir iletişimle bilgilendirmek.",
+      "c5Name": "Uzun Vadeli Ortaklıklar",
+      "c5Desc": "İşlemlerle değil, yıllarla ölçülen ilişkiler kurmak.",
+      "c6Name": "Sürdürülebilir İş Büyümesi",
+      "c6Desc": "Kalıcı değer yaratacak şekilde, bilinçli olarak büyümek.",
+      "c7Name": "Sürekli İnovasyon",
+      "c7Desc": "Bize güvenen ortaklarımıza daha iyi hizmet verebilmek için çalışma şeklimizi geliştirmek."
+    },
+    "lookingAhead": {
+      "eyebrow": "İleriye Bakış",
+      "title": "Küresel İşin Bir Sonraki Nesli İçin İnşa Etmek.",
+      "p1": "Yolculuğumuz daha yeni başlıyor.",
+      "p2": "İleriye baktığımızda Trivoxa; yeni sektörlere açılmaya, uluslararası ortaklıkları güçlendirmeye, yükselen teknolojileri benimsemeye ve kalıcı değer yaratan yenilikçi çözümler geliştirmeye devam edecek.",
+      "p3": "Amacımız yalnızca bir işletme olarak büyümek değil; gelecek nesillerin yönetmekten gurur duyacağı ve küresel ortakların güvenmeye devam edeceği bir kurum inşa etmektir."
+    },
+    "cta": {
+      "title": "Geleceği Birlikte İnşa Edelim.",
+      "description": "İster ürün tedarik etmek, ister uluslararası pazarlara açılmak, ister uzun vadeli bir iş ortaklığı kurmak isteyin, ekibimiz güvenle ilerlemenize yardımcı olmaya hazır.",
+      "ctaPartner": "Bizimle Ortak Olun",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    }
+  },
+  "productExportsPage": {
+    "hero": {
+      "crumbBusinesses": "İş Alanları",
+      "crumbSelf": "Ürün İhracatı",
+      "eyebrow": "Ürün İhracatı",
+      "title": "Küresel Ürün İhracatı.",
+      "description": "Güvenilir tedarik ve ihracat çözümleri aracılığıyla kaliteli ürünler sunmak için uluslararası alıcıları Hindistan genelinde özenle seçilmiş üretim ortaklarıyla buluşturuyoruz.",
+      "ctaQuote": "Teklif İsteyin",
+      "ctaContact": "Ekibimizle İletişime Geçin"
+    },
+    "about": {
+      "eyebrow": "Ürün İhracatı Hakkında",
+      "title": "Hindistan'ın Üretim Gücüne Tek ve Güvenilir Bir Kapı.",
+      "lead": "Endüstriyel malzemeler ve tekstilden sağlık ürünleri ve tüketim mallarına kadar odağımız, küresel alıcıları uluslararası beklentileri karşılayan güvenilir tedarik çözümleriyle buluşturmaktır.\n\nShiveshwar Textiles'in üretim temeliyle desteklenen yapımızda, pratik üretim bilgisini büyüyen güvenilir ortaklar ağıyla birleştiriyoruz."
+    },
+    "industriesSection": {
+      "eyebrow": "Hizmet Verdiğimiz Sektörler",
+      "title": "Her Büyük Sektörde Ürünler.",
+      "lead": "Ürün ihracatı bölümümüz aracılığıyla desteklediğimiz sektörleri keşfedin."
+    },
+    "portfolio": {
+      "eyebrow": "Tam Ürün Portföyü",
+      "title": "İhraç Ettiğimiz Her Şeyi Arayın.",
+      "lead": "Tüm sektörlerdeki yayınlanmış her ürün — isme veya HS koduna göre arayın, sektöre ve incoterm'e göre filtreleyin ve ürünleri doğrudan teklif talebinize ekleyin."
+    },
+    "sourcing": {
+      "eyebrow": "Küresel Tedarik Süreci",
+      "title": "İhtiyaçtan Teslimata Yapılandırılmış Bir Yol.",
+      "s1Title": "İhtiyaçları Anlamak",
+      "s1Desc": "Teknik özellikler, hacimler, kalite standartları ve ticari beklentiler.",
+      "s2Title": "Üretim Ortaklarını Belirlemek",
+      "s2Desc": "İhtiyaçlarınızı Hindistan genelindeki doğru, incelemeden geçirilmiş üreticilerle eşleştiriyoruz.",
+      "s3Title": "Üretimi Koordine Etmek",
+      "s3Desc": "Her aşamada zaman çizelgelerini ve iletişimi yönetiyoruz.",
+      "s4Title": "Kalite ve Belgelendirme",
+      "s4Desc": "Kalite odaklı koordinasyon ve eksiksiz ihracat belgelendirmesi.",
+      "s5Title": "Küresel Teslimat",
+      "s5Desc": "Lojistik koordinasyonu ve güvenilir uluslararası teslimat."
+    },
+    "quality": {
+      "eyebrow": "Kalite Güvencesi",
+      "title": "Güvenebileceğiniz Kalite.",
+      "lead": "Her sipariş, uluslararası ticaret için tasarlanmış, kalite odaklı ve belgelendirmeye dayalı bir süreçle desteklenir.",
+      "q1Title": "Kalite Odaklı Koordinasyon",
+      "q1Desc": "Üretimin her aşamasında kalite odaklı koordinasyon.",
+      "q2Title": "Şartname Disiplini",
+      "q2Desc": "Üzerinde mutabık kalınan şartnamelere gösterilen özen.",
+      "q3Title": "İncelemeden Geçirilmiş Ortaklar",
+      "q3Desc": "Güvenilir, incelemeden geçirilmiş üretim ortakları.",
+      "q4Title": "Eksiksiz Belgelendirme",
+      "q4Desc": "Eksiksiz ihracat belgelendirmesi.",
+      "q5Title": "Güvenilir Teslimat",
+      "q5Desc": "Güvenilir lojistik ve teslimat."
+    },
+    "cta": {
+      "title": "Bir Sonraki Ürününüzü Birlikte Tedarik Edelim.",
+      "description": "Tedarik etmeniz gerekeni bize anlatın, ekibimiz sizi doğru üretim ortaklarıyla ve güvenilir bir ihracat süreciyle buluştursun.",
+      "ctaQuote": "Teklif İsteyin",
+      "ctaTextile": "Tekstil ve Giyimi Keşfedin"
+    }
+  },
+  "serviceExportsPage": {
+    "hero": {
+      "crumbBusinesses": "İş Alanları",
+      "crumbSelf": "Hizmet İhracatı",
+      "eyebrow": "Hizmet İhracatı",
+      "title": "Küresel Hizmet İhracatı.",
+      "description": "Kurumların teknoloji, yazılım geliştirme, yapay zekâ, markalaşma, dijital pazarlama ve iş destek hizmetleri aracılığıyla büyümesini hızlandırmalarına yardımcı oluyoruz. İşletmeleri Hindistan'ın yetkin profesyonelleriyle buluşturarak, modern iş zorluklarına özel pratik çözümler sunuyoruz.",
+      "ctaConsult": "Danışmanlık Talep Edin",
+      "ctaExplore": "Hizmetleri Keşfedin"
+    },
+    "about": {
+      "eyebrow": "Hizmet İhracatı Hakkında",
+      "title": "Hindistan'ın Yetkin Profesyonelleri, Sizin Ekibiniz Olarak Çalışıyor.",
+      "p1": "Hizmet ihracatı bölümümüz, kurumları teknoloji, tasarım ve iş çözümleri sunan yetkin profesyonellerle buluşturur.",
+      "p2": "Bu, dışarıdan sağlanan hizmetlerin ötesinde bir şeydir — bir yetenek ağına erişimdir. Ekipler sizinkiyle bütünleşir, şeffaf bir şekilde iletişim kurar ve ihtiyaçlarınız büyüdükçe ölçeklenir.",
+      "p3": "Yazılım ve yapay zekâdan markalaşma ve iş desteğine kadar, güvenilir ve kalite odaklı uygulamayla daha hızlı ilerlemenize yardımcı oluyoruz."
+    },
+    "servicesSection": {
+      "eyebrow": "Hizmet Kategorileri",
+      "title": "Profesyonel Hizmetlerin Tam Yelpazesi."
+    },
+    "delivery": {
+      "eyebrow": "Teslimat Süreci",
+      "title": "Güvenilir Şekilde Nasıl Teslim Ediyoruz.",
+      "s1Title": "Keşif Görüşmesi",
+      "s1Desc": "Hedefler, kapsam, teknik ihtiyaçlar ve başarı kriterleri.",
+      "s2Title": "Gereksinimler ve Kapsam",
+      "s2Desc": "Neyin teslim edileceğine dair net ve üzerinde mutabık kalınan bir tanım.",
+      "s3Title": "Ekip Oluşturma",
+      "s3Desc": "Sizi projenize uygun yetkin profesyonellerle buluşturuyoruz.",
+      "s4Title": "Teslimat Sprintleri",
+      "s4Desc": "Süreç boyunca net kilometre taşları ve şeffaf iletişim.",
+      "s5Title": "Sürekli Destek",
+      "s5Desc": "Güvenilir teslimat ve büyüdükçe sürekli destek."
+    },
+    "why": {
+      "eyebrow": "Neden Trivoxa'yı Seçmelisiniz",
+      "title": "Pratik Çözümler, Uzun Vadeli Ortaklık.",
+      "w1": "Hindistan Yetenek Ağı",
+      "w2": "Zaman Dilimi Avantajı",
+      "w3": "Kalite Koordinasyonu",
+      "w4": "Şeffaf İletişim",
+      "w5": "Ölçeklenebilir Ekipler",
+      "w6": "Uzun Vadeli Ortaklık"
+    },
+    "cta": {
+      "title": "Birlikte Bir Şeyler İnşa Edelim.",
+      "description": "Projenizi veya zorluğunuzu bizimle paylaşın, sizi onu hayata geçirecek doğru ekiple buluşturalım.",
+      "ctaBook": "Danışmanlık Ayırtın",
+      "ctaProposal": "Teklif Talep Edin"
+    },
+    "digitalNote": "Trivoxa Digital — Trivoxa Group'un özel teknoloji hizmetleri kolu. digital.trivoxagroup.com adresini ziyaret edin."
+  },
+  "industryDetail": {
+    "crumbIndustries": "Sektörler",
+    "eyebrowPrefix": "Sektör — {name}",
+    "ctaRequestQuote": "{name} İçin Teklif İsteyin",
+    "ctaContactTeam": "Ekiple İletişime Geçin",
+    "context": {
+      "eyebrow": "Sektör Bağlamı",
+      "title": "{name} Sektöründe Kimlere Hizmet Veriyoruz",
+      "buyerTypesTitle": "Tipik Alıcılar",
+      "complianceTitle": "Alıcıların Bilmesi Gerekenler"
+    },
+    "offer": {
+      "eyebrow": "Neler Sunuyoruz",
+      "title": "Neler İhraç Ediyoruz",
+      "lead": "Her kategori; gerçek HS kodlarına, minimum sipariş miktarlarına ve teslimat sürelerine göre fiyatlandırılır — teklif talebinizi göndermeden önce tahmine yer yok."
+    },
+    "explore": {
+      "eyebrow": "Daha Fazlasını Keşfedin",
+      "browsePortfolio": "Ürün Portföyüne Göz Atın",
+      "exploreServices": "Hizmet Yetkinliklerimizi Keşfedin",
+      "exportsSuffix": "İhracatı →",
+      "globalServiceExports": "Küresel Hizmet İhracatı →"
+    },
+    "why": {
+      "eyebrow": "Neden Trivoxa",
+      "title": "Deneyim Üzerine Kurulu. Ortaklıkla Yönlendirilen."
+    },
+    "related": {
+      "eyebrow": "İlgili Sektörler",
+      "title": "Diğer Sektörleri Keşfedin"
+    },
+    "cta": {
+      "titleTemplate": "{name} tedarik etmeye hazır mısınız?",
+      "description": "Bize teklif talebinizi gönderin, tedarik ekibimiz 24 iş saati içinde (IST) yanıt versin.",
+      "ctaSendRfq": "Bize Teklif Talebinizi Gönderin →"
+    }
   }
 }

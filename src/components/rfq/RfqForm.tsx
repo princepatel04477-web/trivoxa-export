@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -20,18 +21,8 @@ import {
 } from "@/lib/validation/rfq";
 import LazyCrane from "@/components/LazyCrane";
 
-const STEPS = ["Company", "Product", "Terms"] as const;
-
 /** Which conversation the visitor wants to have (spec §4 — RFQ paths). */
 type RfqPath = "product" | "service" | "partnership" | "career" | "audit";
-
-const PATHS: { key: RfqPath; title: string; desc: string }[] = [
-  { key: "product", title: "Product Export RFQ", desc: "Source products with HS codes, MOQs, and a formal quotation." },
-  { key: "service", title: "Service Engagement", desc: "Technology, AI, software, design, or marketing from Trivoxa Digital." },
-  { key: "partnership", title: "Partnership", desc: "Manufacturing, logistics, or distribution partnerships with the Group." },
-  { key: "audit", title: "Factory Audit / Site Visit", desc: "Request a supplier audit or site visit ahead of placing an order." },
-  { key: "career", title: "Careers", desc: "Join the team — see open areas and send your application." },
-];
 
 interface Attachment {
   filename: string;
@@ -65,6 +56,15 @@ const categoryKeyOf = (industrySlug: string, categoryName: string) => `${industr
 const STEP_SCHEMAS = [rfqCompanySchema, rfqProductSchema, rfqTermsSchema];
 
 export default function RfqForm() {
+  const t = useTranslations("rfqPage");
+  const STEPS = useMemo(() => [t("form.steps.company"), t("form.steps.product"), t("form.steps.terms")] as const, [t]);
+  const PATHS: { key: RfqPath; title: string; desc: string }[] = [
+    { key: "product", title: t("form.paths.productTitle"), desc: t("form.paths.productDesc") },
+    { key: "service", title: t("form.paths.serviceTitle"), desc: t("form.paths.serviceDesc") },
+    { key: "partnership", title: t("form.paths.partnershipTitle"), desc: t("form.paths.partnershipDesc") },
+    { key: "audit", title: t("form.paths.auditTitle"), desc: t("form.paths.auditDesc") },
+    { key: "career", title: t("form.paths.careerTitle"), desc: t("form.paths.careerDesc") },
+  ];
   const searchParams = useSearchParams();
   const categoryOptions = useMemo(() => getAllCategoriesWithIndustry(), []);
   const presetSlug = searchParams.get("category");
@@ -113,7 +113,7 @@ export default function RfqForm() {
     deliveryStart: "",
     deliveryEnd: "",
     sampleRequired: presetSample ? "yes" : "no",
-    notes: presetProducts.length ? `Products of interest: ${presetProducts.join(", ")}` : "",
+    notes: presetProducts.length ? `${t("form.presetProductsNote")} ${presetProducts.join(", ")}` : "",
     attachments: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -153,12 +153,12 @@ export default function RfqForm() {
     const current = [...form.attachments];
     for (const file of Array.from(list)) {
       if (current.length >= MAX_ATTACHMENTS) {
-        setErrors((e) => ({ ...e, attachments: `Maximum ${MAX_ATTACHMENTS} files.` }));
+        setErrors((e) => ({ ...e, attachments: t("form.attachmentsMax", { max: MAX_ATTACHMENTS }) }));
         break;
       }
       const totalAfter = current.reduce((s, a) => s + a.size, 0) + file.size;
       if (totalAfter > MAX_ATTACHMENT_BYTES) {
-        setErrors((e) => ({ ...e, attachments: "Combined attachments must stay under 4 MB." }));
+        setErrors((e) => ({ ...e, attachments: t("form.attachmentsSizeError") }));
         break;
       }
       const contentBase64 = await new Promise<string>((resolve, reject) => {
@@ -218,10 +218,10 @@ export default function RfqForm() {
         body: JSON.stringify(parsed.data),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Submission failed. Please try again.");
+      if (!res.ok) throw new Error(json.error ?? t("form.submitFailedFallback"));
       setReference(json.reference);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setSubmitError(err instanceof Error ? err.message : t("form.errorGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -232,19 +232,19 @@ export default function RfqForm() {
     return (
       <div className="rfq-confirm">
         <LazyCrane variant="success" />
-        <span className="tvx-eyebrow">RFQ Received</span>
-        <h2>Reference #{reference}</h2>
-        <p>Our team responds within 24 business hours (IST) via the email and WhatsApp number you provided.</p>
+        <span className="tvx-eyebrow">{t("confirm.eyebrow")}</span>
+        <h2>{t("confirm.referenceLabel", { reference })}</h2>
+        <p>{t("confirm.respondNote")}</p>
         <div className="rfq-confirm__next">
-          <span className="ind-drawer__eyebrow">What Happens Next</span>
+          <span className="ind-drawer__eyebrow">{t("confirm.whatHappensNext")}</span>
           <ol>
-            <li>Our sourcing team reviews your requirement against current factory capacity.</li>
-            <li>You receive a formal quotation with pricing, lead time, and payment terms.</li>
-            <li>Once confirmed, we issue a proforma invoice and begin production scheduling.</li>
+            <li>{t("confirm.s1")}</li>
+            <li>{t("confirm.s2")}</li>
+            <li>{t("confirm.s3")}</li>
           </ol>
         </div>
         <Link className="tvx-btn tvx-btn--primary" href="/industries/">
-          Browse More Industries
+          {t("confirm.browseMore")}
         </Link>
       </div>
     );
@@ -253,7 +253,7 @@ export default function RfqForm() {
   /* ---------- Path picker ---------- */
   if (!path) {
     return (
-      <div className="rfq-paths" role="group" aria-label="What would you like to discuss?">
+      <div className="rfq-paths" role="group" aria-label={t("form.pathsAriaLabel")}>
         {PATHS.map((p) => (
           <button key={p.key} type="button" className="rfq-path-card" onClick={() => setPath(p.key)}>
             <h3>{p.title}</h3>
@@ -268,15 +268,15 @@ export default function RfqForm() {
   if (path === "career") {
     return (
       <div className="rfq-confirm">
-        <span className="tvx-eyebrow">Careers</span>
-        <h2>We&rsquo;d love to hear from you.</h2>
-        <p>Open areas, culture, and the application form live on our careers page.</p>
+        <span className="tvx-eyebrow">{t("career.eyebrow")}</span>
+        <h2>{t("career.title")}</h2>
+        <p>{t("career.description")}</p>
         <div className="rfq-actions">
           <button type="button" className="tvx-btn tvx-btn--ghost" onClick={() => setPath(null)}>
-            Back
+            {t("career.back")}
           </button>
           <Link className="tvx-btn tvx-btn--primary" href="/careers/">
-            Go to Careers →
+            {t("career.goToCareers")}
           </Link>
         </div>
       </div>
@@ -291,7 +291,7 @@ export default function RfqForm() {
   return (
     <div className="rfq-form">
       <button type="button" className="rfq-path-back" onClick={() => setPath(null)}>
-        ← Change enquiry type
+        {t("form.changeEnquiryType")}
       </button>
 
       <div className="rfq-progress">
@@ -316,19 +316,19 @@ export default function RfqForm() {
         >
           {step === 0 && (
             <div className="rfq-grid">
-              <Field label="Company Name" error={errors.companyName}>
+              <Field label={t("form.fields.companyName")} error={errors.companyName}>
                 <input value={form.companyName} onChange={(e) => update("companyName", e.target.value)} />
               </Field>
-              <Field label="Contact Name" error={errors.contactName}>
+              <Field label={t("form.fields.contactName")} error={errors.contactName}>
                 <input value={form.contactName} onChange={(e) => update("contactName", e.target.value)} />
               </Field>
-              <Field label="Business Email" error={errors.email}>
+              <Field label={t("form.fields.businessEmail")} error={errors.email}>
                 <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} />
               </Field>
-              <Field label="WhatsApp Number" error={errors.whatsapp}>
+              <Field label={t("form.fields.whatsappNumber")} error={errors.whatsapp}>
                 <PhoneInput international defaultCountry="IN" value={form.whatsapp} onChange={(v) => update("whatsapp", v ?? "")} />
               </Field>
-              <Field label="Country of Import" error={errors.importCountry}>
+              <Field label={t("form.fields.countryOfImport")} error={errors.importCountry}>
                 <input value={form.importCountry} onChange={(e) => update("importCountry", e.target.value)} />
               </Field>
             </div>
@@ -338,15 +338,14 @@ export default function RfqForm() {
             <>
               {presetProducts.length > 0 && (
                 <p className="rfq-preset-note">
-                  From your catalog selection: <strong>{presetProducts.join(", ")}</strong> — details carried into the
-                  notes for our sourcing team.
+                  {t("form.presetNote", { products: presetProducts.join(", ") })}
                 </p>
               )}
               <div className="rfq-grid">
-                <Field label="Destination Port" error={errors.destinationPort}>
+                <Field label={t("form.fields.destinationPort")} error={errors.destinationPort}>
                   <input value={form.destinationPort} onChange={(e) => update("destinationPort", e.target.value)} />
                 </Field>
-                <Field label="Product Category" error={errors.categoryKey}>
+                <Field label={t("form.fields.productCategory")} error={errors.categoryKey}>
                   <select value={form.categoryKey} onChange={(e) => onCategoryChange(e.target.value)}>
                     {categoryOptions.map((c) => (
                       <option key={categoryKeyOf(c.industrySlug, c.category.name)} value={categoryKeyOf(c.industrySlug, c.category.name)}>
@@ -355,13 +354,13 @@ export default function RfqForm() {
                     ))}
                   </select>
                 </Field>
-                <Field label="HS Code" error={errors.hsCode}>
+                <Field label={t("form.fields.hsCode")} error={errors.hsCode}>
                   <input value={form.hsCode} onChange={(e) => update("hsCode", e.target.value)} />
                 </Field>
-                <Field label="Quantity" error={errors.quantity}>
+                <Field label={t("form.fields.quantity")} error={errors.quantity}>
                   <input type="number" min="0" step="any" value={form.quantity} onChange={(e) => update("quantity", e.target.value)} />
                 </Field>
-                <Field label="Unit">
+                <Field label={t("form.fields.unit")}>
                   <select value={form.unit} onChange={(e) => update("unit", e.target.value as FormState["unit"])}>
                     {QUANTITY_UNITS.map((u) => (
                       <option key={u} value={u}>
@@ -370,30 +369,32 @@ export default function RfqForm() {
                     ))}
                   </select>
                 </Field>
-                <Field label="Target Price Band (optional)">
-                  <input placeholder="e.g. $2.10–$2.40 / kg" value={form.priceBand} onChange={(e) => update("priceBand", e.target.value)} />
+                <Field label={t("form.fields.targetPriceBand")}>
+                  <input placeholder={t("form.fields.targetPriceBandPlaceholder")} value={form.priceBand} onChange={(e) => update("priceBand", e.target.value)} />
                 </Field>
               </div>
               {selectedCategory && (
                 <p className="rfq-helper" role="note">
-                  Catalog reference for {selectedCategory.category.name}: typical MOQ{" "}
-                  <strong>{selectedCategory.category.moq}</strong> · lead time{" "}
-                  <strong>{selectedCategory.category.leadTime}</strong> · HS{" "}
-                  <strong>{selectedCategory.category.hsCode}</strong>. Quantities below the MOQ are quoted case by
-                  case — submit anyway and we&rsquo;ll advise.
+                  {t("form.catalogHelper", {
+                    category: selectedCategory.category.name,
+                    moq: selectedCategory.category.moq,
+                    leadTime: selectedCategory.category.leadTime,
+                    hsCode: selectedCategory.category.hsCode,
+                  })}
                 </p>
               )}
               {selectedCategory?.category.requiresCert && selectedCategory.category.requiresCert.length > 0 && (
                 <p className="rfq-helper rfq-helper--cert" role="note">
-                  Certification status for {selectedCategory.category.name}:{" "}
-                  {selectedCategory.category.requiresCert
-                    .map((code) => {
-                      const cert = getCertification(code);
-                      return cert ? `${cert.code} — ${cert.detail}` : code;
-                    })
-                    .join(" · ")}
-                  . We can still log your requirement now; export is contingent on certification completing. See{" "}
-                  <Link href="/compliance/">our full compliance posture →</Link>
+                  {t("form.certHelper", {
+                    category: selectedCategory.category.name,
+                    statuses: selectedCategory.category.requiresCert
+                      .map((code) => {
+                        const cert = getCertification(code);
+                        return cert ? `${cert.code} — ${cert.detail}` : code;
+                      })
+                      .join(" · "),
+                  })}{" "}
+                  <Link href="/compliance/">{t("form.complianceLink")}</Link>
                 </p>
               )}
             </>
@@ -401,22 +402,22 @@ export default function RfqForm() {
 
           {step === 2 && (
             <div className="rfq-grid">
-              <Field label="Preferred Incoterm" error={errors.incoterm}>
+              <Field label={t("form.fields.preferredIncoterm")} error={errors.incoterm}>
                 <select value={form.incoterm} onChange={(e) => update("incoterm", e.target.value as FormState["incoterm"])}>
-                  {INCOTERMS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
+                  {INCOTERMS.map((term) => (
+                    <option key={term} value={term}>
+                      {term}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="Delivery Window — From" error={errors.deliveryStart}>
+              <Field label={t("form.fields.deliveryFrom")} error={errors.deliveryStart}>
                 <input type="date" value={form.deliveryStart} onChange={(e) => update("deliveryStart", e.target.value)} />
               </Field>
-              <Field label="Delivery Window — To" error={errors.deliveryEnd}>
+              <Field label={t("form.fields.deliveryTo")} error={errors.deliveryEnd}>
                 <input type="date" value={form.deliveryEnd} onChange={(e) => update("deliveryEnd", e.target.value)} />
               </Field>
-              <Field label="Sample Required">
+              <Field label={t("form.fields.sampleRequired")}>
                 <div className="rfq-toggle">
                   {(["yes", "no"] as const).map((v) => (
                     <button
@@ -425,15 +426,15 @@ export default function RfqForm() {
                       className={form.sampleRequired === v ? "is-active" : ""}
                       onClick={() => update("sampleRequired", v)}
                     >
-                      {v === "yes" ? "Yes" : "No"}
+                      {v === "yes" ? t("form.fields.yes") : t("form.fields.no")}
                     </button>
                   ))}
                 </div>
               </Field>
-              <Field label="Additional Notes" full>
+              <Field label={t("form.fields.additionalNotes")} full>
                 <textarea rows={4} value={form.notes} onChange={(e) => update("notes", e.target.value)} />
               </Field>
-              <Field label={`Spec Sheets / Drawings (up to ${MAX_ATTACHMENTS} files, 4 MB total)`} full error={errors.attachments || undefined}>
+              <Field label={t("form.fields.specSheets", { max: MAX_ATTACHMENTS, mb: 4 })} full error={errors.attachments || undefined}>
                 <input
                   type="file"
                   multiple
@@ -452,7 +453,7 @@ export default function RfqForm() {
                         </span>
                         <button
                           type="button"
-                          aria-label={`Remove ${a.filename}`}
+                          aria-label={t("form.removeFileAria", { filename: a.filename })}
                           onClick={() =>
                             update(
                               "attachments",
@@ -477,17 +478,17 @@ export default function RfqForm() {
       <div className="rfq-actions">
         {step > 0 && (
           <button type="button" className="tvx-btn tvx-btn--ghost" onClick={goBack}>
-            Back
+            {t("form.back")}
           </button>
         )}
         {step < STEPS.length - 1 && (
           <button type="button" className="tvx-btn tvx-btn--primary" onClick={goNext}>
-            Continue
+            {t("form.continue")}
           </button>
         )}
         {step === STEPS.length - 1 && (
           <button type="button" className="tvx-btn tvx-btn--primary" disabled={submitting} onClick={handleSubmit}>
-            {submitting ? "Submitting…" : "Submit RFQ"}
+            {submitting ? t("form.submitting") : t("form.submitRfq")}
           </button>
         )}
       </div>
@@ -495,22 +496,11 @@ export default function RfqForm() {
   );
 }
 
-const INQUIRY_TITLES: Record<"service" | "partnership" | "audit", string> = {
-  service: "Service Engagement",
-  partnership: "Partnership",
-  audit: "Factory Audit / Site Visit",
-};
-
-const INQUIRY_PROMPTS: Record<"service" | "partnership" | "audit", string> = {
-  service: "What do you want to build or achieve?",
-  partnership: "What kind of partnership do you have in mind?",
-  audit: "Which facility or product line, and when would you like to visit or audit?",
-};
-
 /** Service / partnership / factory-audit enquiry — a focused message form
  * into /api/contact (CAS-07: factory audit / site visit as a distinct RFQ
  * enquiry type, not a separate form). */
 function InquiryForm({ kind, onBack }: { kind: "service" | "partnership" | "audit"; onBack: () => void }) {
+  const t = useTranslations("rfqPage");
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
@@ -519,11 +509,11 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership" | "audi
   const [submitting, setSubmitting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
 
-  const title = INQUIRY_TITLES[kind];
+  const title = t(`inquiry.${kind}Title`);
 
   async function submit() {
     if (!fullName.trim() || !email.trim() || message.trim().length < 10) {
-      setError("Please add your name, a valid email, and a few sentences about your requirement.");
+      setError(t("inquiry.errorValidation"));
       return;
     }
     setSubmitting(true);
@@ -540,10 +530,10 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership" | "audi
         }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Submission failed. Please try again.");
+      if (!res.ok) throw new Error(json.error ?? t("form.submitFailedFallback"));
       setReference(json.reference);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : t("inquiry.errorGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -553,11 +543,11 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership" | "audi
     return (
       <div className="rfq-confirm">
         <LazyCrane variant="success" />
-        <span className="tvx-eyebrow">{title} Enquiry Received</span>
-        <h2>Reference #{reference}</h2>
-        <p>Our team responds within 24 business hours (IST).</p>
+        <span className="tvx-eyebrow">{t("inquiry.enquiryReceived", { title })}</span>
+        <h2>{t("confirm.referenceLabel", { reference })}</h2>
+        <p>{t("inquiry.respondNote")}</p>
         <Link className="tvx-btn tvx-btn--primary" href={kind === "service" ? "/businesses/service-exports/" : kind === "audit" ? "/compliance/" : "/group/"}>
-          {kind === "service" ? "Explore Service Exports" : kind === "audit" ? "See Our Compliance Posture" : "About the Group"}
+          {kind === "service" ? t("inquiry.exploreServiceExports") : kind === "audit" ? t("inquiry.seeCompliance") : t("inquiry.aboutGroup")}
         </Link>
       </div>
     );
@@ -566,26 +556,26 @@ function InquiryForm({ kind, onBack }: { kind: "service" | "partnership" | "audi
   return (
     <div className="rfq-form">
       <button type="button" className="rfq-path-back" onClick={onBack}>
-        ← Change enquiry type
+        {t("form.changeEnquiryType")}
       </button>
       <div className="rfq-grid">
-        <Field label="Your Name">
+        <Field label={t("inquiry.yourName")}>
           <input value={fullName} onChange={(e) => setFullName(e.target.value)} />
         </Field>
-        <Field label="Company (optional)">
+        <Field label={t("inquiry.companyOptional")}>
           <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
         </Field>
-        <Field label="Business Email">
+        <Field label={t("inquiry.businessEmail")}>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
-        <Field label={INQUIRY_PROMPTS[kind]} full>
+        <Field label={t(`inquiry.${kind}Prompt`)} full>
           <textarea rows={6} value={message} onChange={(e) => setMessage(e.target.value)} />
         </Field>
       </div>
       {error && <p className="rfq-error">{error}</p>}
       <div className="rfq-actions">
         <button type="button" className="tvx-btn tvx-btn--primary" disabled={submitting} onClick={submit}>
-          {submitting ? "Sending…" : `Send ${title} Enquiry`}
+          {submitting ? t("inquiry.sending") : t("inquiry.sendEnquiry", { title })}
         </button>
       </div>
     </div>

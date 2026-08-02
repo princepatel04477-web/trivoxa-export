@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "@/components/brand/Logo";
 import { FOOTER_TONE } from "@/lib/logo";
@@ -10,51 +11,10 @@ import { taxonomy } from "@/lib/data/taxonomy";
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
 const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL;
 
-/** Rich footer (spec §1 + §3): full nav mirror — the long industry and
- * service lists live HERE, not in the top nav — plus newsletter, locations,
- * legal, and the parent-company credit. */
-const groupColumn = [
-  { label: "Our Story", href: "/group/#our-story" },
-  { label: "Leadership", href: "/group/#leadership" },
-  { label: "Shiveshwar Foundation", href: "/group/#foundation" },
-  { label: "Vision", href: "/group/#vision" },
-  { label: "Commitments", href: "/group/#commitments" },
-  { label: "Compliance", href: "/compliance/" },
-  { label: "Careers", href: "/careers/" },
-];
-
 // Every taxonomy entry with a live catalog route (PTO-02), plus the
 // catch-all link — previously a local literal list missing Furniture &
 // Interiors and Jewellery & Precious Products.
-const productColumn = [
-  ...taxonomy.filter((t) => t.catalogHref).map((t) => ({ label: t.displayName, href: t.catalogHref! })),
-  { label: "All Product Exports", href: "/businesses/product-exports/" },
-];
-
-const serviceColumn = [
-  { label: "Technology", href: "/businesses/service-exports/technology/" },
-  { label: "AI", href: "/businesses/service-exports/ai/" },
-  { label: "Software", href: "/businesses/service-exports/software/" },
-  { label: "Design & Branding", href: "/businesses/service-exports/design/" },
-  { label: "Digital Marketing", href: "/businesses/service-exports/marketing/" },
-  { label: "Business Support", href: "/businesses/service-exports/business-support/" },
-];
-
-const exploreColumn = [
-  { label: "Industries", href: "/industries/" },
-  { label: "Global Presence", href: "/global-presence/" },
-  { label: "Insights", href: "/insights/" },
-  { label: "Request a Quote", href: "/rfq/" },
-  { label: "Contact", href: "/contact/" },
-];
-
-const legalLinks = [
-  { label: "Privacy", href: "/privacy-policy/" },
-  { label: "Terms", href: "/terms/" },
-  { label: "Compliance", href: "/compliance/" },
-  { label: "Anti-corruption Policy", href: "/anti-corruption-policy/" },
-  { label: "Cookie Preferences", href: "/cookie-preferences/" },
-];
+const productColumnMeta = taxonomy.filter((t) => t.catalogHref).map((t) => ({ megaMenuKey: t.megaMenuKey, href: t.catalogHref! }));
 
 function FooterColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
@@ -75,6 +35,9 @@ export default function SiteFooter() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("footer");
+  const tn = useTranslations("nav");
+  const tm = useTranslations("megaMenu");
 
   const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
@@ -89,9 +52,49 @@ export default function SiteFooter() {
       if (!res.ok) throw new Error();
       setSent(true);
     } catch {
-      setError("Could not subscribe right now — please try again.");
+      setError(t("newsletter.errorGeneric"));
     }
   };
+
+  const groupColumn = [
+    { label: tm("story"), href: "/group/#our-story" },
+    { label: tm("leadership"), href: "/group/#leadership" },
+    { label: tm("foundation"), href: "/group/#foundation" },
+    { label: tm("vision"), href: "/group/#vision" },
+    { label: tm("commitments"), href: "/group/#commitments" },
+    { label: t("links.compliance"), href: "/compliance/" },
+    { label: tn("careers"), href: "/careers/" },
+  ];
+
+  const productColumn = [
+    ...productColumnMeta.map((p) => ({ label: p.megaMenuKey ? tm(p.megaMenuKey) : "", href: p.href })),
+    { label: t("columns.allProductExports"), href: "/businesses/product-exports/" },
+  ];
+
+  const serviceColumn = [
+    { label: tm("technology"), href: "/businesses/service-exports/technology/" },
+    { label: tm("ai"), href: "/businesses/service-exports/ai/" },
+    { label: tm("software"), href: "/businesses/service-exports/software/" },
+    { label: tm("designBranding"), href: "/businesses/service-exports/design/" },
+    { label: tm("digitalMarketing"), href: "/businesses/service-exports/marketing/" },
+    { label: tm("businessSupport"), href: "/businesses/service-exports/business-support/" },
+  ];
+
+  const exploreColumn = [
+    { label: tn("industries"), href: "/industries/" },
+    { label: tn("globalPresence"), href: "/global-presence/" },
+    { label: tn("insights"), href: "/insights/" },
+    { label: t("links.requestQuote"), href: "/rfq/" },
+    { label: tn("contactUs"), href: "/contact/" },
+  ];
+
+  const legalLinks = [
+    { label: t("legal.privacy"), href: "/privacy-policy/" },
+    { label: t("legal.terms"), href: "/terms/" },
+    { label: t("links.compliance"), href: "/compliance/" },
+    { label: t("legal.antiCorruption"), href: "/anti-corruption-policy/" },
+    { label: t("legal.cookiePreferences"), href: "/cookie-preferences/" },
+  ];
 
   return (
     <section className="footer">
@@ -102,15 +105,15 @@ export default function SiteFooter() {
             <div className="logo">
               <Logo variant="full" slot="footer" tone={FOOTER_TONE} />
             </div>
-            <p className="tagline">Building the Future of Global Commerce — One Partnership at a Time.</p>
+            <p className="tagline">{t("tagline")}</p>
 
             <div className="footer-locations">
               <div className="footer-locations__hq">
-                <span className="footer-locations__label">Headquarters</span>
-                <p>Surat, Gujarat, India</p>
+                <span className="footer-locations__label">{t("headquartersLabel")}</span>
+                <p>{t("headquartersValue")}</p>
               </div>
               <div className="footer-locations__global">
-                <span className="footer-locations__label">Serving buyers across</span>
+                <span className="footer-locations__label">{t("servingLabel")}</span>
                 <p>{regionsTagline}</p>
               </div>
             </div>
@@ -129,48 +132,46 @@ export default function SiteFooter() {
           </div>
 
           {/* Nav mirror */}
-          <FooterColumn title="The Group" links={groupColumn} />
-          <FooterColumn title="Product Exports" links={productColumn} />
-          <FooterColumn title="Service Exports" links={serviceColumn} />
-          <FooterColumn title="Explore" links={exploreColumn} />
+          <FooterColumn title={t("columns.theGroup")} links={groupColumn} />
+          <FooterColumn title={t("columns.productExports")} links={productColumn} />
+          <FooterColumn title={t("columns.serviceExports")} links={serviceColumn} />
+          <FooterColumn title={t("columns.explore")} links={exploreColumn} />
 
           {/* Newsletter column */}
           <div className="col footer-newsletter">
-            <div className="title">Stay Informed</div>
-            <p className="footer-newsletter__copy">Quarterly dispatch on global trade and business insights.</p>
+            <div className="title">{t("newsletter.title")}</div>
+            <p className="footer-newsletter__copy">{t("newsletter.copy")}</p>
             {sent ? (
-              <p className="footer-newsletter__thanks">Thanks — you&rsquo;re on the list.</p>
+              <p className="footer-newsletter__thanks">{t("newsletter.thanks")}</p>
             ) : (
               <form className="footer-newsletter__form" onSubmit={handleSubscribe}>
                 <input
                   type="email"
                   required
-                  placeholder="Your email"
+                  placeholder={t("newsletter.placeholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  aria-label="Email address"
+                  aria-label={t("newsletter.emailAriaLabel")}
                 />
-                <button type="submit" aria-label="Subscribe">
+                <button type="submit" aria-label={t("newsletter.subscribeAriaLabel")}>
                   →
                 </button>
               </form>
             )}
             {error && <p className="footer-newsletter__error" role="alert">{error}</p>}
-            <p className="footer-response-note">Responds within 24 business hours (IST)</p>
+            <p className="footer-response-note">{t("newsletter.responseNote")}</p>
           </div>
         </div>
 
         {/* Bottom bar */}
         <div className="footer-bottom">
-          <span>&copy; Trivoxa Group 2026</span>
+          <span>{t("copyright")}</span>
           {legalLinks.map((link) => (
-            <Link key={link.label} href={link.href}>
+            <Link key={link.href} href={link.href}>
               {link.label}
             </Link>
           ))}
-          <span className="footer-parent-credit">
-            A venture built on the manufacturing heritage of Shiveshwar Textiles
-          </span>
+          <span className="footer-parent-credit">{t("parentCredit")}</span>
         </div>
       </div>
     </section>

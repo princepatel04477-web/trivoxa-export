@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Steps } from "@/components/trivoxa/ui";
 import RfqForm from "@/components/rfq/RfqForm";
@@ -16,20 +17,20 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL;
 const CALENDAR_URL = process.env.NEXT_PUBLIC_CALENDAR_URL;
 
-const nextSteps = [
-  { title: "Review", desc: "Our sourcing team reviews your requirement against current factory capacity — within 24 business hours (IST)." },
-  { title: "Quote", desc: "You receive a formal quotation with pricing, lead time, and payment terms." },
-  { title: "Confirm", desc: "Once confirmed, we issue a proforma invoice and begin production scheduling." },
-];
+export default async function RfqPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("rfqPage");
 
-export default function RfqPage() {
+  const nextSteps = [
+    { title: t("nextSteps.s1Title"), desc: t("nextSteps.s1Desc") },
+    { title: t("nextSteps.s2Title"), desc: t("nextSteps.s2Desc") },
+    { title: t("nextSteps.s3Title"), desc: t("nextSteps.s3Desc") },
+  ];
+
   return (
     <TrivoxaShell film="contact">
-      <PageHero
-        eyebrow="Request For Quote"
-        title="Send Us Your RFQ"
-        description="Pick your path — product sourcing, services, or partnership. Real HS codes, real lead times. Our team responds within 24 business hours (IST)."
-      />
+      <PageHero eyebrow={t("hero.eyebrow")} title={t("hero.title")} description={t("hero.description")} />
 
       <section className="tvx-section tvx-section--tight">
         <div className="container">
@@ -42,9 +43,9 @@ export default function RfqPage() {
               visitor with a general (non-sourcing) question always has
               somewhere else to go (HEP-03 cross-link). */}
           <div className="rfq-quicklinks" aria-label="Other ways to reach us">
-            <span className="rfq-quicklinks__label">General question?</span>
+            <span className="rfq-quicklinks__label">{t("quickLinks.label")}</span>
             <Link href="/contact/" data-analytics="rfq-contact-crosslink">
-              Contact us →
+              {t("quickLinks.contact")}
             </Link>
             {WHATSAPP_NUMBER && (
                 <a
@@ -53,17 +54,17 @@ export default function RfqPage() {
                   rel="noopener noreferrer"
                   data-analytics="rfq-whatsapp"
                 >
-                  WhatsApp ↗
+                  {t("quickLinks.whatsapp")}
                 </a>
               )}
               {LINKEDIN_URL && (
                 <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" data-analytics="rfq-linkedin">
-                  LinkedIn ↗
+                  {t("quickLinks.linkedin")}
                 </a>
               )}
               {CALENDAR_URL && (
                 <a href={CALENDAR_URL} target="_blank" rel="noopener noreferrer" data-analytics="rfq-calendar">
-                  Book a call ↗
+                  {t("quickLinks.calendar")}
                 </a>
               )}
           </div>
@@ -71,12 +72,12 @@ export default function RfqPage() {
       </section>
 
       {/* What happens next */}
-      <Section eyebrow="What Happens Next" title="Three Steps From RFQ to Order.">
+      <Section eyebrow={t("nextSteps.eyebrow")} title={t("nextSteps.title")}>
         <Steps items={nextSteps} row />
       </Section>
 
       {/* Where we are */}
-      <Section eyebrow="Where We Are" title="Surat, Gujarat — India's Export Corridor.">
+      <Section eyebrow={t("whereWeAre.eyebrow")} title={t("whereWeAre.title")}>
         <div className="rfq-map">
           {/* Presentational frame only — it carries the radius, hairline, ring
               and shadow so the embed reads as a deliberate panel rather than a
@@ -92,10 +93,7 @@ export default function RfqPage() {
               allowFullScreen
             />
           </div>
-          <p className="rfq-map__note">
-            Headquartered in Surat with access to Mundra, Kandla, and Nhava Sheva ports — response window 24 business
-            hours, IST.
-          </p>
+          <p className="rfq-map__note">{t("whereWeAre.note")}</p>
         </div>
       </Section>
     </TrivoxaShell>

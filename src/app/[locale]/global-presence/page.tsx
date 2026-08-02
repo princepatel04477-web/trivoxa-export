@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import "@/app/styles/global-presence-page.css";
 import "@/app/styles/signature-canvas.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
@@ -19,77 +20,75 @@ export const metadata: Metadata = {
 // also used by the footer tagline. `slug` remains load-bearing: it drives
 // the `#region-*` anchor each lane carries, which the particle field's
 // regionCues hang off (see GLOBAL_PRESENCE in src/lib/choreography.ts).
+// Region titles stay as the English proper noun sitewide; only the
+// descriptive copy is translated (globalPresencePage.regionItems.<slug>).
 
 // Export ports — Layer 2 (commerce/logistics data, honestly placed on the
 // logistics page rather than the homepage). UN/LOCODEs are the standard
 // public codes for these ports, not invented; the descriptors are public
 // knowledge about each port's role in Indian trade.
-const exportPorts = [
-  {
-    name: "Mundra",
-    code: "INMUN",
-    role: "India's largest commercial port by cargo volume",
-    detail: "All-weather, deep-draft port on the Gulf of Kutch — the workhorse for containerized and bulk export cargo out of Gujarat.",
-  },
-  {
-    name: "Kandla",
-    code: "INKLA",
-    role: "Major gateway for dry and liquid bulk",
-    detail: "Deendayal Port anchors agri-commodity and bulk exports — a natural fit for spices, grains, and castor shipments.",
-  },
-  {
-    name: "Nhava Sheva (JNPT)",
-    code: "INNSA",
-    role: "India's largest container port",
-    detail: "Handles roughly half of India's containerized trade — the default corridor for European and American consignments.",
-  },
-];
+const PORT_META = [
+  { name: "Mundra", code: "INMUN", key: "mundra" },
+  { name: "Kandla", code: "INKLA", key: "kandla" },
+  { name: "Nhava Sheva (JNPT)", code: "INNSA", key: "nhavaSheva" },
+] as const;
 
-/** Honest presence numbers derived from what the site actually publishes —
- * computed from data modules (PTO-05), never typed as literals. */
-const presenceStats = [
-  { value: regions.length, label: "Regions served" },
-  { value: taxonomy.length, label: "Industries covered" },
-  { value: exportPorts.length, label: "Export ports" },
-  { value: 24, suffix: "h", label: "Response window (IST)" },
-];
+export default async function GlobalPresencePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("globalPresencePage");
 
-const ecosystem = [
-  { title: "Manufacturing Partners", desc: "Trusted producers anchored by Shiveshwar Textiles." },
-  { title: "Product Export Division", desc: "Physical goods sourced and delivered worldwide." },
-  { title: "Service Export Division", desc: "Technology, design, and professional teams." },
-  { title: "Logistics Partners", desc: "Coordinated export, documentation, and delivery." },
-  { title: "Global Buyers", desc: "Organizations we serve across international markets." },
-  { title: "Long-Term Partnerships", desc: "Relationships built to endure and expand." },
-];
+  const exportPorts = PORT_META.map((p) => ({
+    name: p.name,
+    code: p.code,
+    role: t(`ports.${p.key}Role`),
+    detail: t(`ports.${p.key}Detail`),
+  }));
 
-const operations = [
-  "Global Sourcing",
-  "Export Coordination",
-  "Documentation",
-  "Quality Assurance",
-  "Supply Chain Management",
-  "International Communication",
-];
+  /** Honest presence numbers derived from what the site actually publishes —
+   * computed from data modules (PTO-05), never typed as literals. */
+  const presenceStats = [
+    { value: regions.length, label: t("statsSection.regionsServed") },
+    { value: taxonomy.length, label: t("statsSection.industriesCovered") },
+    { value: exportPorts.length, label: t("statsSection.exportPorts") },
+    { value: 24, suffix: "h", label: t("statsSection.responseWindow") },
+  ];
 
-const growth = [
-  "Expanding Partnerships",
-  "Emerging Markets",
-  "New Industries",
-  "Global Collaboration",
-  "Long-Term Growth",
-];
+  const ecosystem = [
+    { title: t("ecosystem.items.e1Title"), desc: t("ecosystem.items.e1Desc") },
+    { title: t("ecosystem.items.e2Title"), desc: t("ecosystem.items.e2Desc") },
+    { title: t("ecosystem.items.e3Title"), desc: t("ecosystem.items.e3Desc") },
+    { title: t("ecosystem.items.e4Title"), desc: t("ecosystem.items.e4Desc") },
+    { title: t("ecosystem.items.e5Title"), desc: t("ecosystem.items.e5Desc") },
+    { title: t("ecosystem.items.e6Title"), desc: t("ecosystem.items.e6Desc") },
+  ];
 
-const why = [
-  { icon: "🌐", title: "Global Business Perspective", description: "An international outlook shaping every solution we deliver." },
-  { icon: "🏭", title: "Manufacturing Heritage", description: "Real production knowledge from our founding manufacturing partner." },
-  { icon: "🤝", title: "Trusted Partner Network", description: "A growing ecosystem of vetted partners worldwide." },
-  { icon: "🧭", title: "Cross-Border Expertise", description: "Experience navigating international trade and compliance." },
-  { icon: "💬", title: "Professional Communication", description: "Clear, reliable coordination across time zones." },
-  { icon: "♾", title: "Long-Term Relationships", description: "Partnerships designed to grow across markets and years." },
-];
+  const operations = [
+    t("tradeOps.items.o1"),
+    t("tradeOps.items.o2"),
+    t("tradeOps.items.o3"),
+    t("tradeOps.items.o4"),
+    t("tradeOps.items.o5"),
+    t("tradeOps.items.o6"),
+  ];
 
-export default function GlobalPresencePage() {
+  const growth = [
+    t("growing.items.g1"),
+    t("growing.items.g2"),
+    t("growing.items.g3"),
+    t("growing.items.g4"),
+    t("growing.items.g5"),
+  ];
+
+  const why = [
+    { icon: "🌐", title: t("why.statements.w1Title"), description: t("why.statements.w1Desc") },
+    { icon: "🏭", title: t("why.statements.w2Title"), description: t("why.statements.w2Desc") },
+    { icon: "🤝", title: t("why.statements.w3Title"), description: t("why.statements.w3Desc") },
+    { icon: "🧭", title: t("why.statements.w4Title"), description: t("why.statements.w4Desc") },
+    { icon: "💬", title: t("why.statements.w5Title"), description: t("why.statements.w5Desc") },
+    { icon: "♾", title: t("why.statements.w6Title"), description: t("why.statements.w6Desc") },
+  ];
+
   return (
     <TrivoxaShell>
       {/* Signature animation: one persistent canvas behind every section. The
@@ -101,21 +100,13 @@ export default function GlobalPresencePage() {
       </div>
 
       <PageHero
-        eyebrow="Global Presence"
-        title="Connecting Opportunities Across Borders."
-        description="International business is built on trust, collaboration, and strong relationships. Through an expanding network of suppliers, partners, and clients, Trivoxa Group is building meaningful connections that enable organizations to grow confidently across international markets."
-        actions={[{ label: "Start a Conversation", href: "/contact/" }, { label: "Request a Quote", modal: true, variant: "ghost" }]}
+        eyebrow={t("hero.eyebrow")}
+        title={t("hero.title")}
+        description={t("hero.description")}
+        actions={[{ label: t("hero.ctaConversation"), href: "/contact/" }, { label: t("hero.ctaQuote"), modal: true, variant: "ghost" }]}
       />
 
-      <Section
-        id="global-overview"
-        eyebrow="Our Global Approach"
-        title="One Vision. Connected Across Markets."
-        lead={
-          "Our global approach is built on a simple belief: meaningful business grows through cross-border collaboration and long-term relationships.\n\n" +
-          "We connect markets, simplify international trade, and bring together manufacturers, professionals, and buyers into a single, dependable network — guided by an international business philosophy focused on trust and shared success."
-        }
-      />
+      <Section id="global-overview" eyebrow={t("overview.eyebrow")} title={t("overview.title")} lead={t("overview.lead")} />
 
       {/* Interactive Global Network — deliberately sparse and tall (see
           .presence-network in signature-canvas.css): the live particle globe
@@ -128,35 +119,31 @@ export default function GlobalPresencePage() {
           real: the globe is draggable. */}
       <section className="tvx-section presence-network" id="global-network">
         <div className="container">
-          <span className="tvx-eyebrow">Interactive Global Network</span>
-          <h2>One Connected World.</h2>
+          <span className="tvx-eyebrow">{t("network.eyebrow")}</span>
+          <h2>{t("network.heading")}</h2>
           <div className="tvx-lead">
-            <p>
-              Every partner, port, and buyer we work with sits somewhere on this
-              globe — one network, turning. Drag it to look around; keep scrolling
-              to see the regions light up and the trade lanes draw between them.
-            </p>
+            <p>{t("network.lead")}</p>
           </div>
         </div>
       </section>
 
-      <Section id="regions" eyebrow="Regions We Serve" title={`Building Presence Across ${regions.length} Global Regions.`} lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
+      <Section id="regions" eyebrow={t("regionsSection.eyebrow")} title={t("regionsSection.title", { count: regions.length })} lead={t("regionsSection.lead")}>
         <div className="tvx-lanes">
           {regions.map((r) => (
             <div className="tvx-lane" key={r.title} id={`region-${r.slug}`}>
               <span className="tvx-lane__name">{r.title}</span>
-              <span className="tvx-lane__desc">{r.description}</span>
+              <span className="tvx-lane__desc">{t(`regionItems.${r.slug}`)}</span>
             </div>
           ))}
         </div>
       </Section>
 
       {/* Presence in numbers — animated counters (spec §3/§4) */}
-      <Section eyebrow="Presence in Numbers" title="The Network, Measured Honestly.">
+      <Section eyebrow={t("statsSection.eyebrow")} title={t("statsSection.title")}>
         <PresenceStats stats={presenceStats} />
       </Section>
 
-      <Section eyebrow="Export Ports" title="Where Shipments Leave From." lead="Every shipment is coordinated through established Indian export ports, regardless of destination.">
+      <Section eyebrow={t("ports.eyebrow")} title={t("ports.title")} lead={t("ports.lead")}>
         <div className="presence-crane" aria-hidden="true">
           <LazyCrane variant="subtle" />
         </div>
@@ -174,7 +161,7 @@ export default function GlobalPresencePage() {
         </div>
       </Section>
 
-      <Section eyebrow="Our Ecosystem" title="How Trivoxa Connects the World." lead="From manufacturing partners to global buyers, our ecosystem turns complex international trade into seamless business relationships.">
+      <Section eyebrow={t("ecosystem.eyebrow")} title={t("ecosystem.title")} lead={t("ecosystem.lead")}>
         <div className="tvx-strip">
           {ecosystem.flatMap((e, i) => {
             const nodes = [
@@ -195,15 +182,15 @@ export default function GlobalPresencePage() {
         </div>
       </Section>
 
-      <Section id="trade-operations" eyebrow="Trade & Operations" title="Managing International Business, End to End." lead="We coordinate the practical realities of global trade so our partners can focus on growth.">
+      <Section id="trade-operations" eyebrow={t("tradeOps.eyebrow")} title={t("tradeOps.title")} lead={t("tradeOps.lead")}>
         <Checklist items={operations} />
       </Section>
 
-      <Section id="growing" eyebrow="Growing Across Borders" title="Clear Ambition, Built Responsibly." lead="Instead of overstating reach, we focus on the growth that creates real, lasting value.">
+      <Section id="growing" eyebrow={t("growing.eyebrow")} title={t("growing.title")} lead={t("growing.lead")}>
         <Checklist items={growth} />
       </Section>
 
-      <Section eyebrow="Why Trivoxa" title="Why Global Businesses Choose Trivoxa.">
+      <Section eyebrow={t("why.eyebrow")} title={t("why.title")}>
         <div className="tvx-statements">
           {why.map((w) => (
             <div className="tvx-statement" key={w.title}>
@@ -216,9 +203,9 @@ export default function GlobalPresencePage() {
       </Section>
 
       <CtaBand
-        title="Let's Connect Across Borders."
-        description="Wherever your business is headed, Trivoxa Group is ready to help you source, expand, and build lasting partnerships across international markets."
-        actions={[{ label: "Start a Conversation", href: "/contact/" }, { label: "Request a Quote", modal: true, variant: "ghost" }]}
+        title={t("cta.title")}
+        description={t("cta.description")}
+        actions={[{ label: t("cta.ctaConversation"), href: "/contact/" }, { label: t("cta.ctaQuote"), modal: true, variant: "ghost" }]}
       />
     </TrivoxaShell>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import { CONTACT, mailto } from "@/data/contact";
@@ -9,51 +10,41 @@ export const metadata: Metadata = {
     "Trivoxa Group's origin story — built from a woven-textile manufacturing floor in Surat, Gujarat, into an international trade and export group.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("about");
+
   return (
     <TrivoxaShell film="about">
-      <PageHero
-        eyebrow="About"
-        title="Built From a Manufacturing Floor in Surat."
-        description="Trivoxa Group didn't start as a trading company. It started on the production floor of a textile manufacturer — and carried that discipline into international trade."
-      />
+      <PageHero eyebrow={t("hero.eyebrow")} title={t("hero.title")} description={t("hero.description")} />
 
-      <Section
-        eyebrow="Our Origin"
-        title="From One Factory to a Growing Export Group."
-        lead={
-          "Trivoxa Group began in strategic partnership with Shiveshwar Textiles, a woven-textile manufacturer based in Surat, Gujarat. Years spent running production floors — managing looms, holding delivery windows, answering to quality checks — shaped how the company approaches export: reliability first, everything else second.\n\n" +
-          "As buyer inquiries grew beyond textiles into healthcare, building materials, agriculture, and engineering goods, Trivoxa Group formed to carry that same manufacturing discipline into new categories — sourcing through vetted partners rather than manufacturing in-house, but holding every shipment to the standard our founding manufacturing partner built its name on."
-        }
-      />
+      <Section eyebrow={t("origin.eyebrow")} title={t("origin.title")} lead={t("origin.lead")} />
 
       <section className="tvx-section tvx-section--tight">
         <div className="container">
           <blockquote className="tvx-pullquote">
-            <p>
-              We didn&rsquo;t set out to be a trading house. We set out to make sure a manufacturing
-              promise made in Surat still holds by the time it reaches a warehouse in Rotterdam.
-            </p>
-            <cite>— Trivoxa Group</cite>
+            <p>{t("quote.text")}</p>
+            <cite>{t("quote.cite")}</cite>
           </blockquote>
         </div>
       </section>
 
-      <Section eyebrow="Company & Contact" title="Where to Find Us.">
+      <Section eyebrow={t("info.eyebrow")} title={t("info.title")}>
         <div className="tvx-info-row">
-          <div className="tvx-info-label">Registered Address</div>
-          <p>Surat, Gujarat, India</p>
+          <div className="tvx-info-label">{t("info.addressLabel")}</div>
+          <p>{t("info.address")}</p>
         </div>
         <div className="tvx-info-row">
-          <div className="tvx-info-label">Email</div>
+          <div className="tvx-info-label">{t("info.emailLabel")}</div>
           <a href={mailto(CONTACT.general)}>{CONTACT.general}</a>
         </div>
       </Section>
 
       <CtaBand
-        title="Have a Question About Our Group?"
-        description="Reach out and our team will get back to you within one business day."
-        actions={[{ label: "Contact Our Team", href: "/contact/" }, { label: "Explore the Group", href: "/group/", variant: "ghost" }]}
+        title={t("cta.title")}
+        description={t("cta.description")}
+        actions={[{ label: t("cta.ctaContact"), href: "/contact/" }, { label: t("cta.ctaGroup"), href: "/group/", variant: "ghost" }]}
       />
     </TrivoxaShell>
   );

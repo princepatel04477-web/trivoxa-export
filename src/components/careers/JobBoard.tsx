@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { openings, type JobOpening } from "@/lib/data/openings";
 import { CONTACT, mailto } from "@/data/contact";
 import EmptyState from "@/components/EmptyState";
 
 function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void }) {
+  const t = useTranslations("careers.jobBoard");
   return (
     <AnimatePresence>
       {job && (
@@ -30,7 +32,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
             aria-label={`${job.title} — full role description`}
           >
             <button className="ind-drawer__close" onClick={onClose}>
-              Close ✕
+              {t("closeLabel")}
             </button>
             <span className="ind-drawer__eyebrow">
               {job.department} — {job.location} — {job.employmentType} — {job.remoteOption}
@@ -39,7 +41,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
             <p className="job-drawer__desc">{job.description}</p>
             <dl>
               <div>
-                <dt>Responsibilities</dt>
+                <dt>{t("responsibilitiesLabel")}</dt>
                 <dd>
                   <ul className="job-drawer__list">
                     {job.responsibilities.map((r) => (
@@ -49,7 +51,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
                 </dd>
               </div>
               <div>
-                <dt>Requirements</dt>
+                <dt>{t("requirementsLabel")}</dt>
                 <dd>
                   <ul className="job-drawer__list">
                     {job.requirements.map((r) => (
@@ -60,7 +62,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
               </div>
               {job.niceToHave && job.niceToHave.length > 0 && (
                 <div>
-                  <dt>Nice to Have</dt>
+                  <dt>{t("niceToHaveLabel")}</dt>
                   <dd>
                     <ul className="job-drawer__list">
                       {job.niceToHave.map((r) => (
@@ -75,7 +77,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
               className="tvx-btn tvx-btn--primary ind-drawer__specsheet"
               href={mailto(CONTACT.careers, `Application — ${job.title} (${job.id})`)}
             >
-              Apply for This Role
+              {t("applyLabel")}
             </a>
           </motion.div>
         </>
@@ -88,14 +90,15 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
  * full-JD drawer, or an honest empty state + open-application CTA when
  * no roles are seeded. */
 export default function JobBoard() {
+  const t = useTranslations("careers.jobBoard");
   const [active, setActive] = useState<JobOpening | null>(null);
 
   if (openings.length === 0) {
     return (
       <EmptyState
-        status="There are no open roles listed right now."
-        timing="We review open applications continuously, not on a fixed hiring cycle."
-        action={{ label: "Submit an Open Application", href: mailto(CONTACT.careers, "Open Application — Trivoxa Group"), external: true }}
+        status={t("emptyStatus")}
+        timing={t("emptyTiming")}
+        action={{ label: t("emptyAction"), href: mailto(CONTACT.careers, "Open Application — Trivoxa Group"), external: true }}
       />
     );
   }
@@ -106,10 +109,10 @@ export default function JobBoard() {
         <table className="ind-table">
           <thead>
             <tr>
-              <th>Role</th>
-              <th>Department</th>
-              <th>Location</th>
-              <th>Type</th>
+              <th>{t("tableRole")}</th>
+              <th>{t("tableDepartment")}</th>
+              <th>{t("tableLocation")}</th>
+              <th>{t("tableType")}</th>
               <th aria-label="Open role" />
             </tr>
           </thead>
@@ -126,7 +129,7 @@ export default function JobBoard() {
                 <td className="mono">{job.department}</td>
                 <td className="mono">{job.location}</td>
                 <td className="mono">{job.employmentType}</td>
-                <td className="mono job-board__view">View Role →</td>
+                <td className="mono job-board__view">{t("viewRole")}</td>
               </tr>
             ))}
           </tbody>

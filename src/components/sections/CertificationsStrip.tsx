@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
 import { ScrollTrigger } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
@@ -38,6 +39,7 @@ function CertBadge({ mark }: { mark: CertMark }) {
  * credentials presented prominently first, pending ones grouped separately
  * underneath so the page never reads as "not yet certified" at a glance. */
 export default function CertificationsStrip() {
+  const t = useTranslations("compliance");
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function CertificationsStrip() {
     <section className="certifications-strip" ref={sectionRef}>
       <div className="container">
         <div className="certifications-strip__group">
-          <h3 className="certifications-strip__group-title">Active</h3>
+          <h3 className="certifications-strip__group-title">{t("active")}</h3>
           <div className="certifications-strip__row">
             {ACTIVE_MARKS.map((mark) => (
               <CertBadge key={mark.code} mark={mark} />
@@ -76,19 +78,14 @@ export default function CertificationsStrip() {
           </div>
         </div>
         <div className="certifications-strip__group">
-          <h3 className="certifications-strip__group-title">In Progress</h3>
+          <h3 className="certifications-strip__group-title">{t("inProgress")}</h3>
           <div className="certifications-strip__row">
             {IN_PROGRESS_MARKS.map((mark) => (
               <CertBadge key={mark.code} mark={mark} />
             ))}
           </div>
         </div>
-        <p className="certifications-strip__footnote">
-          Operational licensing (IEC, GST) is active. Sector certifications are being
-          secured with the target dates shown above. When each credential is finalized,
-          it will be published here with its registration number, issuing authority,
-          legal entity name, and validity period — linked to a verifiable document.
-        </p>
+        <p className="certifications-strip__footnote">{t("footnote")}</p>
       </div>
     </section>
   );

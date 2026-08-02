@@ -28,9 +28,10 @@ export default function Preloader() {
         el.style.display = "none";
       }, 1000);
     });
-    // Safety net: never leave the hero gated if the particle scene is slow to
-    // load or WebGL is unavailable. markPreloaderDone() is latched/idempotent.
-    const fallback = window.setTimeout(() => markPreloaderDone(), 1200);
+    // Safety net: never leave the hero gated if the particle scene fails to
+    // report ready. Long enough to cover WebGL creation + the first stable
+    // assembly frame on Safari/Retina, but still bounded if WebGL stalls.
+    const fallback = window.setTimeout(() => markPreloaderDone(), 3600);
     return () => {
       unsub();
       window.clearTimeout(fallback);

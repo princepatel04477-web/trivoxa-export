@@ -51,6 +51,17 @@ export function isTouchPrimary(): boolean {
 }
 
 /**
+ * WebKit is the renderer family with the most volatile WebGL resize behavior on
+ * Apple hardware. Keep this UA check small and explicit: Chromium-based iOS
+ * browsers are also WebKit under the hood, while desktop Chrome/Edge are not.
+ */
+export function isAppleWebKit(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+  return /AppleWebKit/i.test(ua) && !/(Chrome|Chromium|Edg|OPR|Firefox|FxiOS)/i.test(ua);
+}
+
+/**
  * The device's hardware class, resolved once per session.
  *
  * Not recomputed on resize or rotation by design — a phone does not become a

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { Eyebrow, Section, CtaBand } from "@/components/trivoxa/ui";
 import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
@@ -11,7 +12,7 @@ import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import LeadershipPanel from "@/components/leadership/LeadershipPanel";
 import EcosystemDiagram from "@/components/ecosystem/EcosystemDiagram";
 import GroupLattice from "@/components/group/GroupLattice";
-import { SHIVESHWAR_NAME, SHIVESHWAR_RELATIONSHIP, SHIVESHWAR_FOUNDATION_LINE } from "@/lib/corporate";
+import { SHIVESHWAR_NAME } from "@/lib/corporate";
 import "@/app/styles/patterns.css";
 import "@/app/styles/group-page.css";
 import "@/app/styles/signature-canvas.css";
@@ -22,101 +23,87 @@ export const metadata: Metadata = {
     "Trivoxa Group is an international business group committed to connecting global businesses with trusted products, strategic sourcing solutions, and professional services.",
 };
 
-const principles = [
-  { title: "Vision", description: "We think beyond today's opportunities and build for tomorrow." },
-  { title: "Integrity", description: "Trust is earned through honesty, transparency, and consistency." },
-  { title: "Excellence", description: "We pursue the highest standards in everything we deliver." },
-  { title: "Innovation", description: "We embrace new ideas, technology, and continuous improvement." },
-  { title: "Partnership", description: "We believe sustainable success is created together." },
-  { title: "Impact", description: "We measure success by the lasting value we create for partners, communities, and future generations." },
-];
+export default async function GroupPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("group");
+  const tc = await getTranslations("contact.info");
 
-const ecosystem = [
-  { title: "Product Export Division", description: "Sourcing and delivering quality products through trusted manufacturing partners." },
-  { title: "Service Export Division", description: "Technology, design, and professional services delivered by skilled teams." },
-  { title: "Manufacturing Network", description: "Anchored by Shiveshwar Textiles and a growing partner base." },
-  { title: "Technology Partners", description: "Specialists enabling digital transformation and automation." },
-  { title: "Logistics Partners", description: "Coordinated export, documentation, and supply-chain delivery." },
-  { title: "Global Client Network", description: "Buyers and organizations we serve across international markets." },
-];
+  const relationship = tc("foundationRelationship");
 
-const foundationPhotos = [
-  { src: "/images/foundation/exterior.jpg", caption: "Factory Exterior" },
-  { src: "/images/foundation/weaving.jpg", caption: "Weaving Floor" },
-  { src: "/images/foundation/inspection.jpg", caption: "Quality Inspection" },
-];
+  const principles = [
+    { title: t("philosophy.p1Title"), description: t("philosophy.p1Desc") },
+    { title: t("philosophy.p2Title"), description: t("philosophy.p2Desc") },
+    { title: t("philosophy.p3Title"), description: t("philosophy.p3Desc") },
+    { title: t("philosophy.p4Title"), description: t("philosophy.p4Desc") },
+    { title: t("philosophy.p5Title"), description: t("philosophy.p5Desc") },
+    { title: t("philosophy.p6Title"), description: t("philosophy.p6Desc") },
+  ];
 
-/** Founders wall. Drop real portraits at /images/leadership/{parth,dhruv,tirth}.jpg
- * and set `photoSrc` on each entry — the panel renders an honest "profile in
- * progress" placeholder until then. Messages are the three paragraphs of the
- * leadership statement from the master content doc, one per founder. */
-const founders = [
-  {
-    name: "Parth Mangukiya",
-    role: "Founder & Managing Director",
-    email: "parth@trivoxagroup.com",
-    align: "left" as const,
-    message:
-      "Leadership at Trivoxa is driven by a commitment to long-term thinking, responsible decision-making, and continuous improvement.",
-  },
-  {
-    name: "Dhruv Patel",
-    role: "Co-Founder, Business Development",
-    email: "dhruv@trivoxagroup.com",
-    align: "right" as const,
-    message:
-      "Our responsibility extends beyond business growth. We are building an organization founded on trust, guided by integrity, and dedicated to creating meaningful value for our customers, partners, and communities.",
-  },
-  {
-    name: "Tirth Kalathiya",
-    role: "Co-Founder, Technology & Innovation",
-    email: "tirth@trivoxagroup.com",
-    align: "left" as const,
-    message:
-      "As Trivoxa grows, our leadership will continue to uphold the principles that define our organization while embracing innovation and new opportunities across global markets.",
-  },
-];
+  const ecosystem = [
+    { title: t("ecosystem.e1Title"), description: t("ecosystem.e1Desc") },
+    { title: t("ecosystem.e2Title"), description: t("ecosystem.e2Desc") },
+    { title: t("ecosystem.e3Title"), description: t("ecosystem.e3Desc") },
+    { title: t("ecosystem.e4Title"), description: t("ecosystem.e4Desc") },
+    { title: t("ecosystem.e5Title"), description: t("ecosystem.e5Desc") },
+    { title: t("ecosystem.e6Title"), description: t("ecosystem.e6Desc") },
+  ];
 
-/** The journey as stages, not invented dates — the master content doc
- * records the sequence of the group's growth, not a year-by-year ledger,
- * and we don't fabricate one. */
-const journey = [
-  { title: "Manufacturing Foundations", description: "Shiveshwar Textiles builds deep expertise in woven textile production and quality-focused operations." },
-  { title: "An International Vision", description: "The founders recognize global demand for a trusted partner into India's manufacturing capability." },
-  { title: "Trivoxa Group Established", description: "The international business arm is founded to bridge global buyers and Indian production." },
-  { title: "Two Export Divisions", description: "Product Exports and Service Exports (Trivoxa Digital) launch as the group's operating arms." },
-  { title: "Growing Global Partnerships", description: "The network expands across industries, regions, and long-term client relationships." },
-];
+  const foundationPhotos = [
+    { src: "/images/foundation/exterior.jpg", caption: t("foundation.photo1Caption") },
+    { src: "/images/foundation/weaving.jpg", caption: t("foundation.photo2Caption") },
+    { src: "/images/foundation/inspection.jpg", caption: t("foundation.photo3Caption") },
+  ];
 
-const commitments = [
-  { name: "Ethical Business Practices", description: "Conducting every relationship with honesty, fairness, and accountability." },
-  { name: "Responsible Sourcing", description: "Partnering with manufacturers who share our standards for quality and fair practice." },
-  { name: "Quality Without Compromise", description: "Holding every product and service to a standard worth trusting." },
-  { name: "Transparent Communication", description: "Keeping partners informed with clear, consistent, and honest dialogue." },
-  { name: "Long-Term Partnerships", description: "Building relationships measured in years, not transactions." },
-  { name: "Sustainable Business Growth", description: "Expanding deliberately, in ways that create lasting value." },
-  { name: "Continuous Innovation", description: "Improving how we work, so we can better serve the partners who rely on us." },
-];
+  /** Founders wall. Drop real portraits at /images/leadership/{parth,dhruv,tirth}.jpg
+   * and set `photoSrc` on each entry — the panel renders an honest "profile in
+   * progress" placeholder until then. Messages are the three paragraphs of the
+   * leadership statement from the master content doc, one per founder. */
+  const founders = [
+    { name: "Parth Mangukiya", role: t("leadership.f1Role"), email: "parth@trivoxagroup.com", align: "left" as const, message: t("leadership.f1Message") },
+    { name: "Dhruv Patel", role: t("leadership.f2Role"), email: "dhruv@trivoxagroup.com", align: "right" as const, message: t("leadership.f2Message") },
+    { name: "Tirth Kalathiya", role: t("leadership.f3Role"), email: "tirth@trivoxagroup.com", align: "left" as const, message: t("leadership.f3Message") },
+  ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Trivoxa Group",
-  description:
-    "Trivoxa Group is an international business group committed to connecting global businesses with trusted products, strategic sourcing solutions, and professional services.",
-  // Shiveshwar Textiles is an independent strategic manufacturing partner,
-  // not a parent/subsidiary — schema.org has no clean property for an
-  // arms-length partnership like this, so it is intentionally left out of
-  // structured data rather than misrepresented via parentOrganization.
-  founder: founders.map((f) => ({
-    "@type": "Person",
-    name: f.name,
-    jobTitle: f.role,
-    email: f.email,
-  })),
-};
+  /** The journey as stages, not invented dates — the master content doc
+   * records the sequence of the group's growth, not a year-by-year ledger,
+   * and we don't fabricate one. */
+  const journey = [
+    { title: t("journey.s1Title"), description: t("journey.s1Desc") },
+    { title: t("journey.s2Title"), description: t("journey.s2Desc") },
+    { title: t("journey.s3Title"), description: t("journey.s3Desc") },
+    { title: t("journey.s4Title"), description: t("journey.s4Desc") },
+    { title: t("journey.s5Title"), description: t("journey.s5Desc") },
+  ];
 
-export default function GroupPage() {
+  const commitments = [
+    { name: t("commitments.c1Name"), description: t("commitments.c1Desc") },
+    { name: t("commitments.c2Name"), description: t("commitments.c2Desc") },
+    { name: t("commitments.c3Name"), description: t("commitments.c3Desc") },
+    { name: t("commitments.c4Name"), description: t("commitments.c4Desc") },
+    { name: t("commitments.c5Name"), description: t("commitments.c5Desc") },
+    { name: t("commitments.c6Name"), description: t("commitments.c6Desc") },
+    { name: t("commitments.c7Name"), description: t("commitments.c7Desc") },
+  ];
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Trivoxa Group",
+    description:
+      "Trivoxa Group is an international business group committed to connecting global businesses with trusted products, strategic sourcing solutions, and professional services.",
+    // Shiveshwar Textiles is an independent strategic manufacturing partner,
+    // not a parent/subsidiary — schema.org has no clean property for an
+    // arms-length partnership like this, so it is intentionally left out of
+    // structured data rather than misrepresented via parentOrganization.
+    founder: founders.map((f) => ({
+      "@type": "Person",
+      name: f.name,
+      jobTitle: f.role,
+      email: f.email,
+    })),
+  };
+
   return (
     <TrivoxaShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -132,15 +119,11 @@ export default function GroupPage() {
       <section className="group-hero">
         <SectionGrain className="hero-grain" />
         <div className="container group-hero__inner">
-          <Eyebrow>The Group</Eyebrow>
-          <h1 className="group-hero__title">Building an Organization Designed to Endure.</h1>
-          <p className="group-hero__desc">
-            Trivoxa Group is an international business group built on a strong manufacturing foundation and driven
-            by a global vision. Through trusted partnerships, strategic sourcing, and professional services, we
-            connect businesses with opportunities while creating lasting value across international markets.
-          </p>
+          <Eyebrow>{t("hero.eyebrow")}</Eyebrow>
+          <h1 className="group-hero__title">{t("hero.title")}</h1>
+          <p className="group-hero__desc">{t("hero.description")}</p>
           <Link href="#our-story" className="tvx-btn tvx-btn--primary group-hero__scroll">
-            <span>Discover Our Story</span>
+            <span>{t("hero.ctaStory")}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 2.5v11M3 9l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -151,12 +134,12 @@ export default function GroupPage() {
       {/* 2. WHO WE ARE */}
       <div className="container">
         <SplitScreenSticky
-          eyebrow="Who We Are"
-          title="A Global Business Group Built on Trust, Purpose, and Long-Term Vision."
+          eyebrow={t("whoWeAre.eyebrow")}
+          title={t("whoWeAre.title")}
           paragraphs={[
-            "Trivoxa Group is an international business group committed to connecting global businesses with trusted products, strategic sourcing solutions, and professional services.",
-            `Built upon the manufacturing expertise of our ${SHIVESHWAR_RELATIONSHIP}, ${SHIVESHWAR_NAME}, we combine industry knowledge with a forward-looking approach to international business. By bringing together trusted manufacturers, skilled professionals, and global partners, we help organizations build stronger supply chains, access new opportunities, and achieve sustainable growth.`,
-            "At Trivoxa, we believe meaningful business is built on trust, quality, and relationships that last far beyond a single transaction.",
+            t("whoWeAre.p1"),
+            t("whoWeAre.p2", { relationship, name: SHIVESHWAR_NAME }),
+            t("whoWeAre.p3"),
           ]}
         />
       </div>
@@ -164,21 +147,14 @@ export default function GroupPage() {
       {/* 3. OUR FOUNDATION */}
       <section className="tvx-section foundation-section" id="foundation">
         <div className="container">
-          <Eyebrow>Our Foundation</Eyebrow>
-          <h2>Built on Manufacturing Excellence. Inspired by Global Opportunity.</h2>
+          <Eyebrow>{t("foundation.eyebrow")}</Eyebrow>
+          <h2>{t("foundation.title")}</h2>
           <div className="foundation-split">
             <div className="foundation-split__copy">
-              <p>Every great organization is built on a strong foundation.</p>
-              <p>{SHIVESHWAR_FOUNDATION_LINE}</p>
-              <p>
-                This manufacturing heritage provides us with practical industry knowledge, a deep understanding of
-                production processes, and a commitment to delivering reliable solutions to global markets.
-              </p>
-              <p>
-                While Trivoxa continues to expand into new industries and business services, our foundation remains
-                rooted in the principles that have guided us from the beginning — quality, reliability, integrity,
-                and long-term partnerships.
-              </p>
+              <p>{t("foundation.p1")}</p>
+              <p>{t("foundation.p2")}</p>
+              <p>{t("foundation.p3")}</p>
+              <p>{t("foundation.p4")}</p>
             </div>
             <div className="foundation-split__photos">
               {foundationPhotos.map((photo) => (
@@ -199,7 +175,7 @@ export default function GroupPage() {
             </div>
           </div>
           <Link href="/rfq/?path=audit" className="tvx-btn tvx-btn--ghost foundation-section__audit-cta">
-            Request a Factory Audit / Site Visit →
+            {t("foundation.auditCta")}
           </Link>
         </div>
       </section>
@@ -207,17 +183,13 @@ export default function GroupPage() {
       {/* 4. OUR STORY */}
       <EditorialPanel
         id="our-story"
-        eyebrow="Our Story"
-        title="Creating Opportunities Beyond Borders."
-        paragraphs={[
-          "Trivoxa was founded with a vision to bridge the gap between global demand and India's extraordinary capabilities.",
-          "We recognized that businesses around the world needed more than products — they needed a trusted partner capable of understanding their requirements, connecting them with reliable manufacturing, and supporting them throughout every stage of international trade.",
-          "Guided by this purpose, Trivoxa was created to build long-term relationships that extend beyond commerce and contribute to sustainable business growth for partners across the world.",
-        ]}
+        eyebrow={t("ourStory.eyebrow")}
+        title={t("ourStory.title")}
+        paragraphs={[t("ourStory.p1"), t("ourStory.p2"), t("ourStory.p3")]}
       />
 
       {/* 4b. THE JOURNEY — visual timeline (spec §4, The Group) */}
-      <Section eyebrow="The Journey" title="How the Group Took Shape.">
+      <Section eyebrow={t("journey.eyebrow")} title={t("journey.title")}>
         <HorizontalTimeline steps={journey} />
       </Section>
 
@@ -225,21 +197,15 @@ export default function GroupPage() {
       <section className="group-vision" id="vision">
         <SectionGrain className="group-vision__grain" />
         <div className="container group-vision__inner">
-          <Eyebrow>Our Vision</Eyebrow>
-          <h2 className="sr-only">Our Vision</h2>
-          <p className="group-vision__statement">
-            To become one of the world&rsquo;s most trusted international business groups by creating lasting value
-            through global trade, innovation, and enduring partnerships.
-          </p>
-          <p className="group-vision__support">
-            Our vision is to build an organization that continues creating opportunities across industries and
-            international markets for generations to come.
-          </p>
+          <Eyebrow>{t("vision.eyebrow")}</Eyebrow>
+          <h2 className="sr-only">{t("vision.eyebrow")}</h2>
+          <p className="group-vision__statement">{t("vision.statement")}</p>
+          <p className="group-vision__support">{t("vision.support")}</p>
         </div>
       </section>
 
       {/* 6. THE TRIVOXA WAY */}
-      <Section id="trivoxa-way" eyebrow="Our Philosophy" title="The Trivoxa Way" lead="Every decision we make is guided by principles that define who we are and how we build relationships.">
+      <Section id="trivoxa-way" eyebrow={t("philosophy.eyebrow")} title={t("philosophy.title")} lead={t("philosophy.lead")}>
         <NumberedList items={principles} />
       </Section>
 
@@ -248,7 +214,7 @@ export default function GroupPage() {
         {founders.map((f, i) => (
           <LeadershipPanel
             key={f.name}
-            eyebrow={i === 0 ? "Leadership" : undefined}
+            eyebrow={i === 0 ? t("leadership.eyebrow") : undefined}
             name={f.name}
             role={f.role}
             email={f.email}
@@ -259,46 +225,38 @@ export default function GroupPage() {
       </div>
 
       {/* 8. BUSINESS ECOSYSTEM */}
-      <Section id="ecosystem" eyebrow="Our Ecosystem" title="One Connected Network. Endless Opportunities." lead="Trivoxa Group brings together manufacturing expertise, strategic sourcing, technology, logistics, and professional services within one integrated business ecosystem.">
+      <Section id="ecosystem" eyebrow={t("ecosystem.eyebrow")} title={t("ecosystem.title")} lead={t("ecosystem.lead")}>
         <EcosystemDiagram centerLabel="Trivoxa Group" nodes={ecosystem.map((item) => ({ label: item.title }))} />
       </Section>
 
       {/* 9. STRATEGIC PARTNERS */}
       <section className="tvx-section partners-section">
         <div className="container">
-          <Eyebrow>Strategic Partners</Eyebrow>
-          <h2>Growing Through Trusted Partnerships.</h2>
+          <Eyebrow>{t("partners.eyebrow")}</Eyebrow>
+          <h2>{t("partners.title")}</h2>
           <div className="tvx-lead">
-            <p>Strong partnerships are the foundation of sustainable business.</p>
+            <p>{t("partners.lead")}</p>
           </div>
           <div className="partners-grid">
             <div className="partners-grid__founding">
               <figure className="foundation-photo__frame" />
-              <h3>Founding Manufacturing Partner — {SHIVESHWAR_NAME}</h3>
-              <p>
-                As Trivoxa Group&rsquo;s {SHIVESHWAR_RELATIONSHIP}, {SHIVESHWAR_NAME} provides the manufacturing
-                expertise and industry experience that support our commitment to quality and reliability.
-              </p>
-              <p>
-                Alongside {SHIVESHWAR_NAME}, we continue building relationships with trusted manufacturers,
-                logistics providers, technology partners, and industry specialists who share our values.
-              </p>
+              <h3>{t("partners.foundingTitle", { name: SHIVESHWAR_NAME })}</h3>
+              <p>{t("partners.p1", { relationship, name: SHIVESHWAR_NAME })}</p>
+              <p>{t("partners.p2", { name: SHIVESHWAR_NAME })}</p>
             </div>
-            <p className="partners-grid__growth-note">
-              Our partner network continues to grow across manufacturing, logistics, and technology.
-            </p>
+            <p className="partners-grid__growth-note">{t("partners.growthNote")}</p>
           </div>
         </div>
       </section>
 
       {/* 10. OUR COMMITMENTS */}
-      <Section id="commitments" eyebrow="Our Commitments" title="Our Commitment to Every Relationship." lead="Every partnership begins with trust and is strengthened through consistent action. We are committed to conducting business responsibly, delivering reliable solutions, and continuously improving the way we serve our partners around the world.">
+      <Section id="commitments" eyebrow={t("commitments.eyebrow")} title={t("commitments.title")} lead={t("commitments.lead")}>
         <table className="commitments-table">
           <thead>
             <tr>
-              <th className="commitments-table__num" scope="col">#</th>
-              <th scope="col">Commitment</th>
-              <th scope="col">Brief Description</th>
+              <th className="commitments-table__num" scope="col">{t("commitments.tableNum")}</th>
+              <th scope="col">{t("commitments.tableCommitment")}</th>
+              <th scope="col">{t("commitments.tableDescription")}</th>
             </tr>
           </thead>
           <tbody>
@@ -316,22 +274,18 @@ export default function GroupPage() {
       {/* 11. LOOKING AHEAD */}
       <EditorialPanel
         id="looking-ahead"
-        eyebrow="Looking Ahead"
-        title="Building for the Next Generation of Global Business."
-        paragraphs={[
-          "Our journey is only beginning.",
-          "As we look ahead, Trivoxa will continue expanding into new industries, strengthening international partnerships, embracing emerging technologies, and developing innovative solutions that create lasting value.",
-          "Our ambition is not simply to grow as a business, but to build an organization that future generations will be proud to lead and global partners will continue to trust.",
-        ]}
+        eyebrow={t("lookingAhead.eyebrow")}
+        title={t("lookingAhead.title")}
+        paragraphs={[t("lookingAhead.p1"), t("lookingAhead.p2"), t("lookingAhead.p3")]}
       />
 
       {/* 12. CTA */}
       <div className="group-cta-wrap">
         <SectionGrain className="group-cta-wrap__grain" />
         <CtaBand
-          title="Let's Build the Future Together."
-          description="Whether you're looking to source products, expand into international markets, or establish a long-term business partnership, our team is ready to help you move forward with confidence."
-          actions={[{ label: "Partner With Us", modal: true }, { label: "Contact Our Team", href: "/contact/", variant: "ghost" }]}
+          title={t("cta.title")}
+          description={t("cta.description")}
+          actions={[{ label: t("cta.ctaPartner"), modal: true }, { label: t("cta.ctaContact"), href: "/contact/", variant: "ghost" }]}
         />
       </div>
     </TrivoxaShell>

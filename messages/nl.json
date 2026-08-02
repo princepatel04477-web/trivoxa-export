@@ -154,5 +154,1146 @@
       "eyebrow": "Inzichten",
       "heading": "Perspectieven die wereldwijd zakendoen sturen"
     }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "Over ons",
+      "title": "Gebouwd vanaf de productievloer in Surat.",
+      "description": "Trivoxa Group begon niet als handelsonderneming. Het begon op de productievloer van een textielfabrikant — en droeg die discipline over naar de internationale handel."
+    },
+    "origin": {
+      "eyebrow": "Ons ontstaan",
+      "title": "Van één fabriek naar een groeiende exportgroep.",
+      "lead": "Trivoxa Group ontstond in strategisch partnerschap met Shiveshwar Textiles, een fabrikant van geweven textiel gevestigd in Surat, Gujarat. Jarenlange ervaring met het runnen van productievloeren — het beheren van weefgetouwen, het bewaken van levertermijnen, het voldoen aan kwaliteitscontroles — bepaalde hoe het bedrijf export benadert: betrouwbaarheid eerst, al het andere komt daarna.\n\nToen de vraag van afnemers zich uitbreidde van textiel naar gezondheidszorg, bouwmaterialen, landbouw en technische producten, werd Trivoxa Group opgericht om diezelfde productiediscipline naar nieuwe categorieën te brengen — sourcing via zorgvuldig gescreende partners in plaats van eigen productie, maar met dezelfde norm voor elke zending als waarmee onze oprichtende productiepartner zijn naam heeft opgebouwd."
+    },
+    "quote": {
+      "text": "Het was nooit ons doel om een handelshuis te worden. Ons doel was ervoor te zorgen dat een productiebelofte die in Surat wordt gedaan, nog steeds standhoudt wanneer deze een magazijn in Rotterdam bereikt.",
+      "cite": "— Trivoxa Group"
+    },
+    "info": {
+      "eyebrow": "Bedrijf & Contact",
+      "title": "Waar u ons vindt.",
+      "addressLabel": "Statutair adres",
+      "address": "Surat, Gujarat, India",
+      "emailLabel": "E-mail"
+    },
+    "cta": {
+      "title": "Heeft u een vraag over onze groep?",
+      "description": "Neem contact op en ons team reageert binnen één werkdag.",
+      "ctaContact": "Neem contact op met ons team",
+      "ctaGroup": "Ontdek de groep"
+    }
+  },
+  "businesses": {
+    "hero": {
+      "eyebrow": "Onze activiteiten",
+      "title": "Wereldwijde oplossingen voor het moderne bedrijfsleven.",
+      "description": "Trivoxa Group levert geïntegreerde oplossingen voor productsourcing en professionele dienstverlening waarmee bedrijven zich kunnen uitbreiden naar internationale markten. Via vertrouwde partnerschappen, productie-expertise en een streven naar uitmuntendheid verbinden wij organisaties met de producten, diensten en kansen die zij nodig hebben om met vertrouwen te groeien.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaDivisions": "Ontdek onze divisies"
+    },
+    "overview": {
+      "eyebrow": "Onze activiteiten",
+      "title": "Twee divisies. Eén gedeelde toewijding aan uitmuntendheid.",
+      "p1": "Trivoxa Group opereert via twee complementaire bedrijfsdivisies die zijn ontworpen om organisaties op wereldwijde markten te ondersteunen.",
+      "p2": "Onze divisie Productexport verbindt internationale afnemers met vertrouwde fabrikanten en zorgvuldig gesourcete producten uit India, terwijl onze divisie Dienstenexport toegang biedt tot bekwame professionals die technologie-, design- en bedrijfsoplossingen leveren.",
+      "p3": "Samen stellen deze divisies ons in staat geïntegreerde oplossingen te bieden die productiekracht, professionele expertise en langdurig partnerschap combineren."
+    },
+    "division1": {
+      "eyebrow": "Divisie 01",
+      "title": "PRODUCTEXPORT",
+      "description": "Wij sourcen en leveren hoogwaardige producten via een vertrouwd netwerk van productiepartners in heel India. Van industriële materialen en textiel tot gezondheidszorgproducten en consumentengoederen — onze focus ligt op het verbinden van wereldwijde afnemers met betrouwbare leveringsoplossingen die voldoen aan internationale verwachtingen.",
+      "cta": "Ontdek productexport"
+    },
+    "division2": {
+      "eyebrow": "Divisie 02",
+      "title": "DIENSTENEXPORT",
+      "description": "Wij helpen organisaties hun groei te versnellen met technologie, softwareontwikkeling, kunstmatige intelligentie, branding, digitale marketing en zakelijke ondersteuningsdiensten. Door bedrijven te verbinden met India's bekwame professionals, leveren wij praktische oplossingen die zijn afgestemd op de uitdagingen van het moderne bedrijfsleven.",
+      "cta": "Ontdek dienstenexport"
+    },
+    "process": {
+      "eyebrow": "Ons proces",
+      "title": "Een gestructureerde aanpak voor internationaal zakendoen.",
+      "lead": "Elk succesvol partnerschap begint met begrip. Ons proces is ontworpen om in elke fase van het traject duidelijkheid, kwaliteit en vertrouwen te waarborgen.",
+      "steps": {
+        "step1Title": "Uw vereisten begrijpen",
+        "step1Desc": "Wij beginnen met het begrijpen van uw bedrijfsdoelstellingen, technische specificaties en commerciële verwachtingen.",
+        "step2Title": "De juiste oplossing adviseren",
+        "step2Desc": "Op basis van uw vereisten bepalen wij de meest geschikte producten, productiepartners of professionele serviceteams.",
+        "step3Title": "Productie of uitvoering coördineren",
+        "step3Desc": "Wij beheren het sourcing-, productie- of projectuitvoeringsproces, met heldere communicatie gedurende het volledige traject.",
+        "step4Title": "Kwaliteit verifiëren",
+        "step4Desc": "Elke oplossing wordt ondersteund door kwaliteitsgerichte coördinatie en zorgvuldige aandacht voor de overeengekomen vereisten.",
+        "step5Title": "Met vertrouwen leveren",
+        "step5Desc": "Van documentatie en logistiek tot projectoplevering en doorlopende ondersteuning: wij zorgen voor een betrouwbare ervaring van begin tot eind."
+      }
+    },
+    "why": {
+      "eyebrow": "Waarom Trivoxa",
+      "title": "Gebouwd op ervaring. Gericht op partnerschap.",
+      "strengths": {
+        "s1Title": "Productiefundament",
+        "s1Desc": "Gebouwd op de productie-expertise van onze oprichtende strategische partner, Shiveshwar Textiles.",
+        "s2Title": "Vertrouwd partnernetwerk",
+        "s2Desc": "Een groeiend ecosysteem van zorgvuldig geselecteerde fabrikanten, professionals en oplossingsleveranciers.",
+        "s3Title": "Kwaliteitsgedreven aanpak",
+        "s3Desc": "Elk project wordt gekenmerkt door aandacht voor kwaliteit, betrouwbaarheid en waarde op lange termijn.",
+        "s4Title": "Wereldwijd perspectief",
+        "s4Desc": "Wij ondersteunen bedrijven op internationale markten met oplossingen die zijn ontworpen voor wereldwijde handel.",
+        "s5Title": "Schaalbare oplossingen",
+        "s5Desc": "Flexibele mogelijkheden die meegroeien met de veranderende behoeften van onze klanten.",
+        "s6Title": "Langdurige relaties",
+        "s6Desc": "Wij geloven dat duurzaam succes wordt bereikt door blijvende partnerschappen, niet door eenmalige transacties."
+      }
+    },
+    "cta": {
+      "title": "Laten we samen wereldwijd zaken opbouwen.",
+      "description": "Of u nu producten wilt inkopen, professionele expertise zoekt of nieuwe internationale kansen wilt verkennen — Trivoxa Group staat klaar om u met vertrouwen vooruit te helpen.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaContact": "Neem contact op met ons team"
+    }
+  },
+  "industries": {
+    "hero": {
+      "eyebrow": "Sectoren",
+      "title": "Sectorexpertise. Wereldwijde kansen.",
+      "description": "Elke sector kent unieke uitdagingen, normen en kansen. Trivoxa Group combineert productie-expertise, strategische sourcing en professionele diensten om oplossingen te leveren die zijn afgestemd op de veranderende behoeften van bedrijven op internationale markten.",
+      "ctaExplore": "Ontdek sectoren",
+      "ctaQuote": "Offerte aanvragen"
+    },
+    "overview": {
+      "eyebrow": "Onze sectoren",
+      "title": "Sectoren ondersteunen met kennis, partnerschap en wereldwijde oplossingen.",
+      "p1": "Bij Trivoxa geloven wij dat succesvolle partnerschappen beginnen met het begrijpen van de sectoren die wij bedienen.",
+      "p2": "Elke sector heeft zijn eigen operationele vereisten, kwaliteitsnormen en commerciële verwachtingen. Door productie-expertise, ervaring in internationale handel en professionele diensten te combineren, leveren wij oplossingen die zijn ontworpen om sectorspecifieke uitdagingen aan te pakken en tegelijk langdurige bedrijfswaarde te creëren.",
+      "p3": "Of wij nu fabrikanten, distributeurs, retailers, zorgorganisaties of technologiegedreven bedrijven ondersteunen, ons doel blijft hetzelfde: onze partners helpen met vertrouwen te groeien in een steeds meer verbonden wereldwijde markt."
+    },
+    "list": {
+      "eyebrow": "Sectoren die wij bedienen",
+      "title": "Oplossingen voor uiteenlopende sectoren.",
+      "lead": "Trivoxa Group ondersteunt een groeiend portfolio aan sectoren via vertrouwde partnerschappen, verantwoorde sourcing en oplossingen op maat."
+    },
+    "items": {
+      "textile-apparel": {
+        "name": "Textiel en kleding",
+        "description": "Wij ondersteunen fabrikanten, merken, groothandels en sourcingbedrijven met stoffen, huishoudtextiel, kledingaccessoires en sourcingoplossingen op maat.",
+        "buyerTypes": {
+          "b1": "Kleding- en modemerken",
+          "b2": "Woon- en interieurretailers",
+          "b3": "Groothandels & distributeurs",
+          "b4": "Sourcing- en inkoophuizen"
+        },
+        "complianceNote": "Afnemers vragen vaak om etikettering van de stofsamenstelling en, voor zendingen naar de EU/VS, documentatie over beperkte stoffen (REACH, CPSIA). Wij coördineren de documentatie die onze productiepartners voor elke bestelling kunnen aanleveren."
+      },
+      "healthcare-pharmaceuticals": {
+        "name": "Gezondheidszorg en farmacie",
+        "description": "Wij bieden toegang tot betrouwbare farmaceutische producten en zorgoplossingen via verantwoorde sourcing en kwaliteitsgerichte productiepartnerschappen.",
+        "buyerTypes": {
+          "b1": "Farmaceutische distributeurs",
+          "b2": "Importeurs van zorgproducten",
+          "b3": "Apotheekketens & groothandels",
+          "b4": "Nutraceutical-merken"
+        },
+        "complianceNote": "Export van farmaceutische producten is onderworpen aan de invoerregelgeving van het bestemmingsland. Afnemers zijn zelf verantwoordelijk voor het bevestigen van de invoervergunning in hun land."
+      },
+      "building-materials": {
+        "name": "Bouwmaterialen",
+        "description": "Wij leveren natuursteen, marmer, graniet, keramische producten en bouwmaterialen voor woning-, utiliteits- en infrastructuurprojecten.",
+        "buyerTypes": {
+          "b1": "Bouwaannemers",
+          "b2": "Architecten & ontwerpers",
+          "b3": "Distributeurs van bouwmaterialen",
+          "b4": "Ontwikkelaars van infrastructuurprojecten"
+        },
+        "complianceNote": "Zendingen natuursteen en tegels vereisen doorgaans certificaten voor maattoleranties en, voor zendingen naar de EU, CE-markeringsdocumentatie van de fabrikant. Wij coördineren de relevante documentatie voor elke bestelling."
+      },
+      "furniture-interiors": {
+        "name": "Meubels en interieur",
+        "description": "Wij verbinden bedrijven met hoogwaardige meubel- en interieuroplossingen voor woon-, bedrijfs- en horecaomgevingen.",
+        "buyerTypes": {
+          "b1": "Horeca- en hotelgroepen",
+          "b2": "Interieurontwerpers voor zakelijke omgevingen",
+          "b3": "Meubelretailers & distributeurs"
+        },
+        "complianceNote": "Massief houten meubels worden doorgaans verzonden onder ISPM 15-fumigatiecertificering voor de verpakking, samen met standaard exportdocumentatie."
+      },
+      "agriculture-food": {
+        "name": "Landbouw en voeding",
+        "description": "Wij ondersteunen internationale afnemers met zorgvuldig gesourcete landbouwproducten, verse producten, specerijen en verwerkte voedingsoplossingen.",
+        "buyerTypes": {
+          "b1": "Voedselimporteurs & -distributeurs",
+          "b2": "Groothandels in specerijen & ingrediënten",
+          "b3": "Voedselproducenten",
+          "b4": "Inkopers uit retail & foodservice"
+        },
+        "complianceNote": "Voedsel- en landbouwexport vanuit India wordt gereguleerd door FSSAI en APEDA. Afnemers dienen voorafgaand aan het plaatsen van een bestelling de specifieke registraties en fytosanitaire certificeringen te bevestigen die van toepassing zijn op hun zending."
+      },
+      "engineering-industrial": {
+        "name": "Techniek en industrie",
+        "description": "Wij leveren industriële producten, technische componenten en productieoplossingen die industriële groei en infrastructuurontwikkeling ondersteunen.",
+        "buyerTypes": {
+          "b1": "Distributeurs van industriële apparatuur",
+          "b2": "OEM-fabrikanten",
+          "b3": "Infrastructuur- en bouwbedrijven",
+          "b4": "Inkopers onderhoud & reparatie"
+        },
+        "complianceNote": "Machines en onderdelen worden doorgaans verzonden met materiaaltestcertificaten en, waar van toepassing, CE- of UL-conformiteitsdocumentatie geleverd door de fabrikant."
+      },
+      "technology": {
+        "name": "Technologie",
+        "description": "Wij bieden softwareontwikkeling, kunstmatige intelligentie, digitale transformatie en technologieoplossingen voor het moderne bedrijfsleven.",
+        "buyerTypes": {
+          "b1": "Start-ups & scale-ups",
+          "b2": "Gevestigde ondernemingen",
+          "b3": "Bureaus op zoek naar extra leveringscapaciteit"
+        },
+        "complianceNote": "Opdrachten worden gestructureerd rond duidelijke scopes, voorwaarden voor intellectuele-eigendomsrechten en gegevensverwerkingsovereenkomsten die passen bij de jurisdictie van elke klant."
+      },
+      "retail-consumer-goods": {
+        "name": "Retail en consumentengoederen",
+        "description": "Wij helpen retailers, distributeurs en consumentenmerken hun toeleveringsketens te versterken met schaalbare sourcing- en bedrijfsoplossingen.",
+        "buyerTypes": {
+          "b1": "Retailketens",
+          "b2": "E-commercemerken",
+          "b3": "Distributeurs & groothandels"
+        },
+        "complianceNote": "Vereisten voor consumentengoederen variëren per categorie — etikettering, veiligheidsmarkeringen en certificeringsbehoeften worden vóór aanvang van de productie afgestemd op de bestemmingsmarkt."
+      },
+      "jewellery-precious-products": {
+        "name": "Sieraden en edele producten",
+        "description": "Wij verbinden wereldwijde afnemers met zorgvuldig gesourcete sieraden en edele producten via vertrouwde productiepartnerschappen.",
+        "buyerTypes": {
+          "b1": "Sieradenretailers & -distributeurs",
+          "b2": "Groothandels- en exporthuizen",
+          "b3": "Private-label sieradenmerken"
+        },
+        "complianceNote": "Export van edelmetalen en edelstenen is doorgaans onderworpen aan keuring, zuiverheidscertificering en, waar van toepassing, Kimberley Process-documentatie. Afnemers dienen voorafgaand aan het plaatsen van een bestelling de specifieke certificeringsvereisten voor hun bestemmingsmarkt te bevestigen."
+      }
+    },
+    "challenges": {
+      "eyebrow": "Uw sector begrijpen",
+      "title": "Elke sector kent andere uitdagingen. Elke oplossing zou anders moeten zijn.",
+      "p1": "Geen twee sectoren functioneren op exact dezelfde manier.",
+      "p2": "Van regelgeving en kwaliteitsborging tot betrouwbaarheid van de toeleveringsketen, productie-efficiëntie en veranderende marktverwachtingen — elke sector kent zijn eigen kansen en uitdagingen.",
+      "p3": "Bij Trivoxa beginnen wij met het begrijpen van deze realiteit voordat wij oplossingen aanbevelen die aansluiten bij de operationele, technische en commerciële doelstellingen van onze klanten."
+    },
+    "solutions": {
+      "eyebrow": "Onze mogelijkheden",
+      "title": "Oplossingen ontworpen rond sectorvereisten.",
+      "lead": "Onze mogelijkheden reiken verder dan het leveren van producten of diensten. Wij werken samen met bedrijven om praktische oplossingen te ontwikkelen die operationele efficiëntie, internationale groei en succes op lange termijn ondersteunen.",
+      "items": {
+        "i1": "Strategische productsourcing",
+        "i2": "Professionele dienstverleningsoplossingen",
+        "i3": "Productiepartnerschappen",
+        "i4": "Kwaliteitscoördinatie",
+        "i5": "Exportdocumentatie",
+        "i6": "Logistieke coördinatie",
+        "i7": "Technologie-integratie",
+        "i8": "Langdurige zakelijke ondersteuning"
+      }
+    },
+    "approach": {
+      "eyebrow": "Onze aanpak",
+      "title": "Sterke partnerschappen opbouwen in elke sector.",
+      "lead": "Elk succesvol partnerschap volgt een gestructureerde aanpak, gebaseerd op begrip, samenwerking en langdurige toewijding.",
+      "steps": {
+        "step1Title": "Sectorvereisten begrijpen",
+        "step1Desc": "Wij beginnen met het begrijpen van uw bedrijf, technische specificaties, compliance-vereisten en commerciële doelstellingen, voordat wij de meest geschikte oplossing aanbevelen.",
+        "step2Title": "De juiste partners verbinden",
+        "step2Desc": "Ons netwerk van vertrouwde fabrikanten, bekwame professionals, logistieke dienstverleners en technologiespecialisten stelt ons in staat oplossingen samen te stellen die zijn afgestemd op uw sector.",
+        "step3Title": "Betrouwbare oplossingen leveren",
+        "step3Desc": "Of het nu gaat om het coördineren van productsourcing of het leveren van professionele diensten, wij richten ons in elke fase op kwaliteit, transparantie en betrouwbare uitvoering.",
+        "step4Title": "Langdurige relaties opbouwen",
+        "step4Desc": "Wij geloven dat de sterkste zakelijke relaties worden opgebouwd door vertrouwen, consistente prestaties en een gedeelde toewijding aan duurzame groei."
+      }
+    },
+    "why": {
+      "eyebrow": "Waarom Trivoxa",
+      "title": "Gebouwd op ervaring. Gedreven door partnerschap.",
+      "lead": "Bedrijven kiezen voor Trivoxa omdat wij praktische sectorkennis combineren met een langetermijnbenadering van internationaal zakendoen.",
+      "strengths": {
+        "s1Title": "Productiefundament",
+        "s1Desc": "Gebouwd op de productie-expertise van onze oprichtende strategische partner, Shiveshwar Textiles.",
+        "s2Title": "Sectorkennis",
+        "s2Desc": "Oplossingen ontwikkeld rond de operationele realiteit van elke sector.",
+        "s3Title": "Vertrouwd netwerk",
+        "s3Desc": "Een groeiend ecosysteem van fabrikanten, technologieleveranciers, logistieke specialisten en zakelijke professionals.",
+        "s4Title": "Kwaliteitsgedreven bedrijfsvoering",
+        "s4Desc": "Toegewijd aan consistentie, betrouwbaarheid en voortdurende verbetering.",
+        "s5Title": "Wereldwijd perspectief",
+        "s5Desc": "Wij ondersteunen bedrijven via internationale sourcing, professionele diensten en wereldwijde partnerschappen.",
+        "s6Title": "Langdurige relaties",
+        "s6Desc": "Gericht op het opbouwen van partnerschappen die ook ver na individuele projecten waarde blijven creëren."
+      }
+    },
+    "lookingAhead": {
+      "eyebrow": "Vooruitblik",
+      "title": "Groeien met de sectoren die wij bedienen.",
+      "p1": "Sectoren blijven zich ontwikkelen, en Trivoxa ontwikkelt mee.",
+      "p2": "Wij blijven ons inzetten voor het uitbreiden van onze mogelijkheden, het versterken van internationale partnerschappen, het omarmen van innovatie en het ondersteunen van opkomende sectoren met verantwoorde bedrijfspraktijken en toekomstgerichte oplossingen.",
+      "p3": "Terwijl wij blijven groeien, blijft onze focus liggen op het creëren van duurzame waarde voor onze partners en het bijdragen aan sterkere sectoren en meer verbonden wereldwijde markten."
+    },
+    "cta": {
+      "title": "Laten we samen sectoroplossingen opbouwen.",
+      "description": "Of u nu op zoek bent naar betrouwbare sourcing, professionele expertise of een langdurige internationale zakenpartner, Trivoxa staat klaar om uw bedrijf met vertrouwen vooruit te helpen.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaContact": "Neem contact op met ons team"
+    }
+  },
+  "globalPresencePage": {
+    "hero": {
+      "eyebrow": "Wereldwijde aanwezigheid",
+      "title": "Kansen verbinden over grenzen heen.",
+      "description": "Internationaal zakendoen berust op vertrouwen, samenwerking en sterke relaties. Via een groeiend netwerk van leveranciers, partners en klanten bouwt Trivoxa Group betekenisvolle verbindingen waarmee organisaties met vertrouwen kunnen groeien op internationale markten.",
+      "ctaConversation": "Start een gesprek",
+      "ctaQuote": "Offerte aanvragen"
+    },
+    "overview": {
+      "eyebrow": "Onze wereldwijde aanpak",
+      "title": "Eén visie. Verbonden over markten heen.",
+      "lead": "Onze wereldwijde aanpak is gebaseerd op een eenvoudige overtuiging: betekenisvolle zaken groeien door grensoverschrijdende samenwerking en langdurige relaties.\n\nWij verbinden markten, vereenvoudigen internationale handel en brengen fabrikanten, professionals en afnemers samen in één betrouwbaar netwerk — geleid door een internationale bedrijfsfilosofie die gericht is op vertrouwen en gedeeld succes."
+    },
+    "network": {
+      "eyebrow": "Interactief wereldwijd netwerk",
+      "heading": "Eén verbonden wereld.",
+      "lead": "Elke partner, haven en afnemer waarmee wij samenwerken bevindt zich ergens op deze wereldbol — één netwerk, dat draait. Sleep om rond te kijken; blijf scrollen om de regio's te zien oplichten en de handelsroutes ertussen te zien ontstaan."
+    },
+    "regionsSection": {
+      "eyebrow": "Regio's die wij bedienen",
+      "title": "Wij bouwen aanwezigheid op in {count} wereldwijde regio's.",
+      "lead": "In plaats van grenzen te tellen, richten wij ons op het opbouwen van duurzame relaties in de regio's waar onze partners actief zijn en groeien."
+    },
+    "regionItems": {
+      "europe": "Textiel, bouwmaterialen en professionele diensten voor gevestigde en opkomende Europese markten.",
+      "middle-east": "Bouwmaterialen, landbouw en consumentengoederen voor snelgroeiende markten in de Golfregio en de regio.",
+      "africa": "Landbouw, farmaceutische producten en industriële producten ter ondersteuning van infrastructuur en ontwikkeling.",
+      "north-america": "Textiel, woonartikelen en technologiediensten voor veeleisende, kwaliteitsgerichte afnemers.",
+      "south-america": "Sourcingpartnerschappen en consumentengoederen voor groeiende regionale toeleveringsketens.",
+      "asia-pacific": "Productiesamenwerking, technologiediensten en grensoverschrijdende handel in de APAC-regio."
+    },
+    "statsSection": {
+      "eyebrow": "Aanwezigheid in cijfers",
+      "title": "Het netwerk, eerlijk gemeten.",
+      "regionsServed": "Bediende regio's",
+      "industriesCovered": "Gedekte sectoren",
+      "exportPorts": "Exporthavens",
+      "responseWindow": "Reactietijd (IST)"
+    },
+    "ports": {
+      "eyebrow": "Exporthavens",
+      "title": "Waar zendingen vertrekken.",
+      "lead": "Elke zending wordt gecoördineerd via gevestigde Indiase exporthavens, ongeacht de bestemming.",
+      "mundraRole": "India's grootste commerciële haven qua vrachtvolume",
+      "mundraDetail": "Weersonafhankelijke diepwaterhaven aan de Golf van Kutch — het werkpaard voor containervracht en bulkexport vanuit Gujarat.",
+      "kandlaRole": "Belangrijke toegangspoort voor droge en vloeibare bulk",
+      "kandlaDetail": "Deendayal Port vormt het anker voor agrarische grondstoffen en bulkexport — een logische keuze voor zendingen specerijen, granen en ricinus.",
+      "nhavaShevaRole": "India's grootste containerhaven",
+      "nhavaShevaDetail": "Verwerkt ongeveer de helft van India's containerhandel — de standaardroute voor Europese en Amerikaanse zendingen."
+    },
+    "ecosystem": {
+      "eyebrow": "Ons ecosysteem",
+      "title": "Hoe Trivoxa de wereld verbindt.",
+      "lead": "Van productiepartners tot wereldwijde afnemers: ons ecosysteem maakt van complexe internationale handel naadloze zakelijke relaties.",
+      "items": {
+        "e1Title": "Productiepartners",
+        "e1Desc": "Vertrouwde producenten, verankerd door Shiveshwar Textiles.",
+        "e2Title": "Divisie Productexport",
+        "e2Desc": "Fysieke goederen wereldwijd gesourcet en geleverd.",
+        "e3Title": "Divisie Dienstenexport",
+        "e3Desc": "Technologie, design en professionele teams.",
+        "e4Title": "Logistieke partners",
+        "e4Desc": "Gecoördineerde export, documentatie en levering.",
+        "e5Title": "Wereldwijde afnemers",
+        "e5Desc": "Organisaties die wij bedienen op internationale markten.",
+        "e6Title": "Langdurige partnerschappen",
+        "e6Desc": "Relaties gebouwd om te blijven bestaan en te groeien."
+      }
+    },
+    "tradeOps": {
+      "eyebrow": "Handel & operaties",
+      "title": "Internationaal zakendoen beheren, van begin tot eind.",
+      "lead": "Wij coördineren de praktische kant van internationale handel, zodat onze partners zich kunnen richten op groei.",
+      "items": {
+        "o1": "Wereldwijde sourcing",
+        "o2": "Exportcoördinatie",
+        "o3": "Documentatie",
+        "o4": "Kwaliteitsborging",
+        "o5": "Supply chain management",
+        "o6": "Internationale communicatie"
+      }
+    },
+    "growing": {
+      "eyebrow": "Groeien over grenzen heen",
+      "title": "Duidelijke ambitie, verantwoord opgebouwd.",
+      "lead": "In plaats van ons bereik te overdrijven, richten wij ons op groei die echte, blijvende waarde creëert.",
+      "items": {
+        "g1": "Groeiende partnerschappen",
+        "g2": "Opkomende markten",
+        "g3": "Nieuwe sectoren",
+        "g4": "Wereldwijde samenwerking",
+        "g5": "Langdurige groei"
+      }
+    },
+    "why": {
+      "eyebrow": "Waarom Trivoxa",
+      "title": "Waarom wereldwijde bedrijven voor Trivoxa kiezen.",
+      "statements": {
+        "w1Title": "Wereldwijd zakelijk perspectief",
+        "w1Desc": "Een internationale blik die elke oplossing die wij leveren vormgeeft.",
+        "w2Title": "Productie-erfgoed",
+        "w2Desc": "Praktische productiekennis van onze oprichtende productiepartner.",
+        "w3Title": "Vertrouwd partnernetwerk",
+        "w3Desc": "Een groeiend ecosysteem van gescreende partners wereldwijd.",
+        "w4Title": "Grensoverschrijdende expertise",
+        "w4Desc": "Ervaring met het navigeren door internationale handel en compliance.",
+        "w5Title": "Professionele communicatie",
+        "w5Desc": "Heldere, betrouwbare coördinatie over tijdzones heen.",
+        "w6Title": "Langdurige relaties",
+        "w6Desc": "Partnerschappen die zijn ontworpen om te groeien over markten en jaren heen."
+      }
+    },
+    "cta": {
+      "title": "Laten we verbinden over grenzen heen.",
+      "description": "Waar uw bedrijf ook naartoe gaat, Trivoxa Group staat klaar om u te helpen bij sourcing, uitbreiding en het opbouwen van blijvende partnerschappen op internationale markten.",
+      "ctaConversation": "Start een gesprek",
+      "ctaQuote": "Offerte aanvragen"
+    }
+  },
+  "contact": {
+    "hero": {
+      "eyebrow": "Contact",
+      "title": "Laten we samen de toekomst bouwen.",
+      "description": "Of u nu producten wilt inkopen, wilt uitbreiden naar internationale markten of een langdurig zakelijk partnerschap wilt aangaan, ons team staat klaar om u met vertrouwen vooruit te helpen.",
+      "ctaContact": "Neem contact op",
+      "ctaQuote": "Offerte aanvragen"
+    },
+    "help": {
+      "eyebrow": "Hoe kunnen wij helpen?",
+      "title": "Kies waar u wilt beginnen."
+    },
+    "inquiries": {
+      "productExport": {
+        "name": "Aanvraag productexport",
+        "description": "Producten inkopen via ons productienetwerk — geoffreerd op basis van HS-codes en minimale bestelhoeveelheden (MOQ)."
+      },
+      "serviceExport": {
+        "name": "Aanvraag dienstenexport",
+        "description": "Technologie, AI, software, design, marketing en zakelijke ondersteuningsdiensten."
+      },
+      "supplier": {
+        "name": "Leveranciers- en productiepartnerschap",
+        "description": "Word onderdeel van ons partnernetwerk als fabrikant of oplossingsleverancier."
+      },
+      "partnership": {
+        "name": "Strategisch partnerschap",
+        "description": "Distributie, investeringen, joint ventures en doorverwijzingspartnerschappen."
+      },
+      "careers": {
+        "name": "Loopbaanmogelijkheden",
+        "description": "Openstaande functies en open sollicitaties binnen de groep."
+      },
+      "general": {
+        "name": "Algemene vraag",
+        "description": "Iets anders? Wij zorgen dat het bij de juiste persoon terechtkomt."
+      }
+    },
+    "formHeading": "Stuur ons een bericht en wij nemen contact met u op.",
+    "info": {
+      "emailLabel": "E-mail",
+      "businessLabel": "Activiteiten",
+      "businessValue": "Productexport & Dienstenexport",
+      "foundationLabel": "Fundament",
+      "foundationValue": "Ondersteund door onze {relationship}, Shiveshwar Textiles",
+      "foundationRelationship": "oprichtende strategische productiepartner",
+      "followLabel": "Volg ons",
+      "followValue": "LinkedIn · Instagram · X · YouTube",
+      "microcopy": "Trivoxa Group opereert wereldwijd, met coördinatie van haar bedrijfsactiviteiten vanuit Surat, Gujarat, India."
+    }
+  },
+  "footer": {
+    "tagline": "Wij bouwen aan de toekomst van wereldhandel — partnerschap voor partnerschap.",
+    "headquartersLabel": "Hoofdkantoor",
+    "headquartersValue": "Surat, Gujarat, India",
+    "servingLabel": "Wij bedienen afnemers in",
+    "columns": {
+      "theGroup": "De Groep",
+      "productExports": "Productexport",
+      "serviceExports": "Dienstenexport",
+      "explore": "Ontdekken",
+      "allProductExports": "Alle productexport"
+    },
+    "links": {
+      "compliance": "Compliance",
+      "requestQuote": "Offerte aanvragen"
+    },
+    "newsletter": {
+      "title": "Blijf op de hoogte",
+      "copy": "Elk kwartaal inzichten over wereldhandel en zakendoen.",
+      "placeholder": "Uw e-mailadres",
+      "emailAriaLabel": "E-mailadres",
+      "subscribeAriaLabel": "Aanmelden",
+      "thanks": "Bedankt — u staat op de lijst.",
+      "errorGeneric": "Aanmelden is momenteel niet gelukt — probeer het opnieuw.",
+      "responseNote": "Reactie binnen 24 werkuren (IST)"
+    },
+    "legal": {
+      "privacy": "Privacy",
+      "terms": "Voorwaarden",
+      "antiCorruption": "Anticorruptiebeleid",
+      "cookiePreferences": "Cookievoorkeuren"
+    },
+    "copyright": "© Trivoxa Group 2026",
+    "parentCredit": "Een onderneming gebouwd op het productie-erfgoed van Shiveshwar Textiles"
+  },
+  "contactForm": {
+    "fullNamePlaceholder": "Volledige naam",
+    "fullNameAria": "Volledige naam",
+    "companyNamePlaceholder": "Bedrijfsnaam",
+    "companyNameAria": "Bedrijfsnaam",
+    "emailPlaceholder": "Uw e-mailadres",
+    "emailAria": "Uw e-mailadres",
+    "messagePlaceholder": "Waarmee kunnen wij u helpen?",
+    "messageAria": "Waarmee kunnen wij u helpen?",
+    "sendNow": "Nu verzenden",
+    "sending": "Verzenden…",
+    "successMessage": "Bericht verzonden — ons team neemt binnen 24 werkuren (IST) contact met u op.",
+    "errorGeneric": "Er is iets misgegaan bij het verzenden van uw bericht. Probeer het opnieuw.",
+    "errorValidation": "Controleer het formulier en probeer het opnieuw"
+  },
+  "common": {
+    "whatsappAria": "Chat via WhatsApp",
+    "exportServicesFallback": "uw exportdiensten"
+  },
+  "careers": {
+    "hero": {
+      "eyebrow": "Werken bij",
+      "title": "Bouw met ons aan wat komt.",
+      "description": "Elke grote organisatie wordt gebouwd door mensen die geloven in het creëren van iets dat groter is dan zijzelf.\n\nBij Trivoxa bouwen we aan een cultuur gedreven door nieuwsgierigheid, integriteit, innovatie en voortdurende groei — waar ambitieuze mensen samenkomen om echte impact te maken in wereldwijde sectoren.",
+      "ctaExplore": "Ontdek de mogelijkheden",
+      "ctaContact": "Neem contact op"
+    },
+    "culture": {
+      "eyebrow": "Onze cultuur",
+      "title": "Een cultuur gebouwd voor ambitieuze mensen.",
+      "lead": "Wij combineren de discipline van een productie-erfgoed met de energie van een groeiend internationaal bedrijf — een plek voor betekenisvol, blijvend werk.",
+      "values": {
+        "v1Title": "Nieuwsgierigheid",
+        "v1Desc": "Wij stellen betere vragen en blijven leergierig in elke markt die wij betreden.",
+        "v2Title": "Integriteit",
+        "v2Desc": "Wij doen het juiste — met partners, klanten en elkaar.",
+        "v3Title": "Innovatie",
+        "v3Desc": "Wij omarmen nieuwe ideeën, technologie en voortdurende verbetering.",
+        "v4Title": "Voortdurende groei",
+        "v4Desc": "Wij investeren in mensen die iets willen bouwen dat groter is dan zijzelf."
+      }
+    },
+    "photoEssay": {
+      "eyebrow": "Waar het werk gebeurt",
+      "title": "Van de productievloer naar wereldwijde markten.",
+      "caption1": "Fabrieksexterieur — Shiveshwar Textiles",
+      "caption2": "De weefvloer",
+      "caption3": "Kwaliteitscontrole"
+    },
+    "voices": {
+      "v1Quote": "Leiderschap bij Trivoxa wordt gedreven door een toewijding aan langetermijndenken, verantwoorde besluitvorming en voortdurende verbetering.",
+      "v1Role": "Oprichter & Algemeen Directeur",
+      "v2Quote": "Wij bouwen aan een organisatie gegrondvest op vertrouwen, geleid door integriteit en toegewijd aan het creëren van betekenisvolle waarde voor onze klanten, partners en gemeenschappen.",
+      "v2Role": "Medeoprichter, Business Development",
+      "v3Quote": "Naarmate Trivoxa groeit, zal ons leiderschap de principes die onze organisatie definiëren blijven hooghouden, terwijl we innovatie en nieuwe kansen omarmen.",
+      "v3Role": "Medeoprichter, Technologie & Innovatie"
+    },
+    "areas": {
+      "eyebrow": "Waar u past",
+      "title": "Gebieden waarin wij groeien.",
+      "lead": "Naarmate Trivoxa uitbreidt naar nieuwe sectoren en markten, bouwen wij teams op het gebied van handel, technologie en partnerschappen.",
+      "a1Title": "Wereldwijde handel & sourcing",
+      "a1Desc": "Coördineer productexport, leveranciersrelaties en internationale logistiek.",
+      "a2Title": "Technologie & diensten",
+      "a2Desc": "Software, AI, design en digitale levering voor onze divisie Dienstenexport.",
+      "a3Title": "Zaken & partnerschappen",
+      "a3Desc": "Groei, klantrelaties en de ontwikkeling van langdurige partnerschappen."
+    },
+    "benefits": {
+      "eyebrow": "Wat u krijgt",
+      "title": "Voordelen gebouwd rond groei.",
+      "b1Title": "Internationale ervaring",
+      "b1Desc": "Werk vanaf dag één rechtstreeks samen met afnemers, fabrikanten en partners in zes wereldwijde regio's.",
+      "b2Title": "Vroege verantwoordelijkheid",
+      "b2Desc": "Kleine teams en een groeiende groep betekenen echte verantwoordelijkheid — corridors, klanten en producten die u zelf beheert.",
+      "b3Title": "Twee werelden, één bedrijf",
+      "b3Desc": "Fysieke handel en digitale diensten onder één dak — beweeg ertussen naarmate uw interesses zich ontwikkelen.",
+      "b4Title": "Leren als standaard",
+      "b4Desc": "Exportcompliance, technologie, onderhandelen — de groep investeert in de vaardigheden die het werk vereist.",
+      "b5Title": "Een duidelijk groeipad",
+      "b5Desc": "Bijdrager → coördinator → corridor- of praktijkleider, openlijk beoordeeld op basis van het werk, niet op anciënniteit.",
+      "b6Title": "Gebouwd om te blijven bestaan",
+      "b6Desc": "Een langetermijnbedrijf, bewust opgebouwd — loopbanen hier worden gemeten in jaren, niet in projecten."
+    },
+    "opportunities": {
+      "eyebrow": "Actuele vacatures",
+      "title": "Openstaande functies bij Trivoxa."
+    },
+    "jobBoard": {
+      "emptyStatus": "Er staan momenteel geen vacatures open.",
+      "emptyTiming": "Wij beoordelen open sollicitaties doorlopend, niet volgens een vaste wervingscyclus.",
+      "emptyAction": "Dien een open sollicitatie in",
+      "tableRole": "Functie",
+      "tableDepartment": "Afdeling",
+      "tableLocation": "Locatie",
+      "tableType": "Type",
+      "viewRole": "Bekijk functie →",
+      "closeLabel": "Sluiten ✕",
+      "responsibilitiesLabel": "Verantwoordelijkheden",
+      "requirementsLabel": "Vereisten",
+      "niceToHaveLabel": "Pre",
+      "applyLabel": "Solliciteer naar deze functie"
+    },
+    "hiringProcess": {
+      "eyebrow": "Wervingsproces",
+      "title": "Van sollicitatie tot welkom.",
+      "s1Title": "Sollicitatie",
+      "s1Desc": "Stuur uw sollicitatie voor een openstaande functie — of stel uzelf voor met een open sollicitatie.",
+      "s2Title": "Beoordeling",
+      "s2Desc": "Ons team beoordeelt uw ervaring in relatie tot de functie en de behoeften van het team.",
+      "s3Title": "Gesprek",
+      "s3Desc": "Een gesprek over uw achtergrond, interesses en manier van werken.",
+      "s4Title": "Assessment",
+      "s4Desc": "Een praktische, functiegerichte opdracht die voor beide partijen waardevol is.",
+      "s5Title": "Afsluitend gesprek",
+      "s5Desc": "Verwachtingen, groeipad en eventuele openstaande vragen — van beide kanten.",
+      "s6Title": "Aanbod",
+      "s6Desc": "Een duidelijk, schriftelijk aanbod met functie, arbeidsvoorwaarden en startgegevens.",
+      "s7Title": "Welkom bij Trivoxa",
+      "s7Desc": "Gestructureerde onboarding in het team en de bredere groep."
+    },
+    "cta": {
+      "title": "Groei met een bedrijf gebouwd om te blijven bestaan.",
+      "description": "Wij zijn altijd geïnteresseerd in getalenteerde mensen die onze waarden delen. Stel uzelf voor en vertel ons hoe u wilt bijdragen.",
+      "ctaContact": "Neem contact op",
+      "ctaGroup": "Meer over de groep"
+    }
+  },
+  "compliance": {
+    "hero": {
+      "eyebrow": "Compliance",
+      "title": "Certificeringen & normen.",
+      "description": "Operationele vergunningen zijn actief. Sectorspecifieke certificeringen worden verkregen volgens een openbaar tijdschema en worden hier vermeld naarmate ze vorderen."
+    },
+    "active": "Actief",
+    "inProgress": "In behandeling",
+    "footnote": "Operationele vergunningen (IEC, GST) zijn actief. Sectorcertificeringen worden verkregen volgens de hierboven vermelde streefdata. Zodra elke certificering is afgerond, wordt deze hier gepubliceerd met registratienummer, uitgevende instantie, naam van de juridische entiteit en geldigheidsperiode — gekoppeld aan een verifieerbaar document.",
+    "cta": {
+      "title": "Wilt u verifiëren voordat u bestelt?",
+      "description": "Vraag een fabrieksaudit of locatiebezoek aan voordat u een bestelling plaatst — een standaard stap voorafgaand aan de bestelling die wij rechtstreeks ondersteunen.",
+      "ctaAudit": "Vraag een fabrieksaudit / locatiebezoek aan",
+      "ctaContact": "Neem contact op met ons team"
+    }
+  },
+  "insightsPage": {
+    "hero": {
+      "eyebrow": "Inzichten",
+      "title": "Perspectieven die wereldwijd zakendoen sturen.",
+      "description": "Markten evolueren. Sectoren transformeren. Elke dag ontstaan nieuwe kansen.\n\nOnze inzichten verkennen wereldhandel, sourcingstrategieën, opkomende sectoren, marktinformatie en bedrijfsinnovatie om organisaties te helpen weloverwogen beslissingen te nemen.",
+      "ctaExplore": "Ontdek inzichten",
+      "ctaContact": "Neem contact op met ons team"
+    },
+    "categories": {
+      "eyebrow": "Categorieën",
+      "title": "Kennis over wereldhandel.",
+      "lead": "Drie gerichte denklijnen, ontwikkeld om partners te helpen met vertrouwen beslissingen te nemen.",
+      "c1": "Exportgids",
+      "c2": "Marktinformatie",
+      "c3": "Sectorinzichten"
+    },
+    "featured": {
+      "eyebrow": "In ontwikkeling",
+      "title": "Stem op wat wij als eerste publiceren.",
+      "lead": "De eerste reeks inzichten wordt op dit moment geschreven. Kies de onderwerpen die u interesseren, laat uw e-mailadres achter, en de leeslijst — plus uw stemmen — gaat rechtstreeks naar het team."
+    },
+    "topics": {
+      "t1Title": "Wereldwijde sourcing navigeren in een verbonden economie",
+      "t1Category": "Marktinformatie",
+      "t1Reading": "~8 min. leestijd",
+      "t1Desc": "Hoe moderne bedrijven veerkrachtige, grensoverschrijdende toeleveringsketens opbouwen.",
+      "t2Title": "De toekomst van textiel- en kledingexport",
+      "t2Category": "Sectorinzichten",
+      "t2Reading": "~6 min. leestijd",
+      "t2Desc": "Waar innovatie in stoffen, kwaliteit en vraag zich naartoe ontwikkelen.",
+      "t3Title": "Dienstenexport: technologie als groeimotor",
+      "t3Category": "Exportgids",
+      "t3Reading": "~7 min. leestijd",
+      "t3Desc": "Waarom software, AI en design de internationale handel hervormen.",
+      "t4Title": "Een HS-code lezen: een praktische gids voor afnemers",
+      "t4Category": "Exportgids",
+      "t4Reading": "~5 min. leestijd",
+      "t4Desc": "Waar die cijfers u daadwerkelijk toe verplichten — invoerrechten, documentatie en compliance.",
+      "t5Title": "Mundra versus Nhava Sheva: uw exportcorridor kiezen",
+      "t5Category": "Marktinformatie",
+      "t5Reading": "~6 min. leestijd",
+      "t5Desc": "Hoe havenkeuze de levertijd, kosten en risico's bepaalt voor vracht van Indiase oorsprong.",
+      "t6Title": "Farmaceutische export en vergunningen in het bestemmingsland",
+      "t6Category": "Sectorinzichten",
+      "t6Reading": "~9 min. leestijd",
+      "t6Desc": "Het regelgevingslandschap dat een importeur van farmaceutische producten die voor het eerst importeert vroegtijdig in kaart moet brengen."
+    },
+    "teaser": {
+      "voteWant": "Ik wil dit lezen",
+      "voteOn": "Op uw leeslijst",
+      "thanksBase": "Bedankt — u staat op de lijst",
+      "thanksVoteSingle": " en uw stem heeft het team bereikt",
+      "thanksVotePlural": " en uw stemmen hebben het team bereikt",
+      "thanksEnd": ". Zodra deze worden gepubliceerd, ontvangt u de eerste editie in uw inbox.",
+      "notifyLeadNone": "Ontvang een melding zodra de eerste inzichten worden gepubliceerd:",
+      "notifyLeadSingle": "Ontvang een melding zodra dit onderwerp wordt gepubliceerd:",
+      "notifyLeadPlural": "Ontvang een melding zodra deze onderwerpen worden gepubliceerd:",
+      "emailPlaceholder": "Uw zakelijke e-mailadres",
+      "emailAria": "E-mailadres",
+      "notifyMe": "Meld mij",
+      "sending": "Verzenden…",
+      "errorGeneric": "Aanmelden is momenteel niet gelukt — probeer het opnieuw."
+    },
+    "cta": {
+      "title": "Zet inzicht om in kansen.",
+      "description": "Heeft u een markt, product of dienst in gedachten? Ons team staat klaar om u te helpen de stap te zetten van perspectief naar partnerschap.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaContact": "Neem contact op met ons team"
+    }
+  },
+  "thankYou": {
+    "hero": {
+      "eyebrow": "Bericht ontvangen",
+      "title": "Bedankt voor uw bericht.",
+      "description": "Een exportspecialist reageert binnen één werkdag. Bekijk ondertussen wat wij sourcen en waar wij actief zijn."
+    },
+    "whatNext": {
+      "eyebrow": "Wat gebeurt er nu",
+      "title": "Dit kunt u verwachten.",
+      "s1": "Ons team beoordeelt uw bericht en stuurt het door naar de juiste specialist.",
+      "s2": "U ontvangt binnen één werkdag een reactie per e-mail.",
+      "s3": "Als uw aanvraag betrekking heeft op sourcing, nemen wij contact met u op over de volgende stappen om een RFQ te formaliseren."
+    },
+    "whileWait": {
+      "eyebrow": "Terwijl u wacht",
+      "title": "Ontdek Trivoxa Group.",
+      "linkProduct": "Ontdek productexport →",
+      "linkIndustries": "Bekijk de sectoren die wij bedienen →",
+      "linkHome": "Terug naar home →"
+    }
+  },
+  "rfqPage": {
+    "hero": {
+      "eyebrow": "Offerteaanvraag",
+      "title": "Stuur ons uw RFQ",
+      "description": "Kies uw traject — productsourcing, diensten of partnerschap. Echte HS-codes, echte levertijden. Ons team reageert binnen 24 werkuren (IST)."
+    },
+    "quickLinks": {
+      "label": "Algemene vraag?",
+      "contact": "Neem contact op →",
+      "whatsapp": "WhatsApp ↗",
+      "linkedin": "LinkedIn ↗",
+      "calendar": "Plan een gesprek ↗"
+    },
+    "nextSteps": {
+      "eyebrow": "Wat gebeurt er nu",
+      "title": "Drie stappen van RFQ naar order.",
+      "s1Title": "Beoordeling",
+      "s1Desc": "Ons sourcingteam beoordeelt uw aanvraag ten opzichte van de actuele fabriekscapaciteit — binnen 24 werkuren (IST).",
+      "s2Title": "Offerte",
+      "s2Desc": "U ontvangt een formele offerte met prijzen, levertijd en betalingsvoorwaarden.",
+      "s3Title": "Bevestiging",
+      "s3Desc": "Na bevestiging stellen wij een proforma-factuur op en starten wij de productieplanning."
+    },
+    "whereWeAre": {
+      "eyebrow": "Waar wij gevestigd zijn",
+      "title": "Surat, Gujarat — India's exportcorridor.",
+      "note": "Gevestigd in Surat met toegang tot de havens Mundra, Kandla en Nhava Sheva — reactietijd 24 werkuren, IST."
+    },
+    "form": {
+      "pathsAriaLabel": "Waarover wilt u met ons in gesprek gaan?",
+      "presetProductsNote": "Producten van interesse:",
+      "steps": {
+        "company": "Bedrijf",
+        "product": "Product",
+        "terms": "Voorwaarden"
+      },
+      "paths": {
+        "productTitle": "RFQ Productexport",
+        "productDesc": "Source producten met HS-codes, MOQ's en een formele offerte.",
+        "serviceTitle": "Dienstverleningsopdracht",
+        "serviceDesc": "Technologie, AI, software, design of marketing van Trivoxa Digital.",
+        "partnershipTitle": "Partnerschap",
+        "partnershipDesc": "Productie-, logistiek- of distributiepartnerschappen met de Groep.",
+        "auditTitle": "Fabrieksaudit / locatiebezoek",
+        "auditDesc": "Vraag een leveranciersaudit of locatiebezoek aan voordat u een bestelling plaatst.",
+        "careerTitle": "Werken bij",
+        "careerDesc": "Sluit u aan bij het team — bekijk openstaande gebieden en stuur uw sollicitatie."
+      },
+      "changeEnquiryType": "← Wijzig type aanvraag",
+      "fields": {
+        "companyName": "Bedrijfsnaam",
+        "contactName": "Contactpersoon",
+        "businessEmail": "Zakelijk e-mailadres",
+        "whatsappNumber": "WhatsApp-nummer",
+        "countryOfImport": "Land van invoer",
+        "destinationPort": "Bestemmingshaven",
+        "productCategory": "Productcategorie",
+        "hsCode": "HS-code",
+        "quantity": "Hoeveelheid",
+        "unit": "Eenheid",
+        "targetPriceBand": "Streefprijsklasse (optioneel)",
+        "targetPriceBandPlaceholder": "bijv. $2,10–$2,40 / kg",
+        "preferredIncoterm": "Gewenste incoterm",
+        "deliveryFrom": "Leverperiode — vanaf",
+        "deliveryTo": "Leverperiode — tot",
+        "sampleRequired": "Monster vereist",
+        "yes": "Ja",
+        "no": "Nee",
+        "additionalNotes": "Aanvullende opmerkingen",
+        "specSheets": "Specificatiebladen / tekeningen (max. {max} bestanden, {mb} MB totaal)",
+        "yourName": "Uw naam",
+        "companyOptional": "Bedrijf (optioneel)"
+      },
+      "presetNote": "Vanuit uw catalogusselectie: {products} — details zijn overgenomen in de notities voor ons sourcingteam.",
+      "catalogHelper": "Catalogusreferentie voor {category}: gebruikelijke MOQ {moq} · levertijd {leadTime} · HS {hsCode}. Hoeveelheden onder de MOQ worden per geval beoordeeld — dien uw aanvraag gerust toch in, wij adviseren u dan verder.",
+      "certHelper": "Certificeringsstatus voor {category}: {statuses}. Wij kunnen uw aanvraag nu alvast registreren; export is afhankelijk van het afronden van de certificering. Zie",
+      "complianceLink": "onze volledige compliancestatus →",
+      "attachmentsMax": "Maximaal {max} bestanden.",
+      "attachmentsSizeError": "Gecombineerde bijlagen mogen niet groter zijn dan 4 MB.",
+      "removeFileAria": "{filename} verwijderen",
+      "back": "Terug",
+      "continue": "Doorgaan",
+      "submitRfq": "RFQ indienen",
+      "submitting": "Bezig met indienen…",
+      "submitFailedFallback": "Indienen mislukt. Probeer het opnieuw.",
+      "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw."
+    },
+    "confirm": {
+      "eyebrow": "RFQ ontvangen",
+      "referenceLabel": "Referentie #{reference}",
+      "respondNote": "Ons team reageert binnen 24 werkuren (IST) via het door u opgegeven e-mailadres en WhatsApp-nummer.",
+      "whatHappensNext": "Wat gebeurt er nu",
+      "s1": "Ons sourcingteam beoordeelt uw aanvraag ten opzichte van de actuele fabriekscapaciteit.",
+      "s2": "U ontvangt een formele offerte met prijzen, levertijd en betalingsvoorwaarden.",
+      "s3": "Na bevestiging stellen wij een proforma-factuur op en starten wij de productieplanning.",
+      "browseMore": "Bekijk meer sectoren"
+    },
+    "career": {
+      "eyebrow": "Werken bij",
+      "title": "Wij horen graag van u.",
+      "description": "Openstaande gebieden, cultuur en het sollicitatieformulier vindt u op onze carrièrepagina.",
+      "back": "Terug",
+      "goToCareers": "Naar Werken bij →"
+    },
+    "inquiry": {
+      "serviceTitle": "Dienstverleningsopdracht",
+      "partnershipTitle": "Partnerschap",
+      "auditTitle": "Fabrieksaudit / locatiebezoek",
+      "servicePrompt": "Wat wilt u bouwen of bereiken?",
+      "partnershipPrompt": "Aan welk type partnerschap denkt u?",
+      "auditPrompt": "Welke faciliteit of productlijn, en wanneer wilt u een bezoek of audit inplannen?",
+      "yourName": "Uw naam",
+      "companyOptional": "Bedrijf (optioneel)",
+      "businessEmail": "Zakelijk e-mailadres",
+      "errorValidation": "Vermeld uw naam, een geldig e-mailadres en een korte omschrijving van uw aanvraag.",
+      "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw.",
+      "sendEnquiry": "Verstuur {title}-aanvraag",
+      "sending": "Verzenden…",
+      "enquiryReceived": "{title}-aanvraag ontvangen",
+      "respondNote": "Ons team reageert binnen 24 werkuren (IST).",
+      "exploreServiceExports": "Ontdek dienstenexport",
+      "seeCompliance": "Bekijk onze compliancestatus",
+      "aboutGroup": "Over de groep"
+    }
+  },
+  "group": {
+    "hero": {
+      "eyebrow": "De Groep",
+      "title": "Wij bouwen aan een organisatie die is ontworpen om te blijven bestaan.",
+      "description": "Trivoxa Group is een internationale ondernemingsgroep, gebouwd op een sterk productiefundament en gedreven door een wereldwijde visie. Via vertrouwde partnerschappen, strategische sourcing en professionele diensten verbinden wij bedrijven met kansen en creëren wij blijvende waarde op internationale markten.",
+      "ctaStory": "Ontdek ons verhaal"
+    },
+    "whoWeAre": {
+      "eyebrow": "Wie wij zijn",
+      "title": "Een wereldwijde ondernemingsgroep gebouwd op vertrouwen, betekenis en een langetermijnvisie.",
+      "p1": "Trivoxa Group is een internationale ondernemingsgroep die zich inzet om wereldwijde bedrijven te verbinden met betrouwbare producten, strategische sourcingoplossingen en professionele diensten.",
+      "p2": "Gebouwd op de productie-expertise van onze {relationship}, {name}, combineren wij sectorkennis met een toekomstgerichte benadering van internationaal zakendoen. Door vertrouwde fabrikanten, bekwame professionals en wereldwijde partners samen te brengen, helpen wij organisaties sterkere toeleveringsketens op te bouwen, nieuwe kansen te benutten en duurzame groei te realiseren.",
+      "p3": "Bij Trivoxa geloven wij dat betekenisvol zakendoen wordt gebouwd op vertrouwen, kwaliteit en relaties die veel verder reiken dan een enkele transactie."
+    },
+    "foundation": {
+      "eyebrow": "Ons fundament",
+      "title": "Gebouwd op productie-excellentie. Geïnspireerd door wereldwijde kansen.",
+      "p1": "Elke grote organisatie is gebouwd op een sterk fundament.",
+      "p2": "Trivoxa Group is opgericht in strategisch partnerschap met Shiveshwar Textiles, een productiebedrijf met uitgebreide expertise in de productie van geweven textiel en kwaliteitsgerichte bedrijfsvoering.",
+      "p3": "Dit productie-erfgoed geeft ons praktische sectorkennis, een diepgaand begrip van productieprocessen en een toewijding aan het leveren van betrouwbare oplossingen aan wereldwijde markten.",
+      "p4": "Terwijl Trivoxa zich blijft uitbreiden naar nieuwe sectoren en zakelijke diensten, blijft ons fundament geworteld in de principes die ons vanaf het begin hebben geleid — kwaliteit, betrouwbaarheid, integriteit en langdurige partnerschappen.",
+      "photo1Caption": "Fabrieksexterieur",
+      "photo2Caption": "Weefvloer",
+      "photo3Caption": "Kwaliteitscontrole",
+      "auditCta": "Vraag een fabrieksaudit / locatiebezoek aan →"
+    },
+    "ourStory": {
+      "eyebrow": "Ons verhaal",
+      "title": "Kansen creëren over grenzen heen.",
+      "p1": "Trivoxa is opgericht met de visie om de kloof te overbruggen tussen wereldwijde vraag en de buitengewone mogelijkheden van India.",
+      "p2": "Wij zagen in dat bedrijven wereldwijd meer nodig hadden dan producten — zij hadden behoefte aan een vertrouwde partner die hun vereisten kon begrijpen, hen kon verbinden met betrouwbare productie en hen kon ondersteunen in elke fase van internationale handel.",
+      "p3": "Geleid door dit doel is Trivoxa opgericht om langdurige relaties op te bouwen die verder reiken dan handel en bijdragen aan duurzame bedrijfsgroei voor partners wereldwijd."
+    },
+    "journey": {
+      "eyebrow": "Het traject",
+      "title": "Hoe de groep vorm kreeg.",
+      "s1Title": "Productiefundament",
+      "s1Desc": "Shiveshwar Textiles bouwt diepgaande expertise op in de productie van geweven textiel en kwaliteitsgerichte bedrijfsvoering.",
+      "s2Title": "Een internationale visie",
+      "s2Desc": "De oprichters herkennen wereldwijde vraag naar een vertrouwde partner voor toegang tot de productiecapaciteit van India.",
+      "s3Title": "Trivoxa Group opgericht",
+      "s3Desc": "De internationale bedrijfstak wordt opgericht om wereldwijde afnemers en Indiase productie met elkaar te verbinden.",
+      "s4Title": "Twee exportdivisies",
+      "s4Desc": "Productexport en Dienstenexport (Trivoxa Digital) worden gelanceerd als de operationele takken van de groep.",
+      "s5Title": "Groeiende wereldwijde partnerschappen",
+      "s5Desc": "Het netwerk breidt zich uit over sectoren, regio's en langdurige klantrelaties."
+    },
+    "vision": {
+      "eyebrow": "Onze visie",
+      "statement": "Uitgroeien tot een van 's werelds meest vertrouwde internationale ondernemingsgroepen door blijvende waarde te creëren via wereldhandel, innovatie en duurzame partnerschappen.",
+      "support": "Onze visie is het bouwen van een organisatie die generaties lang kansen blijft creëren in sectoren en internationale markten."
+    },
+    "philosophy": {
+      "eyebrow": "Onze filosofie",
+      "title": "De Trivoxa-aanpak",
+      "lead": "Elke beslissing die wij nemen wordt geleid door principes die bepalen wie wij zijn en hoe wij relaties opbouwen.",
+      "p1Title": "Visie",
+      "p1Desc": "Wij denken verder dan de kansen van vandaag en bouwen voor morgen.",
+      "p2Title": "Integriteit",
+      "p2Desc": "Vertrouwen verdien je met eerlijkheid, transparantie en consistentie.",
+      "p3Title": "Uitmuntendheid",
+      "p3Desc": "Wij streven naar de hoogste normen in alles wat wij leveren.",
+      "p4Title": "Innovatie",
+      "p4Desc": "Wij omarmen nieuwe ideeën, technologie en voortdurende verbetering.",
+      "p5Title": "Partnerschap",
+      "p5Desc": "Wij geloven dat duurzaam succes samen wordt gecreëerd.",
+      "p6Title": "Impact",
+      "p6Desc": "Wij meten succes aan de blijvende waarde die wij creëren voor partners, gemeenschappen en toekomstige generaties."
+    },
+    "leadership": {
+      "eyebrow": "Leiderschap",
+      "f1Role": "Oprichter & Algemeen Directeur",
+      "f1Message": "Leiderschap bij Trivoxa wordt gedreven door een toewijding aan langetermijndenken, verantwoorde besluitvorming en voortdurende verbetering.",
+      "f2Role": "Medeoprichter, Business Development",
+      "f2Message": "Onze verantwoordelijkheid reikt verder dan bedrijfsgroei. Wij bouwen aan een organisatie gegrondvest op vertrouwen, geleid door integriteit en toegewijd aan het creëren van betekenisvolle waarde voor onze klanten, partners en gemeenschappen.",
+      "f3Role": "Medeoprichter, Technologie & Innovatie",
+      "f3Message": "Naarmate Trivoxa groeit, zal ons leiderschap de principes die onze organisatie definiëren blijven hooghouden, terwijl we innovatie en nieuwe kansen op wereldwijde markten omarmen."
+    },
+    "ecosystem": {
+      "eyebrow": "Ons ecosysteem",
+      "title": "Eén verbonden netwerk. Eindeloze kansen.",
+      "lead": "Trivoxa Group brengt productie-expertise, strategische sourcing, technologie, logistiek en professionele diensten samen binnen één geïntegreerd bedrijfsecosysteem.",
+      "e1Title": "Divisie Productexport",
+      "e1Desc": "Sourcen en leveren van kwaliteitsproducten via vertrouwde productiepartners.",
+      "e2Title": "Divisie Dienstenexport",
+      "e2Desc": "Technologie, design en professionele diensten geleverd door bekwame teams.",
+      "e3Title": "Productienetwerk",
+      "e3Desc": "Verankerd door Shiveshwar Textiles en een groeiende partnerbasis.",
+      "e4Title": "Technologiepartners",
+      "e4Desc": "Specialisten die digitale transformatie en automatisering mogelijk maken.",
+      "e5Title": "Logistieke partners",
+      "e5Desc": "Gecoördineerde export, documentatie en levering van de toeleveringsketen.",
+      "e6Title": "Wereldwijd klantennetwerk",
+      "e6Desc": "Afnemers en organisaties die wij bedienen op internationale markten."
+    },
+    "partners": {
+      "eyebrow": "Strategische partners",
+      "title": "Groeien via vertrouwde partnerschappen.",
+      "lead": "Sterke partnerschappen zijn het fundament van duurzaam zakendoen.",
+      "foundingTitle": "Oprichtende productiepartner — {name}",
+      "p1": "Als {relationship} van Trivoxa Group levert {name} de productie-expertise en sectorervaring die onze toewijding aan kwaliteit en betrouwbaarheid ondersteunen.",
+      "p2": "Naast {name} blijven wij relaties opbouwen met vertrouwde fabrikanten, logistieke dienstverleners, technologiepartners en sectorspecialisten die onze waarden delen.",
+      "growthNote": "Ons partnernetwerk blijft groeien op het gebied van productie, logistiek en technologie."
+    },
+    "commitments": {
+      "eyebrow": "Onze toezeggingen",
+      "title": "Onze toewijding aan elke relatie.",
+      "lead": "Elk partnerschap begint met vertrouwen en wordt versterkt door consistente actie. Wij zetten ons in voor verantwoord zakendoen, het leveren van betrouwbare oplossingen en het voortdurend verbeteren van de manier waarop wij onze partners wereldwijd bedienen.",
+      "tableNum": "#",
+      "tableCommitment": "Toezegging",
+      "tableDescription": "Korte omschrijving",
+      "c1Name": "Ethische bedrijfspraktijken",
+      "c1Desc": "Elke relatie aangaan met eerlijkheid, billijkheid en verantwoordelijkheid.",
+      "c2Name": "Verantwoorde sourcing",
+      "c2Desc": "Samenwerken met fabrikanten die onze normen voor kwaliteit en eerlijke praktijken delen.",
+      "c3Name": "Kwaliteit zonder compromissen",
+      "c3Desc": "Elk product en elke dienst vasthouden aan een norm die vertrouwen waard is.",
+      "c4Name": "Transparante communicatie",
+      "c4Desc": "Partners op de hoogte houden via heldere, consistente en eerlijke communicatie.",
+      "c5Name": "Langdurige partnerschappen",
+      "c5Desc": "Relaties opbouwen die worden gemeten in jaren, niet in transacties.",
+      "c6Name": "Duurzame bedrijfsgroei",
+      "c6Desc": "Bewust uitbreiden, op manieren die blijvende waarde creëren.",
+      "c7Name": "Voortdurende innovatie",
+      "c7Desc": "Onze manier van werken verbeteren, zodat wij de partners die op ons vertrouwen nog beter kunnen bedienen."
+    },
+    "lookingAhead": {
+      "eyebrow": "Vooruitblik",
+      "title": "Bouwen voor de volgende generatie wereldwijd zakendoen.",
+      "p1": "Ons traject staat nog maar aan het begin.",
+      "p2": "Vooruitkijkend zal Trivoxa zich blijven uitbreiden naar nieuwe sectoren, internationale partnerschappen versterken, opkomende technologieën omarmen en innovatieve oplossingen ontwikkelen die blijvende waarde creëren.",
+      "p3": "Onze ambitie is niet alleen om te groeien als bedrijf, maar om een organisatie te bouwen waar toekomstige generaties met trots leiding aan zullen geven en waarin wereldwijde partners hun vertrouwen zullen blijven stellen."
+    },
+    "cta": {
+      "title": "Laten we samen de toekomst bouwen.",
+      "description": "Of u nu producten wilt inkopen, wilt uitbreiden naar internationale markten of een langdurig zakelijk partnerschap wilt aangaan, ons team staat klaar om u met vertrouwen vooruit te helpen.",
+      "ctaPartner": "Word partner",
+      "ctaContact": "Neem contact op met ons team"
+    }
+  },
+  "productExportsPage": {
+    "hero": {
+      "crumbBusinesses": "Activiteiten",
+      "crumbSelf": "Productexport",
+      "eyebrow": "Productexport",
+      "title": "Wereldwijde productexport.",
+      "description": "Wij verbinden internationale afnemers met zorgvuldig geselecteerde productiepartners in heel India om kwaliteitsproducten te leveren via betrouwbare sourcing- en exportoplossingen.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaContact": "Neem contact op met ons team"
+    },
+    "about": {
+      "eyebrow": "Over productexport",
+      "title": "Eén vertrouwde toegangspoort tot de productiekracht van India.",
+      "lead": "Van industriële materialen en textiel tot gezondheidszorgproducten en consumentengoederen — onze focus ligt op het verbinden van wereldwijde afnemers met betrouwbare leveringsoplossingen die voldoen aan internationale verwachtingen.\n\nOndersteund door het productiefundament van Shiveshwar Textiles combineren wij praktische productiekennis met een groeiend netwerk van vertrouwde partners."
+    },
+    "industriesSection": {
+      "eyebrow": "Sectoren die wij bedienen",
+      "title": "Producten voor elke belangrijke sector.",
+      "lead": "Ontdek de sectoren die wij ondersteunen via onze divisie Productexport."
+    },
+    "portfolio": {
+      "eyebrow": "Volledig productportfolio",
+      "title": "Doorzoek alles wat wij exporteren.",
+      "lead": "Elk gepubliceerd product in alle sectoren — zoek op naam of HS-code, filter op sector en incoterm, en voeg producten rechtstreeks toe aan uw RFQ."
+    },
+    "sourcing": {
+      "eyebrow": "Wereldwijd sourcingproces",
+      "title": "Een gestructureerd traject van vereiste naar levering.",
+      "s1Title": "Vereisten begrijpen",
+      "s1Desc": "Specificaties, volumes, kwaliteitsnormen en commerciële verwachtingen.",
+      "s2Title": "Productiepartners identificeren",
+      "s2Desc": "Wij koppelen uw behoeften aan de juiste, zorgvuldig gescreende producenten in heel India.",
+      "s3Title": "Productie coördineren",
+      "s3Desc": "Wij beheren tijdlijnen en communicatie in elke fase.",
+      "s4Title": "Kwaliteit & documentatie",
+      "s4Desc": "Kwaliteitsgerichte coördinatie plus volledige exportdocumentatie.",
+      "s5Title": "Wereldwijde levering",
+      "s5Desc": "Logistieke coördinatie en betrouwbare internationale levering."
+    },
+    "quality": {
+      "eyebrow": "Kwaliteitsborging",
+      "title": "Kwaliteit waarop u kunt vertrouwen.",
+      "lead": "Elke bestelling wordt ondersteund door een kwaliteitsgericht, documentatiegedreven proces dat is opgezet voor internationale handel.",
+      "q1Title": "Kwaliteitsgerichte coördinatie",
+      "q1Desc": "Kwaliteitsgerichte coördinatie in elke fase van de productie.",
+      "q2Title": "Discipline in specificaties",
+      "q2Desc": "Zorgvuldige aandacht voor overeengekomen specificaties.",
+      "q3Title": "Gescreende partners",
+      "q3Desc": "Vertrouwde, zorgvuldig gescreende productiepartners.",
+      "q4Title": "Volledige documentatie",
+      "q4Desc": "Volledige exportdocumentatie.",
+      "q5Title": "Betrouwbare levering",
+      "q5Desc": "Betrouwbare logistiek en levering."
+    },
+    "cta": {
+      "title": "Laten we samen uw volgende product sourcen.",
+      "description": "Vertel ons wat u wilt sourcen, en ons team verbindt u met de juiste productiepartners en een betrouwbaar exportproces.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaTextile": "Ontdek textiel en kleding"
+    }
+  },
+  "serviceExportsPage": {
+    "hero": {
+      "crumbBusinesses": "Activiteiten",
+      "crumbSelf": "Dienstenexport",
+      "eyebrow": "Dienstenexport",
+      "title": "Wereldwijde dienstenexport.",
+      "description": "Wij helpen organisaties hun groei te versnellen met technologie, softwareontwikkeling, kunstmatige intelligentie, branding, digitale marketing en zakelijke ondersteuningsdiensten. Door bedrijven te verbinden met India's bekwame professionals, leveren wij praktische oplossingen die zijn afgestemd op de uitdagingen van het moderne bedrijfsleven.",
+      "ctaConsult": "Vraag een adviesgesprek aan",
+      "ctaExplore": "Ontdek onze diensten"
+    },
+    "about": {
+      "eyebrow": "Over dienstenexport",
+      "title": "India's bekwame professionals, werkend als uw team.",
+      "p1": "Onze divisie Dienstenexport verbindt organisaties met bekwame professionals die technologie-, design- en bedrijfsoplossingen leveren.",
+      "p2": "Dit is meer dan uitbestede diensten — het is toegang tot een talentnetwerk. Teams integreren met de uwe, communiceren transparant en schalen mee naarmate uw behoeften groeien.",
+      "p3": "Van software en AI tot branding en zakelijke ondersteuning — wij helpen u sneller vooruit te komen met betrouwbare, kwaliteitsgedreven uitvoering."
+    },
+    "servicesSection": {
+      "eyebrow": "Dienstencategorieën",
+      "title": "Een volledig spectrum aan professionele diensten."
+    },
+    "delivery": {
+      "eyebrow": "Leveringsproces",
+      "title": "Hoe wij betrouwbaar leveren.",
+      "s1Title": "Kennismakingsgesprek",
+      "s1Desc": "Doelstellingen, scope, technische behoeften en succescriteria.",
+      "s2Title": "Vereisten & scope",
+      "s2Desc": "Een duidelijke, overeengekomen definitie van wat er wordt geleverd.",
+      "s3Title": "Teamsamenstelling",
+      "s3Desc": "Wij verbinden u met bekwame professionals die passen bij uw project.",
+      "s4Title": "Leveringssprints",
+      "s4Desc": "Duidelijke mijlpalen en transparante communicatie gedurende het hele traject.",
+      "s5Title": "Doorlopende ondersteuning",
+      "s5Desc": "Betrouwbare levering plus doorlopende ondersteuning naarmate u opschaalt."
+    },
+    "why": {
+      "eyebrow": "Waarom kiezen voor Trivoxa",
+      "title": "Praktische oplossingen, langdurig partnerschap.",
+      "w1": "Indiaas talentnetwerk",
+      "w2": "Tijdzonevoordeel",
+      "w3": "Kwaliteitscoördinatie",
+      "w4": "Transparante communicatie",
+      "w5": "Schaalbare teams",
+      "w6": "Langdurig partnerschap"
+    },
+    "cta": {
+      "title": "Laten we samen iets bouwen.",
+      "description": "Deel uw project of uitdaging, en wij verbinden u met het juiste team om het te realiseren.",
+      "ctaBook": "Plan een adviesgesprek",
+      "ctaProposal": "Vraag een voorstel aan"
+    },
+    "digitalNote": "Trivoxa Digital — een gespecialiseerde technologietak van Trivoxa Group. Bezoek digital.trivoxagroup.com"
+  },
+  "industryDetail": {
+    "crumbIndustries": "Sectoren",
+    "eyebrowPrefix": "Sector — {name}",
+    "ctaRequestQuote": "Offerte aanvragen voor {name}",
+    "ctaContactTeam": "Neem contact op met het team",
+    "context": {
+      "eyebrow": "Sectorcontext",
+      "title": "Wie wij bedienen in {name}",
+      "buyerTypesTitle": "Typische afnemers",
+      "complianceTitle": "Wat afnemers moeten weten"
+    },
+    "offer": {
+      "eyebrow": "Wat wij bieden",
+      "title": "Wat wij exporteren",
+      "lead": "Elke categorie wordt geoffreerd op basis van echte HS-codes, minimale bestelhoeveelheden en levertijden — geen giswerk voordat u een RFQ verstuurt."
+    },
+    "explore": {
+      "eyebrow": "Meer ontdekken",
+      "browsePortfolio": "Bekijk het productportfolio",
+      "exploreServices": "Ontdek onze dienstverleningsmogelijkheden",
+      "exportsSuffix": "export →",
+      "globalServiceExports": "Wereldwijde dienstenexport →"
+    },
+    "why": {
+      "eyebrow": "Waarom Trivoxa",
+      "title": "Gebouwd op ervaring. Gedreven door partnerschap."
+    },
+    "related": {
+      "eyebrow": "Gerelateerde sectoren",
+      "title": "Ontdek andere sectoren"
+    },
+    "cta": {
+      "titleTemplate": "Klaar om {name} te sourcen?",
+      "description": "Stuur ons uw RFQ en ons sourcingteam reageert binnen 24 werkuren (IST).",
+      "ctaSendRfq": "Stuur ons uw RFQ →"
+    }
   }
 }

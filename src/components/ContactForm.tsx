@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { contactSchema } from "@/lib/validation/contact";
 import { useRouter } from "@/i18n/navigation";
 
@@ -20,6 +21,7 @@ export default function ContactForm({
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations("contactForm");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,7 +30,7 @@ export default function ContactForm({
     const parsed = contactSchema.safeParse(raw);
     if (!parsed.success) {
       setStatus("error");
-      setError(parsed.error.issues[0]?.message ?? "Please check the form and try again");
+      setError(parsed.error.issues[0]?.message ?? t("errorValidation"));
       return;
     }
 
@@ -49,7 +51,7 @@ export default function ContactForm({
       setStatus("success");
     } catch {
       setStatus("error");
-      setError("Something went wrong sending your message. Please try again.");
+      setError(t("errorGeneric"));
     }
   }
 
@@ -57,7 +59,7 @@ export default function ContactForm({
     return (
       <div className={`contact-form ${className ?? ""}`}>
         <p className="form-status form-status--success" role="status">
-          Message sent — our team will get back to you within 24 business hours (IST).
+          {t("successMessage")}
         </p>
       </div>
     );
@@ -71,16 +73,16 @@ export default function ContactForm({
           it disappears on first keystroke. aria-label supplies the name without
           changing a pixel. */}
       <label className="form-field">
-        <input type="text" name="fullName" aria-label="Full name" placeholder="Full Name" required minLength={2} autoComplete="name" />
+        <input type="text" name="fullName" aria-label={t("fullNameAria")} placeholder={t("fullNamePlaceholder")} required minLength={2} autoComplete="name" />
       </label>
       <label className="form-field">
-        <input type="text" name="companyName" aria-label="Company name" placeholder="Company Name" autoComplete="organization" />
+        <input type="text" name="companyName" aria-label={t("companyNameAria")} placeholder={t("companyNamePlaceholder")} autoComplete="organization" />
       </label>
       <label className="form-field">
-        <input type="email" name="email" aria-label="Your email address" placeholder="Your email address" required autoComplete="email" />
+        <input type="email" name="email" aria-label={t("emailAria")} placeholder={t("emailPlaceholder")} required autoComplete="email" />
       </label>
       <label className="form-field">
-        <textarea name="message" aria-label="How could we help you?" placeholder="How could we help you?" rows={4} required minLength={5} />
+        <textarea name="message" aria-label={t("messageAria")} placeholder={t("messagePlaceholder")} rows={4} required minLength={5} />
       </label>
       {status === "error" && error && (
         <p className="form-status form-status--error" role="alert">
@@ -88,7 +90,7 @@ export default function ContactForm({
         </p>
       )}
       <button type="submit" className="form-submit" disabled={status === "submitting"}>
-        {status === "submitting" ? "Sending…" : "Send Now"}
+        {status === "submitting" ? t("sending") : t("sendNow")}
       </button>
     </form>
   );

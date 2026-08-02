@@ -154,5 +154,1146 @@
       "eyebrow": "Perspetivas",
       "heading": "Perspetivas que impulsionam os negócios globais"
     }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "Sobre",
+      "title": "Construída a partir de uma fábrica em Surat.",
+      "description": "A Trivoxa Group não nasceu como uma casa comercial. Nasceu no chão de fábrica de um fabricante têxtil — e levou essa disciplina para o comércio internacional."
+    },
+    "origin": {
+      "eyebrow": "As nossas origens",
+      "title": "De uma fábrica a um grupo exportador em crescimento.",
+      "lead": "A Trivoxa Group nasceu de uma parceria estratégica com a Shiveshwar Textiles, um fabricante de tecidos têxteis sediado em Surat, Gujarat. Anos a gerir fábricas de produção — controlando teares, cumprindo prazos de entrega, respondendo a controlos de qualidade — moldaram a forma como a empresa encara a exportação: fiabilidade em primeiro lugar, tudo o resto depois.\n\nÀ medida que os pedidos dos compradores se expandiram para além dos têxteis, abrangendo saúde, materiais de construção, agricultura e bens de engenharia, a Trivoxa Group formou-se para levar essa mesma disciplina de fabrico a novas categorias — recorrendo a parceiros cuidadosamente selecionados em vez de fabricar internamente, mas mantendo cada expedição ao nível que o nosso parceiro de fabrico fundador construiu o seu nome."
+    },
+    "quote": {
+      "text": "Não nos propusemos a ser uma casa comercial. Propusemo-nos a garantir que uma promessa de fabrico feita em Surat continua válida quando chega a um armazém em Roterdão.",
+      "cite": "— Trivoxa Group"
+    },
+    "info": {
+      "eyebrow": "Empresa e contacto",
+      "title": "Onde nos encontrar.",
+      "addressLabel": "Morada registada",
+      "address": "Surat, Gujarat, Índia",
+      "emailLabel": "Email"
+    },
+    "cta": {
+      "title": "Tem alguma questão sobre o nosso grupo?",
+      "description": "Contacte-nos e a nossa equipa responderá no prazo de um dia útil.",
+      "ctaContact": "Contacte a nossa equipa",
+      "ctaGroup": "Explorar o grupo"
+    }
+  },
+  "businesses": {
+    "hero": {
+      "eyebrow": "Os nossos negócios",
+      "title": "Soluções globais para os negócios modernos.",
+      "description": "A Trivoxa Group oferece soluções integradas de sourcing de produtos e serviços profissionais que ajudam as empresas a expandir-se para mercados internacionais. Através de parcerias de confiança, experiência industrial e um compromisso com a excelência, ligamos organizações aos produtos, serviços e oportunidades de que precisam para crescer com confiança.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaDivisions": "Explorar as nossas divisões"
+    },
+    "overview": {
+      "eyebrow": "Os nossos negócios",
+      "title": "Duas divisões. Um compromisso partilhado com a excelência.",
+      "p1": "A Trivoxa Group opera através de duas divisões complementares, concebidas para apoiar organizações em mercados globais.",
+      "p2": "A nossa Divisão de Exportação de Produtos liga compradores internacionais a fabricantes de confiança e a produtos cuidadosamente selecionados de origem indiana, enquanto a nossa Divisão de Exportação de Serviços dá acesso a profissionais qualificados que prestam soluções de tecnologia, design e negócios.",
+      "p3": "Em conjunto, estas divisões permitem-nos oferecer soluções integradas que combinam capacidade industrial, experiência profissional e parcerias de longo prazo."
+    },
+    "division1": {
+      "eyebrow": "Divisão 01",
+      "title": "EXPORTAÇÃO DE PRODUTOS",
+      "description": "Fazemos o sourcing e a entrega de produtos de alta qualidade através de uma rede de confiança de parceiros de fabrico em toda a Índia. Desde materiais industriais e têxteis a produtos de saúde e bens de consumo, o nosso foco é ligar compradores globais a soluções de fornecimento fiáveis que cumprem as expectativas internacionais.",
+      "cta": "Explorar a exportação de produtos"
+    },
+    "division2": {
+      "eyebrow": "Divisão 02",
+      "title": "EXPORTAÇÃO DE SERVIÇOS",
+      "description": "Ajudamos organizações a acelerar o crescimento através de tecnologia, desenvolvimento de software, inteligência artificial, branding, marketing digital e serviços de apoio empresarial. Ao ligar empresas a profissionais qualificados da Índia, oferecemos soluções práticas adaptadas aos desafios dos negócios modernos.",
+      "cta": "Explorar a exportação de serviços"
+    },
+    "process": {
+      "eyebrow": "O nosso processo",
+      "title": "Uma abordagem estruturada aos negócios globais.",
+      "lead": "Toda parceria de sucesso começa pela compreensão. O nosso processo foi concebido para garantir clareza, qualidade e confiança em cada etapa do percurso.",
+      "steps": {
+        "step1Title": "Compreender os seus requisitos",
+        "step1Desc": "Começamos por compreender os seus objetivos de negócio, especificações técnicas e expectativas comerciais.",
+        "step2Title": "Recomendar a solução certa",
+        "step2Desc": "Com base nos seus requisitos, identificamos os produtos, parceiros de fabrico ou equipas de serviços profissionais mais adequados.",
+        "step3Title": "Coordenar a produção ou execução",
+        "step3Desc": "Gerimos o processo de sourcing, produção ou execução do projeto, mantendo uma comunicação clara ao longo de todo o percurso.",
+        "step4Title": "Verificar a qualidade",
+        "step4Desc": "Cada solução é apoiada por uma coordenação orientada para a qualidade e uma atenção cuidadosa aos requisitos acordados.",
+        "step5Title": "Entregar com confiança",
+        "step5Desc": "Desde a documentação e a logística até à entrega do projeto e ao apoio contínuo, trabalhamos para garantir uma experiência fiável do início ao fim."
+      }
+    },
+    "why": {
+      "eyebrow": "Porquê a Trivoxa",
+      "title": "Construída sobre a experiência. Focada na parceria.",
+      "strengths": {
+        "s1Title": "Base industrial",
+        "s1Desc": "Construída sobre a experiência industrial do nosso parceiro estratégico fundador, a Shiveshwar Textiles.",
+        "s2Title": "Rede de parceiros de confiança",
+        "s2Desc": "Um ecossistema em crescimento de fabricantes, profissionais e fornecedores de soluções cuidadosamente selecionados.",
+        "s3Title": "Abordagem orientada para a qualidade",
+        "s3Desc": "Cada projeto é guiado pela atenção à qualidade, à fiabilidade e ao valor a longo prazo.",
+        "s4Title": "Perspetiva global",
+        "s4Desc": "Apoiamos empresas em mercados internacionais com soluções concebidas para o comércio global.",
+        "s5Title": "Soluções escaláveis",
+        "s5Desc": "Capacidades flexíveis que crescem à medida das necessidades em evolução dos nossos clientes.",
+        "s6Title": "Relações de longo prazo",
+        "s6Desc": "Acreditamos que o sucesso sustentável se alcança através de parcerias duradouras, e não de transações pontuais."
+      }
+    },
+    "cta": {
+      "title": "Vamos construir negócios globais juntos.",
+      "description": "Quer esteja a fazer sourcing de produtos, à procura de experiência profissional ou a explorar novas oportunidades internacionais, a Trivoxa Group está pronta para o ajudar a avançar com confiança.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaContact": "Contacte a nossa equipa"
+    }
+  },
+  "industries": {
+    "hero": {
+      "eyebrow": "Setores",
+      "title": "Experiência setorial. Oportunidades globais.",
+      "description": "Cada setor tem os seus próprios desafios, normas e oportunidades. A Trivoxa Group combina experiência industrial, sourcing estratégico e serviços profissionais para oferecer soluções adaptadas às necessidades em evolução das empresas nos mercados internacionais.",
+      "ctaExplore": "Explorar setores",
+      "ctaQuote": "Pedir orçamento"
+    },
+    "overview": {
+      "eyebrow": "Os nossos setores",
+      "title": "Apoiar setores através de conhecimento, parceria e soluções globais.",
+      "p1": "Na Trivoxa, acreditamos que as parcerias de sucesso começam por compreender os setores que servimos.",
+      "p2": "Cada setor tem os seus próprios requisitos operacionais, normas de qualidade e expectativas comerciais. Ao combinar experiência industrial, experiência em comércio internacional e serviços profissionais, oferecemos soluções concebidas para responder aos desafios específicos de cada setor, criando ao mesmo tempo valor de negócio a longo prazo.",
+      "p3": "Quer estejamos a apoiar fabricantes, distribuidores, retalhistas, organizações de saúde ou empresas orientadas para a tecnologia, o nosso objetivo mantém-se o mesmo: ajudar os nossos parceiros a crescer com confiança num mercado global cada vez mais interligado."
+    },
+    "list": {
+      "eyebrow": "Setores que servimos",
+      "title": "Soluções em setores diversos.",
+      "lead": "A Trivoxa Group apoia um portefólio crescente de setores através de parcerias de confiança, sourcing responsável e soluções de negócio personalizadas."
+    },
+    "items": {
+      "textile-apparel": {
+        "name": "Têxtil e vestuário",
+        "description": "Apoiamos fabricantes, marcas, grossistas e empresas de sourcing com tecidos, têxteis-lar, acessórios de vestuário e soluções de sourcing personalizadas.",
+        "buyerTypes": {
+          "b1": "Marcas de vestuário e moda",
+          "b2": "Retalhistas de casa e decoração",
+          "b3": "Grossistas e distribuidores",
+          "b4": "Empresas de sourcing e compra"
+        },
+        "complianceNote": "Os compradores solicitam frequentemente a rotulagem da composição do tecido e, para expedições com destino à UE/EUA, documentação sobre substâncias restritas (REACH, CPSIA). Coordenamos a documentação que os nossos parceiros de fabrico podem fornecer para cada encomenda."
+      },
+      "healthcare-pharmaceuticals": {
+        "name": "Saúde e farmacêutica",
+        "description": "Damos acesso a produtos farmacêuticos e soluções de saúde de confiança através de sourcing responsável e parcerias de fabrico orientadas para a qualidade.",
+        "buyerTypes": {
+          "b1": "Distribuidores farmacêuticos",
+          "b2": "Importadores de produtos de saúde",
+          "b3": "Cadeias de farmácias e grossistas",
+          "b4": "Marcas de nutracêuticos"
+        },
+        "complianceNote": "As exportações de produtos farmacêuticos estão sujeitas à regulamentação de importação do país de destino. Os compradores são responsáveis por confirmar o licenciamento de importação no seu país."
+      },
+      "building-materials": {
+        "name": "Materiais de construção",
+        "description": "Fornecemos pedra natural, mármore, granito, produtos cerâmicos e materiais de construção para projetos residenciais, comerciais e de infraestruturas.",
+        "buyerTypes": {
+          "b1": "Empreiteiros de construção",
+          "b2": "Arquitetos e designers",
+          "b3": "Distribuidores de materiais de construção",
+          "b4": "Promotores de projetos de infraestrutura"
+        },
+        "complianceNote": "As expedições de pedra e cerâmica requerem geralmente certificados de tolerância dimensional e, para consignações com destino à UE, documentação de marcação CE do fabricante. Coordenamos a documentação relevante para cada encomenda."
+      },
+      "furniture-interiors": {
+        "name": "Mobiliário e interiores",
+        "description": "Ligamos empresas a soluções de mobiliário e interiores de qualidade para ambientes residenciais, comerciais e de hotelaria.",
+        "buyerTypes": {
+          "b1": "Grupos hoteleiros e de hotelaria",
+          "b2": "Designers de interiores comerciais",
+          "b3": "Retalhistas e distribuidores de mobiliário"
+        },
+        "complianceNote": "O mobiliário em madeira maciça é normalmente expedido com certificação de fumigação ISPM 15 para a embalagem, juntamente com a documentação de exportação padrão."
+      },
+      "agriculture-food": {
+        "name": "Agricultura e alimentação",
+        "description": "Apoiamos compradores internacionais com produtos agrícolas cuidadosamente selecionados, produtos frescos, especiarias e soluções de alimentos processados.",
+        "buyerTypes": {
+          "b1": "Importadores e distribuidores alimentares",
+          "b2": "Grossistas de especiarias e ingredientes",
+          "b3": "Fabricantes de alimentos",
+          "b4": "Compradores de retalho e restauração"
+        },
+        "complianceNote": "As exportações alimentares e agrícolas da Índia são reguladas pela FSSAI e pela APEDA. Os compradores devem confirmar os registos específicos e as certificações fitossanitárias aplicáveis à sua expedição antes de fazer a encomenda."
+      },
+      "engineering-industrial": {
+        "name": "Engenharia e indústria",
+        "description": "Fornecemos produtos industriais, componentes de engenharia e soluções de fabrico que apoiam o crescimento industrial e o desenvolvimento de infraestruturas.",
+        "buyerTypes": {
+          "b1": "Distribuidores de equipamento industrial",
+          "b2": "Fabricantes OEM",
+          "b3": "Empresas de infraestrutura e construção",
+          "b4": "Compradores de manutenção e reparação"
+        },
+        "complianceNote": "A maquinaria e os componentes são normalmente expedidos com certificados de ensaio de materiais e, quando aplicável, documentação de conformidade CE ou UL fornecida pelo fabricante."
+      },
+      "technology": {
+        "name": "Tecnologia",
+        "description": "Oferecemos desenvolvimento de software, inteligência artificial, transformação digital e soluções tecnológicas para as empresas modernas.",
+        "buyerTypes": {
+          "b1": "Startups e scaleups",
+          "b2": "Empresas estabelecidas",
+          "b3": "Agências que procuram capacidade de entrega"
+        },
+        "complianceNote": "As contratações são estruturadas em torno de âmbitos claros, termos de propriedade intelectual e acordos de tratamento de dados adequados à jurisdição de cada cliente."
+      },
+      "retail-consumer-goods": {
+        "name": "Retalho e bens de consumo",
+        "description": "Ajudamos retalhistas, distribuidores e marcas de consumo a reforçar as suas cadeias de fornecimento com sourcing escalável e soluções de negócio.",
+        "buyerTypes": {
+          "b1": "Cadeias de retalho",
+          "b2": "Marcas de comércio eletrónico",
+          "b3": "Distribuidores e grossistas"
+        },
+        "complianceNote": "Os requisitos para bens de consumo variam consoante a categoria — a rotulagem, as marcas de segurança e as necessidades de certificação são confirmadas face ao mercado de destino antes de a produção começar."
+      },
+      "jewellery-precious-products": {
+        "name": "Joalharia e produtos preciosos",
+        "description": "Ligamos compradores globais a produtos de joalharia e produtos preciosos cuidadosamente selecionados através de parcerias de fabrico de confiança.",
+        "buyerTypes": {
+          "b1": "Retalhistas e distribuidores de joalharia",
+          "b2": "Casas de exportação e grossistas",
+          "b3": "Marcas de joalharia de marca própria"
+        },
+        "complianceNote": "As exportações de metais preciosos e pedras preciosas estão normalmente sujeitas a contraste, certificação de pureza e documentação do Processo de Kimberley, quando aplicável. Os compradores devem confirmar os requisitos de certificação específicos do seu mercado de destino antes de fazer a encomenda."
+      }
+    },
+    "challenges": {
+      "eyebrow": "Compreender o seu setor",
+      "title": "Cada setor tem desafios diferentes. Cada solução deve ser diferente.",
+      "p1": "Não há dois setores que funcionem exatamente da mesma forma.",
+      "p2": "Da conformidade regulamentar e da garantia de qualidade à fiabilidade da cadeia de fornecimento, à eficiência produtiva e à evolução das expectativas do mercado, cada setor apresenta o seu próprio conjunto de oportunidades e desafios.",
+      "p3": "Na Trivoxa, começamos por compreender estas realidades antes de recomendar soluções alinhadas com os objetivos operacionais, técnicos e comerciais dos nossos clientes."
+    },
+    "solutions": {
+      "eyebrow": "As nossas capacidades",
+      "title": "Soluções concebidas em torno dos requisitos de cada setor.",
+      "lead": "As nossas capacidades vão além do fornecimento de produtos ou da prestação de serviços. Trabalhamos com as empresas para desenvolver soluções práticas que apoiam a eficiência operacional, o crescimento internacional e o sucesso a longo prazo.",
+      "items": {
+        "i1": "Sourcing estratégico de produtos",
+        "i2": "Soluções de serviços profissionais",
+        "i3": "Parcerias de fabrico",
+        "i4": "Coordenação de qualidade",
+        "i5": "Documentação de exportação",
+        "i6": "Coordenação logística",
+        "i7": "Integração tecnológica",
+        "i8": "Apoio empresarial de longo prazo"
+      }
+    },
+    "approach": {
+      "eyebrow": "A nossa abordagem",
+      "title": "Construir parcerias sólidas em todos os setores.",
+      "lead": "Toda parceria de sucesso segue uma abordagem estruturada, construída sobre a compreensão, a colaboração e o compromisso a longo prazo.",
+      "steps": {
+        "step1Title": "Compreender os requisitos do setor",
+        "step1Desc": "Começamos por compreender o seu negócio, as especificações técnicas, os requisitos de conformidade e os objetivos comerciais, antes de recomendar a solução mais adequada.",
+        "step2Title": "Ligar os parceiros certos",
+        "step2Desc": "A nossa rede de fabricantes de confiança, profissionais qualificados, fornecedores de logística e especialistas em tecnologia permite-nos montar soluções adaptadas ao seu setor.",
+        "step3Title": "Entregar soluções fiáveis",
+        "step3Desc": "Quer estejamos a coordenar o sourcing de produtos ou a prestar serviços profissionais, concentramo-nos na qualidade, na transparência e numa execução fiável em todas as etapas.",
+        "step4Title": "Construir relações de longo prazo",
+        "step4Desc": "Acreditamos que as relações comerciais mais sólidas se constroem através da confiança, do desempenho consistente e de um compromisso partilhado com o crescimento sustentável."
+      }
+    },
+    "why": {
+      "eyebrow": "Porquê a Trivoxa",
+      "title": "Construída sobre a experiência. Impulsionada pela parceria.",
+      "lead": "As empresas escolhem a Trivoxa porque combinamos conhecimento prático do setor com uma abordagem de longo prazo aos negócios internacionais.",
+      "strengths": {
+        "s1Title": "Base industrial",
+        "s1Desc": "Construída sobre a experiência industrial do nosso parceiro estratégico fundador, a Shiveshwar Textiles.",
+        "s2Title": "Compreensão do setor",
+        "s2Desc": "Soluções desenvolvidas em torno das realidades operacionais de cada setor.",
+        "s3Title": "Rede de confiança",
+        "s3Desc": "Um ecossistema em crescimento de fabricantes, fornecedores de tecnologia, especialistas em logística e profissionais de negócio.",
+        "s4Title": "Operações orientadas para a qualidade",
+        "s4Desc": "Comprometidos com a consistência, a fiabilidade e a melhoria contínua.",
+        "s5Title": "Perspetiva global",
+        "s5Desc": "Apoiamos empresas através de sourcing internacional, serviços profissionais e parcerias globais.",
+        "s6Title": "Relações de longo prazo",
+        "s6Desc": "Focados na construção de parcerias que continuam a criar valor muito para além de projetos individuais."
+      }
+    },
+    "lookingAhead": {
+      "eyebrow": "A olhar para o futuro",
+      "title": "A crescer junto com os setores que servimos.",
+      "p1": "Os setores continuam a evoluir, e a Trivoxa também.",
+      "p2": "Mantemo-nos comprometidos em expandir as nossas capacidades, reforçar parcerias internacionais, abraçar a inovação e apoiar setores emergentes com práticas de negócio responsáveis e soluções orientadas para o futuro.",
+      "p3": "À medida que continuamos a crescer, o nosso foco mantém-se em criar valor sustentável para os nossos parceiros, contribuindo para setores mais fortes e mercados globais mais interligados."
+    },
+    "cta": {
+      "title": "Vamos construir soluções setoriais juntos.",
+      "description": "Quer procure sourcing de confiança, experiência profissional ou um parceiro de negócios internacional de longo prazo, a Trivoxa está pronta para ajudar o seu negócio a avançar com confiança.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaContact": "Contacte a nossa equipa"
+    }
+  },
+  "globalPresencePage": {
+    "hero": {
+      "eyebrow": "Presença global",
+      "title": "Ligar oportunidades além-fronteiras.",
+      "description": "O comércio internacional assenta em confiança, colaboração e relações sólidas. Através de uma rede crescente de fornecedores, parceiros e clientes, a Trivoxa Group está a construir ligações significativas que permitem às organizações crescer com confiança nos mercados internacionais.",
+      "ctaConversation": "Iniciar uma conversa",
+      "ctaQuote": "Pedir orçamento"
+    },
+    "overview": {
+      "eyebrow": "A nossa abordagem global",
+      "title": "Uma visão. Ligada em todos os mercados.",
+      "lead": "A nossa abordagem global assenta numa convicção simples: os negócios com significado crescem através da colaboração transfronteiriça e de relações de longo prazo.\n\nLigamos mercados, simplificamos o comércio internacional e reunimos fabricantes, profissionais e compradores numa única rede de confiança — guiados por uma filosofia de negócio internacional centrada na confiança e no sucesso partilhado."
+    },
+    "network": {
+      "eyebrow": "Rede global interativa",
+      "heading": "Um mundo interligado.",
+      "lead": "Cada parceiro, porto e comprador com quem trabalhamos tem o seu lugar neste globo — uma única rede, em rotação. Arraste-o para explorar; continue a percorrer a página para ver as regiões a acender-se e as rotas comerciais a desenharem-se entre elas."
+    },
+    "regionsSection": {
+      "eyebrow": "Regiões que servimos",
+      "title": "Construindo presença em {count} regiões globais.",
+      "lead": "Em vez de contar fronteiras, concentramo-nos em construir relações duradouras nas regiões onde os nossos parceiros operam e crescem."
+    },
+    "regionItems": {
+      "europe": "Têxteis, materiais de construção e serviços profissionais para mercados europeus estabelecidos e emergentes.",
+      "middle-east": "Materiais de construção, agricultura e bens de consumo para mercados do Golfo e da região em rápido crescimento.",
+      "africa": "Agricultura, produtos farmacêuticos e produtos industriais que apoiam a infraestrutura e o desenvolvimento.",
+      "north-america": "Têxteis, artigos para o lar e serviços tecnológicos para compradores exigentes e focados na qualidade.",
+      "south-america": "Parcerias de sourcing e bens de consumo para cadeias de fornecimento regionais em expansão.",
+      "asia-pacific": "Colaboração industrial, serviços tecnológicos e comércio transfronteiriço em toda a região Ásia-Pacífico."
+    },
+    "statsSection": {
+      "eyebrow": "Presença em números",
+      "title": "A rede, medida com honestidade.",
+      "regionsServed": "Regiões servidas",
+      "industriesCovered": "Setores abrangidos",
+      "exportPorts": "Portos de exportação",
+      "responseWindow": "Janela de resposta (IST)"
+    },
+    "ports": {
+      "eyebrow": "Portos de exportação",
+      "title": "De onde partem as expedições.",
+      "lead": "Cada expedição é coordenada através de portos de exportação indianos estabelecidos, independentemente do destino.",
+      "mundraRole": "O maior porto comercial da Índia por volume de carga",
+      "mundraDetail": "Porto de águas profundas, operacional todo o ano, no Golfo de Kutch — o motor da carga em contentores e a granel exportada a partir do Gujarat.",
+      "kandlaRole": "Grande porta de entrada para carga seca e líquida a granel",
+      "kandlaDetail": "O Deendayal Port sustenta as exportações agrícolas e a granel — uma opção natural para expedições de especiarias, cereais e mamona.",
+      "nhavaShevaRole": "O maior porto de contentores da Índia",
+      "nhavaShevaDetail": "Movimenta cerca de metade do comércio em contentores da Índia — o corredor padrão para consignações europeias e americanas."
+    },
+    "ecosystem": {
+      "eyebrow": "O nosso ecossistema",
+      "title": "Como a Trivoxa liga o mundo.",
+      "lead": "Dos parceiros de fabrico aos compradores globais, o nosso ecossistema transforma o complexo comércio internacional em relações comerciais simples e eficazes.",
+      "items": {
+        "e1Title": "Parceiros de fabrico",
+        "e1Desc": "Produtores de confiança, ancorados pela Shiveshwar Textiles.",
+        "e2Title": "Divisão de exportação de produtos",
+        "e2Desc": "Bens físicos, com sourcing e entrega em todo o mundo.",
+        "e3Title": "Divisão de exportação de serviços",
+        "e3Desc": "Tecnologia, design e equipas profissionais.",
+        "e4Title": "Parceiros de logística",
+        "e4Desc": "Exportação, documentação e entrega coordenadas.",
+        "e5Title": "Compradores globais",
+        "e5Desc": "Organizações que servimos em mercados internacionais.",
+        "e6Title": "Parcerias de longo prazo",
+        "e6Desc": "Relações construídas para durar e crescer."
+      }
+    },
+    "tradeOps": {
+      "eyebrow": "Comércio e operações",
+      "title": "Gerir o negócio internacional, do início ao fim.",
+      "lead": "Coordenamos as realidades práticas do comércio global para que os nossos parceiros se possam concentrar no crescimento.",
+      "items": {
+        "o1": "Sourcing global",
+        "o2": "Coordenação de exportação",
+        "o3": "Documentação",
+        "o4": "Garantia de qualidade",
+        "o5": "Gestão da cadeia de fornecimento",
+        "o6": "Comunicação internacional"
+      }
+    },
+    "growing": {
+      "eyebrow": "A crescer além-fronteiras",
+      "title": "Ambição clara, construída com responsabilidade.",
+      "lead": "Em vez de sobrevalorizar o nosso alcance, concentramo-nos no crescimento que cria valor real e duradouro.",
+      "items": {
+        "g1": "Parcerias em expansão",
+        "g2": "Mercados emergentes",
+        "g3": "Novos setores",
+        "g4": "Colaboração global",
+        "g5": "Crescimento de longo prazo"
+      }
+    },
+    "why": {
+      "eyebrow": "Porquê a Trivoxa",
+      "title": "Porque razão as empresas globais escolhem a Trivoxa.",
+      "statements": {
+        "w1Title": "Perspetiva global de negócio",
+        "w1Desc": "Uma visão internacional que molda cada solução que entregamos.",
+        "w2Title": "Herança industrial",
+        "w2Desc": "Conhecimento real de produção do nosso parceiro de fabrico fundador.",
+        "w3Title": "Rede de parceiros de confiança",
+        "w3Desc": "Um ecossistema em crescimento de parceiros cuidadosamente selecionados em todo o mundo.",
+        "w4Title": "Experiência transfronteiriça",
+        "w4Desc": "Experiência a navegar no comércio internacional e na conformidade.",
+        "w5Title": "Comunicação profissional",
+        "w5Desc": "Coordenação clara e fiável em todos os fusos horários.",
+        "w6Title": "Relações de longo prazo",
+        "w6Desc": "Parcerias concebidas para crescer ao longo de mercados e anos."
+      }
+    },
+    "cta": {
+      "title": "Vamos ligar-nos além-fronteiras.",
+      "description": "Onde quer que o seu negócio esteja a caminhar, a Trivoxa Group está pronta para o ajudar a fazer sourcing, expandir e construir parcerias duradouras nos mercados internacionais.",
+      "ctaConversation": "Iniciar uma conversa",
+      "ctaQuote": "Pedir orçamento"
+    }
+  },
+  "contact": {
+    "hero": {
+      "eyebrow": "Contacto",
+      "title": "Vamos construir o futuro juntos.",
+      "description": "Quer pretenda fazer sourcing de produtos, expandir para mercados internacionais ou estabelecer uma parceria de negócio de longo prazo, a nossa equipa está pronta para o ajudar a avançar com confiança.",
+      "ctaContact": "Contacte-nos",
+      "ctaQuote": "Pedir orçamento"
+    },
+    "help": {
+      "eyebrow": "Como podemos ajudar?",
+      "title": "Escolha por onde começar."
+    },
+    "inquiries": {
+      "productExport": {
+        "name": "Pedido de exportação de produtos",
+        "description": "Faça sourcing de produtos através da nossa rede de fabrico — orçamentado com base em códigos SH e quantidades mínimas de encomenda (MOQ)."
+      },
+      "serviceExport": {
+        "name": "Pedido de exportação de serviços",
+        "description": "Tecnologia, IA, software, design, marketing e serviços de apoio empresarial."
+      },
+      "supplier": {
+        "name": "Parceria de fornecedor e fabrico",
+        "description": "Junte-se à nossa rede de parceiros como fabricante ou fornecedor de soluções."
+      },
+      "partnership": {
+        "name": "Parceria estratégica",
+        "description": "Distribuição, investimento, joint ventures e parcerias de referência."
+      },
+      "careers": {
+        "name": "Oportunidades de carreira",
+        "description": "Vagas abertas e candidaturas espontâneas em todo o grupo."
+      },
+      "general": {
+        "name": "Pedido geral",
+        "description": "Qualquer outro assunto — encaminhamo-lo para a pessoa certa."
+      }
+    },
+    "formHeading": "Deixe-nos uma mensagem e entraremos em contacto.",
+    "info": {
+      "emailLabel": "Email",
+      "businessLabel": "Negócio",
+      "businessValue": "Exportação de produtos e exportação de serviços",
+      "foundationLabel": "Fundação",
+      "foundationValue": "Apoiada pelo nosso {relationship}, a Shiveshwar Textiles",
+      "foundationRelationship": "parceiro estratégico de fabrico fundador",
+      "followLabel": "Siga-nos",
+      "followValue": "LinkedIn · Instagram · X · YouTube",
+      "microcopy": "A Trivoxa Group opera globalmente, coordenando as suas atividades de negócio a partir de Surat, Gujarat, Índia."
+    }
+  },
+  "footer": {
+    "tagline": "Construindo o futuro do comércio global — uma parceria de cada vez.",
+    "headquartersLabel": "Sede",
+    "headquartersValue": "Surat, Gujarat, Índia",
+    "servingLabel": "A servir compradores em",
+    "columns": {
+      "theGroup": "O Grupo",
+      "productExports": "Exportação de produtos",
+      "serviceExports": "Exportação de serviços",
+      "explore": "Explorar",
+      "allProductExports": "Todas as exportações de produtos"
+    },
+    "links": {
+      "compliance": "Conformidade",
+      "requestQuote": "Solicitar cotação"
+    },
+    "newsletter": {
+      "title": "Mantenha-se informado",
+      "copy": "Boletim trimestral sobre comércio global e perspetivas de negócio.",
+      "placeholder": "O seu email",
+      "emailAriaLabel": "Endereço de email",
+      "subscribeAriaLabel": "Subscrever",
+      "thanks": "Obrigado — já está na nossa lista.",
+      "errorGeneric": "Não foi possível subscrever de momento — tente novamente.",
+      "responseNote": "Resposta no prazo de 24 horas úteis (IST)"
+    },
+    "legal": {
+      "privacy": "Privacidade",
+      "terms": "Termos",
+      "antiCorruption": "Política anticorrupção",
+      "cookiePreferences": "Preferências de cookies"
+    },
+    "copyright": "© Trivoxa Group 2026",
+    "parentCredit": "Um projeto construído sobre a herança industrial da Shiveshwar Textiles"
+  },
+  "contactForm": {
+    "fullNamePlaceholder": "Nome completo",
+    "fullNameAria": "Nome completo",
+    "companyNamePlaceholder": "Nome da empresa",
+    "companyNameAria": "Nome da empresa",
+    "emailPlaceholder": "O seu endereço de email",
+    "emailAria": "O seu endereço de email",
+    "messagePlaceholder": "Como podemos ajudar?",
+    "messageAria": "Como podemos ajudar?",
+    "sendNow": "Enviar agora",
+    "sending": "A enviar…",
+    "successMessage": "Mensagem enviada — a nossa equipa entrará em contacto no prazo de 24 horas úteis (IST).",
+    "errorGeneric": "Ocorreu um erro ao enviar a sua mensagem. Tente novamente.",
+    "errorValidation": "Verifique o formulário e tente novamente"
+  },
+  "common": {
+    "whatsappAria": "Conversar no WhatsApp",
+    "exportServicesFallback": "os seus serviços de exportação"
+  },
+  "careers": {
+    "hero": {
+      "eyebrow": "Carreiras",
+      "title": "Construa connosco o que vem a seguir.",
+      "description": "Todas as grandes organizações são construídas por pessoas que acreditam em criar algo maior do que elas próprias.\n\nNa Trivoxa, estamos a construir uma cultura movida pela curiosidade, integridade, inovação e crescimento contínuo — onde pessoas ambiciosas se juntam para gerar impacto real em setores globais.",
+      "ctaExplore": "Explorar oportunidades",
+      "ctaContact": "Contacte-nos"
+    },
+    "culture": {
+      "eyebrow": "A nossa cultura",
+      "title": "Uma cultura construída para pessoas ambiciosas.",
+      "lead": "Combinamos a disciplina de uma herança industrial com a energia de um negócio internacional em crescimento — um lugar para um trabalho com significado e duradouro.",
+      "values": {
+        "v1Title": "Curiosidade",
+        "v1Desc": "Fazemos perguntas melhores e mantemo-nos com vontade de aprender em cada mercado que exploramos.",
+        "v2Title": "Integridade",
+        "v2Desc": "Fazemos o que está certo — com parceiros, clientes e uns com os outros.",
+        "v3Title": "Inovação",
+        "v3Desc": "Abraçamos novas ideias, tecnologia e melhoria contínua.",
+        "v4Title": "Crescimento contínuo",
+        "v4Desc": "Investimos em pessoas que querem construir algo maior do que elas próprias."
+      }
+    },
+    "photoEssay": {
+      "eyebrow": "Onde o trabalho acontece",
+      "title": "Do chão de fábrica aos mercados globais.",
+      "caption1": "Exterior da fábrica — Shiveshwar Textiles",
+      "caption2": "O piso de tecelagem",
+      "caption3": "Inspeção de qualidade"
+    },
+    "voices": {
+      "v1Quote": "A liderança da Trivoxa rege-se por um compromisso com o pensamento de longo prazo, a tomada de decisões responsável e a melhoria contínua.",
+      "v1Role": "Fundador e Diretor-Geral",
+      "v2Quote": "Estamos a construir uma organização assente na confiança, guiada pela integridade e dedicada a criar valor real para os nossos clientes, parceiros e comunidades.",
+      "v2Role": "Cofundador, Desenvolvimento de Negócio",
+      "v3Quote": "À medida que a Trivoxa cresce, a nossa liderança continuará a defender os princípios que definem a nossa organização, ao mesmo tempo que abraça a inovação e novas oportunidades.",
+      "v3Role": "Cofundador, Tecnologia e Inovação"
+    },
+    "areas": {
+      "eyebrow": "Onde encaixa",
+      "title": "Áreas em crescimento.",
+      "lead": "À medida que a Trivoxa se expande por setores e mercados, estamos a construir equipas nas áreas de comércio, tecnologia e parcerias.",
+      "a1Title": "Comércio global e sourcing",
+      "a1Desc": "Coordenação da exportação de produtos, relações com fornecedores e logística internacional.",
+      "a2Title": "Tecnologia e serviços",
+      "a2Desc": "Software, IA, design e entrega digital para a nossa divisão de exportação de serviços.",
+      "a3Title": "Negócio e parcerias",
+      "a3Desc": "Crescimento, relações com clientes e desenvolvimento de parcerias de longo prazo."
+    },
+    "benefits": {
+      "eyebrow": "O que oferecemos",
+      "title": "Benefícios pensados para o crescimento.",
+      "b1Title": "Exposição internacional",
+      "b1Desc": "Trabalhe diretamente com compradores, fabricantes e parceiros em seis regiões globais desde o primeiro dia.",
+      "b2Title": "Responsabilidade desde cedo",
+      "b2Desc": "Equipas pequenas e um grupo em crescimento significam responsabilidade real — corredores, clientes e produtos que são seus.",
+      "b3Title": "Dois mundos, uma empresa",
+      "b3Desc": "Comércio físico e serviços digitais sob o mesmo teto — transite entre eles à medida que os seus interesses evoluem.",
+      "b4Title": "Aprendizagem como padrão",
+      "b4Desc": "Conformidade na exportação, tecnologia, negociação — o grupo investe nas competências que o trabalho exige.",
+      "b5Title": "Um percurso de crescimento claro",
+      "b5Desc": "Colaborador → coordenador → responsável de corredor ou de área, avaliado abertamente com base no trabalho, não na antiguidade.",
+      "b6Title": "Construída para durar",
+      "b6Desc": "Uma empresa de longo prazo, construída com intenção — as carreiras aqui medem-se em anos, não em projetos."
+    },
+    "opportunities": {
+      "eyebrow": "Oportunidades atuais",
+      "title": "Vagas abertas na Trivoxa."
+    },
+    "jobBoard": {
+      "emptyStatus": "Não há vagas abertas listadas neste momento.",
+      "emptyTiming": "Analisamos candidaturas espontâneas de forma contínua, não segundo um ciclo de contratação fixo.",
+      "emptyAction": "Enviar candidatura espontânea",
+      "tableRole": "Função",
+      "tableDepartment": "Departamento",
+      "tableLocation": "Localização",
+      "tableType": "Tipo",
+      "viewRole": "Ver função →",
+      "closeLabel": "Fechar ✕",
+      "responsibilitiesLabel": "Responsabilidades",
+      "requirementsLabel": "Requisitos",
+      "niceToHaveLabel": "Desejável",
+      "applyLabel": "Candidatar-se a esta função"
+    },
+    "hiringProcess": {
+      "eyebrow": "Processo de contratação",
+      "title": "Da candidatura às boas-vindas.",
+      "s1Title": "Candidatura",
+      "s1Desc": "Envie a sua candidatura para uma vaga aberta — ou apresente-se através de uma candidatura espontânea.",
+      "s2Title": "Análise",
+      "s2Desc": "A nossa equipa analisa a sua experiência face à função e às necessidades da equipa.",
+      "s3Title": "Entrevista",
+      "s3Desc": "Uma conversa sobre o seu percurso, interesses e forma de trabalhar.",
+      "s4Title": "Avaliação",
+      "s4Desc": "Um exercício prático e relevante para a função, útil para ambas as partes.",
+      "s5Title": "Conversa final",
+      "s5Desc": "Expectativas, percurso de crescimento e quaisquer questões em aberto — em ambos os sentidos.",
+      "s6Title": "Proposta",
+      "s6Desc": "Uma proposta clara e por escrito, com função, remuneração e detalhes de início.",
+      "s7Title": "Bem-vindo à Trivoxa",
+      "s7Desc": "Integração estruturada na equipa e no grupo mais alargado."
+    },
+    "cta": {
+      "title": "Cresça com uma empresa construída para durar.",
+      "description": "Estamos sempre interessados em pessoas talentosas que partilhem os nossos valores. Apresente-se e diga-nos como gostaria de contribuir.",
+      "ctaContact": "Contacte-nos",
+      "ctaGroup": "Conhecer o grupo"
+    }
+  },
+  "compliance": {
+    "hero": {
+      "eyebrow": "Conformidade",
+      "title": "Certificações e normas.",
+      "description": "O licenciamento operacional está ativo. As certificações específicas do setor estão a ser obtidas segundo um calendário público, listadas aqui à medida que avançam."
+    },
+    "active": "Ativo",
+    "inProgress": "Em curso",
+    "footnote": "O licenciamento operacional (IEC, GST) está ativo. As certificações setoriais estão a ser obtidas com as datas-alvo indicadas acima. Assim que cada credencial for finalizada, será publicada aqui com o respetivo número de registo, entidade emissora, nome da entidade legal e período de validade — associada a um documento verificável.",
+    "cta": {
+      "title": "Quer verificar antes de encomendar?",
+      "description": "Solicite uma auditoria de fábrica ou visita ao local antes de fazer a encomenda — uma etapa habitual de pré-encomenda que apoiamos diretamente.",
+      "ctaAudit": "Solicitar auditoria de fábrica / visita ao local",
+      "ctaContact": "Contacte a nossa equipa"
+    }
+  },
+  "insightsPage": {
+    "hero": {
+      "eyebrow": "Perspetivas",
+      "title": "Perspetivas que impulsionam os negócios globais.",
+      "description": "Os mercados evoluem. Os setores transformam-se. Novas oportunidades surgem todos os dias.\n\nAs nossas perspetivas exploram o comércio global, estratégias de sourcing, setores emergentes, inteligência de mercado e inovação empresarial para ajudar as organizações a tomar decisões informadas.",
+      "ctaExplore": "Explorar perspetivas",
+      "ctaContact": "Contacte a nossa equipa"
+    },
+    "categories": {
+      "eyebrow": "Categorias",
+      "title": "Conhecimento sobre o comércio global.",
+      "lead": "Três eixos de reflexão bem definidos, pensados para ajudar os parceiros a tomar decisões com confiança.",
+      "c1": "Guia de exportação",
+      "c2": "Inteligência de mercado",
+      "c3": "Perspetivas setoriais"
+    },
+    "featured": {
+      "eyebrow": "Em preparação",
+      "title": "Vote no que publicamos primeiro.",
+      "lead": "A primeira vaga de perspetivas está a ser escrita agora. Escolha os temas que quer ler, deixe o seu email, e a lista de leitura — juntamente com os seus votos — segue diretamente para a equipa."
+    },
+    "topics": {
+      "t1Title": "Navegar no sourcing global numa economia interligada",
+      "t1Category": "Inteligência de mercado",
+      "t1Reading": "~8 min de leitura",
+      "t1Desc": "Como as empresas modernas constroem cadeias de fornecimento resilientes e transfronteiriças.",
+      "t2Title": "O futuro das exportações de têxtil e vestuário",
+      "t2Category": "Perspetivas setoriais",
+      "t2Reading": "~6 min de leitura",
+      "t2Desc": "Para onde caminham a inovação têxtil, a qualidade e a procura.",
+      "t3Title": "Exportação de serviços: a tecnologia como motor de crescimento",
+      "t3Category": "Guia de exportação",
+      "t3Reading": "~7 min de leitura",
+      "t3Desc": "Porque razão o software, a IA e o design estão a remodelar o comércio internacional.",
+      "t4Title": "Como ler um código SH: guia prático para compradores",
+      "t4Category": "Guia de exportação",
+      "t4Reading": "~5 min de leitura",
+      "t4Desc": "Aquilo a que esses dígitos realmente o comprometem — direitos aduaneiros, documentação e conformidade.",
+      "t5Title": "Mundra vs Nhava Sheva: como escolher o seu corredor de exportação",
+      "t5Category": "Inteligência de mercado",
+      "t5Reading": "~6 min de leitura",
+      "t5Desc": "Como a escolha do porto influencia o prazo de entrega, o custo e o risco para cargas de origem indiana.",
+      "t6Title": "Exportações farmacêuticas e licenciamento no país de destino",
+      "t6Category": "Perspetivas setoriais",
+      "t6Reading": "~9 min de leitura",
+      "t6Desc": "O panorama regulamentar que um importador farmacêutico de primeira viagem deve mapear desde cedo."
+    },
+    "teaser": {
+      "voteWant": "Quero ler isto",
+      "voteOn": "Na sua lista de leitura",
+      "thanksBase": "Obrigado — já está na lista",
+      "thanksVoteSingle": " e o seu voto chegou à equipa",
+      "thanksVotePlural": " e os seus votos chegaram à equipa",
+      "thanksEnd": ". O primeiro envio chega à sua caixa de entrada quando estes forem publicados.",
+      "notifyLeadNone": "Seja notificado quando as primeiras perspetivas forem publicadas:",
+      "notifyLeadSingle": "Seja notificado quando este tema for publicado:",
+      "notifyLeadPlural": "Seja notificado quando estes temas forem publicados:",
+      "emailPlaceholder": "O seu email profissional",
+      "emailAria": "Endereço de email",
+      "notifyMe": "Notificar-me",
+      "sending": "A enviar…",
+      "errorGeneric": "Não foi possível subscrever de momento — tente novamente."
+    },
+    "cta": {
+      "title": "Transforme perspetiva em oportunidade.",
+      "description": "Já tem um mercado, produto ou serviço em mente? A nossa equipa está pronta para o ajudar a passar da perspetiva à parceria.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaContact": "Contacte a nossa equipa"
+    }
+  },
+  "thankYou": {
+    "hero": {
+      "eyebrow": "Mensagem recebida",
+      "title": "Obrigado por nos contactar.",
+      "description": "Um especialista em exportação responderá no prazo de um dia útil. Entretanto, explore o que fazemos sourcing e onde operamos."
+    },
+    "whatNext": {
+      "eyebrow": "O que acontece a seguir",
+      "title": "Aqui está o que esperar.",
+      "s1": "A nossa equipa analisa a sua mensagem e encaminha-a para o especialista certo.",
+      "s2": "Terá uma resposta por email no prazo de um dia útil.",
+      "s3": "Se o seu pedido envolver sourcing, entraremos em contacto com os próximos passos para formalizar um RFQ."
+    },
+    "whileWait": {
+      "eyebrow": "Enquanto espera",
+      "title": "Explore a Trivoxa Group.",
+      "linkProduct": "Explorar exportação de produtos →",
+      "linkIndustries": "Ver os setores que servimos →",
+      "linkHome": "Voltar ao início →"
+    }
+  },
+  "rfqPage": {
+    "hero": {
+      "eyebrow": "Pedido de orçamento",
+      "title": "Envie-nos o seu RFQ",
+      "description": "Escolha o seu percurso — sourcing de produtos, serviços ou parceria. Códigos SH reais, prazos de entrega reais. A nossa equipa responde no prazo de 24 horas úteis (IST)."
+    },
+    "quickLinks": {
+      "label": "Questão geral?",
+      "contact": "Contacte-nos →",
+      "whatsapp": "WhatsApp ↗",
+      "linkedin": "LinkedIn ↗",
+      "calendar": "Marcar uma chamada ↗"
+    },
+    "nextSteps": {
+      "eyebrow": "O que acontece a seguir",
+      "title": "Três passos do RFQ à encomenda.",
+      "s1Title": "Análise",
+      "s1Desc": "A nossa equipa de sourcing analisa o seu requisito face à capacidade atual da fábrica — no prazo de 24 horas úteis (IST).",
+      "s2Title": "Orçamento",
+      "s2Desc": "Recebe uma cotação formal com preço, prazo de entrega e condições de pagamento.",
+      "s3Title": "Confirmação",
+      "s3Desc": "Após confirmação, emitimos uma fatura pro-forma e iniciamos o planeamento da produção."
+    },
+    "whereWeAre": {
+      "eyebrow": "Onde estamos",
+      "title": "Surat, Gujarat — o corredor de exportação da Índia.",
+      "note": "Sediados em Surat, com acesso aos portos de Mundra, Kandla e Nhava Sheva — janela de resposta de 24 horas úteis, IST."
+    },
+    "form": {
+      "pathsAriaLabel": "O que gostaria de discutir?",
+      "presetProductsNote": "Produtos de interesse:",
+      "steps": {
+        "company": "Empresa",
+        "product": "Produto",
+        "terms": "Condições"
+      },
+      "paths": {
+        "productTitle": "RFQ de exportação de produtos",
+        "productDesc": "Faça sourcing de produtos com códigos SH, MOQ e uma cotação formal.",
+        "serviceTitle": "Contratação de serviços",
+        "serviceDesc": "Tecnologia, IA, software, design ou marketing da Trivoxa Digital.",
+        "partnershipTitle": "Parceria",
+        "partnershipDesc": "Parcerias de fabrico, logística ou distribuição com o Grupo.",
+        "auditTitle": "Auditoria de fábrica / visita ao local",
+        "auditDesc": "Solicite uma auditoria a fornecedores ou uma visita ao local antes de fazer a encomenda.",
+        "careerTitle": "Carreiras",
+        "careerDesc": "Junte-se à equipa — veja as áreas abertas e envie a sua candidatura."
+      },
+      "changeEnquiryType": "← Alterar tipo de pedido",
+      "fields": {
+        "companyName": "Nome da empresa",
+        "contactName": "Nome de contacto",
+        "businessEmail": "Email profissional",
+        "whatsappNumber": "Número de WhatsApp",
+        "countryOfImport": "País de importação",
+        "destinationPort": "Porto de destino",
+        "productCategory": "Categoria de produto",
+        "hsCode": "Código SH",
+        "quantity": "Quantidade",
+        "unit": "Unidade",
+        "targetPriceBand": "Faixa de preço-alvo (opcional)",
+        "targetPriceBandPlaceholder": "ex.: 2,10–2,40 USD / kg",
+        "preferredIncoterm": "Incoterm preferido",
+        "deliveryFrom": "Janela de entrega — de",
+        "deliveryTo": "Janela de entrega — até",
+        "sampleRequired": "Amostra necessária",
+        "yes": "Sim",
+        "no": "Não",
+        "additionalNotes": "Notas adicionais",
+        "specSheets": "Fichas técnicas / desenhos (até {max} ficheiros, {mb} MB no total)",
+        "yourName": "O seu nome",
+        "companyOptional": "Empresa (opcional)"
+      },
+      "presetNote": "Da sua seleção do catálogo: {products} — detalhes incluídos nas notas para a nossa equipa de sourcing.",
+      "catalogHelper": "Referência de catálogo para {category}: MOQ típico {moq} · prazo de entrega {leadTime} · SH {hsCode}. As quantidades abaixo do MOQ são orçamentadas caso a caso — envie o pedido na mesma e aconselhamo-lo.",
+      "certHelper": "Estado da certificação para {category}: {statuses}. Podemos registar já o seu requisito; a exportação fica sujeita à conclusão da certificação. Veja",
+      "complianceLink": "a nossa postura de conformidade completa →",
+      "attachmentsMax": "Máximo de {max} ficheiros.",
+      "attachmentsSizeError": "Os anexos combinados devem manter-se abaixo de 4 MB.",
+      "removeFileAria": "Remover {filename}",
+      "back": "Voltar",
+      "continue": "Continuar",
+      "submitRfq": "Submeter RFQ",
+      "submitting": "A submeter…",
+      "submitFailedFallback": "O envio falhou. Tente novamente.",
+      "errorGeneric": "Ocorreu um erro. Tente novamente."
+    },
+    "confirm": {
+      "eyebrow": "RFQ recebido",
+      "referenceLabel": "Referência #{reference}",
+      "respondNote": "A nossa equipa responde no prazo de 24 horas úteis (IST), através do email e número de WhatsApp fornecidos.",
+      "whatHappensNext": "O que acontece a seguir",
+      "s1": "A nossa equipa de sourcing analisa o seu requisito face à capacidade atual da fábrica.",
+      "s2": "Recebe uma cotação formal com preço, prazo de entrega e condições de pagamento.",
+      "s3": "Após confirmação, emitimos uma fatura pro-forma e iniciamos o planeamento da produção.",
+      "browseMore": "Ver mais setores"
+    },
+    "career": {
+      "eyebrow": "Carreiras",
+      "title": "Gostaríamos de ouvir de si.",
+      "description": "Áreas abertas, cultura e o formulário de candidatura estão na nossa página de carreiras.",
+      "back": "Voltar",
+      "goToCareers": "Ir para carreiras →"
+    },
+    "inquiry": {
+      "serviceTitle": "Contratação de serviços",
+      "partnershipTitle": "Parceria",
+      "auditTitle": "Auditoria de fábrica / visita ao local",
+      "servicePrompt": "O que quer construir ou alcançar?",
+      "partnershipPrompt": "Que tipo de parceria tem em mente?",
+      "auditPrompt": "Que instalação ou linha de produto, e quando gostaria de visitar ou auditar?",
+      "yourName": "O seu nome",
+      "companyOptional": "Empresa (opcional)",
+      "businessEmail": "Email profissional",
+      "errorValidation": "Indique o seu nome, um email válido e algumas frases sobre o seu requisito.",
+      "errorGeneric": "Ocorreu um erro. Tente novamente.",
+      "sendEnquiry": "Enviar pedido de {title}",
+      "sending": "A enviar…",
+      "enquiryReceived": "Pedido de {title} recebido",
+      "respondNote": "A nossa equipa responde no prazo de 24 horas úteis (IST).",
+      "exploreServiceExports": "Explorar exportação de serviços",
+      "seeCompliance": "Ver a nossa postura de conformidade",
+      "aboutGroup": "Sobre o grupo"
+    }
+  },
+  "group": {
+    "hero": {
+      "eyebrow": "O grupo",
+      "title": "A construir uma organização feita para durar.",
+      "description": "A Trivoxa Group é um grupo empresarial internacional construído sobre uma sólida base industrial e orientado por uma visão global. Através de parcerias de confiança, sourcing estratégico e serviços profissionais, ligamos empresas a oportunidades enquanto criamos valor duradouro nos mercados internacionais.",
+      "ctaStory": "Descubra a nossa história"
+    },
+    "whoWeAre": {
+      "eyebrow": "Quem somos",
+      "title": "Um grupo empresarial global construído sobre confiança, propósito e visão de longo prazo.",
+      "p1": "A Trivoxa Group é um grupo empresarial internacional empenhado em ligar empresas globais a produtos de confiança, soluções estratégicas de sourcing e serviços profissionais.",
+      "p2": "Construída sobre a experiência de fabrico do nosso {relationship}, a {name}, combinamos o conhecimento do setor com uma abordagem orientada para o futuro do negócio internacional. Ao reunir fabricantes de confiança, profissionais qualificados e parceiros globais, ajudamos as organizações a construir cadeias de fornecimento mais sólidas, a aceder a novas oportunidades e a alcançar um crescimento sustentável.",
+      "p3": "Na Trivoxa, acreditamos que um negócio com significado se constrói sobre confiança, qualidade e relações que perduram muito além de uma única transação."
+    },
+    "foundation": {
+      "eyebrow": "A nossa fundação",
+      "title": "Construída sobre a excelência industrial. Inspirada pela oportunidade global.",
+      "p1": "Toda a grande organização se constrói sobre uma base sólida.",
+      "p2": "A Trivoxa Group foi fundada em parceria estratégica com a Shiveshwar Textiles, uma empresa de fabrico com vasta experiência na produção de têxteis tecidos e em operações orientadas para a qualidade.",
+      "p3": "Esta herança industrial dá-nos conhecimento prático do setor, uma compreensão profunda dos processos de produção e um compromisso em entregar soluções fiáveis aos mercados globais.",
+      "p4": "Enquanto a Trivoxa continua a expandir-se para novos setores e serviços empresariais, a nossa base mantém-se enraizada nos princípios que nos têm guiado desde o início — qualidade, fiabilidade, integridade e parcerias de longo prazo.",
+      "photo1Caption": "Exterior da fábrica",
+      "photo2Caption": "Piso de tecelagem",
+      "photo3Caption": "Inspeção de qualidade",
+      "auditCta": "Solicitar auditoria de fábrica / visita ao local →"
+    },
+    "ourStory": {
+      "eyebrow": "A nossa história",
+      "title": "Criar oportunidades além-fronteiras.",
+      "p1": "A Trivoxa foi fundada com a visão de unir a procura global às extraordinárias capacidades da Índia.",
+      "p2": "Reconhecemos que as empresas em todo o mundo precisavam de mais do que produtos — precisavam de um parceiro de confiança, capaz de compreender os seus requisitos, ligá-las a um fabrico fiável e apoiá-las em cada etapa do comércio internacional.",
+      "p3": "Guiada por este propósito, a Trivoxa foi criada para construir relações de longo prazo que vão além do comércio e contribuem para um crescimento de negócio sustentável para parceiros em todo o mundo."
+    },
+    "journey": {
+      "eyebrow": "O percurso",
+      "title": "Como o grupo se formou.",
+      "s1Title": "Bases de fabrico",
+      "s1Desc": "A Shiveshwar Textiles constrói um conhecimento profundo na produção de têxteis tecidos e em operações orientadas para a qualidade.",
+      "s2Title": "Uma visão internacional",
+      "s2Desc": "Os fundadores reconhecem a procura global por um parceiro de confiança para a capacidade de fabrico da Índia.",
+      "s3Title": "Fundação da Trivoxa Group",
+      "s3Desc": "O braço de negócio internacional é fundado para ligar compradores globais à produção indiana.",
+      "s4Title": "Duas divisões de exportação",
+      "s4Desc": "A exportação de produtos e a exportação de serviços (Trivoxa Digital) surgem como os braços operacionais do grupo.",
+      "s5Title": "Parcerias globais em crescimento",
+      "s5Desc": "A rede expande-se por setores, regiões e relações de longo prazo com clientes."
+    },
+    "vision": {
+      "eyebrow": "A nossa visão",
+      "statement": "Tornar-nos um dos grupos empresariais internacionais mais confiáveis do mundo, criando valor duradouro através do comércio global, da inovação e de parcerias duradouras.",
+      "support": "A nossa visão é construir uma organização que continue a criar oportunidades em setores e mercados internacionais para as gerações futuras."
+    },
+    "philosophy": {
+      "eyebrow": "A nossa filosofia",
+      "title": "O caminho Trivoxa",
+      "lead": "Cada decisão que tomamos é guiada por princípios que definem quem somos e como construímos relações.",
+      "p1Title": "Visão",
+      "p1Desc": "Pensamos para além das oportunidades de hoje e construímos para amanhã.",
+      "p2Title": "Integridade",
+      "p2Desc": "A confiança conquista-se com honestidade, transparência e consistência.",
+      "p3Title": "Excelência",
+      "p3Desc": "Procuramos os padrões mais elevados em tudo o que entregamos.",
+      "p4Title": "Inovação",
+      "p4Desc": "Abraçamos novas ideias, tecnologia e melhoria contínua.",
+      "p5Title": "Parceria",
+      "p5Desc": "Acreditamos que o sucesso sustentável se constrói em conjunto.",
+      "p6Title": "Impacto",
+      "p6Desc": "Medimos o sucesso pelo valor duradouro que criamos para parceiros, comunidades e gerações futuras."
+    },
+    "leadership": {
+      "eyebrow": "Liderança",
+      "f1Role": "Fundador e Diretor-Geral",
+      "f1Message": "A liderança da Trivoxa rege-se por um compromisso com o pensamento de longo prazo, a tomada de decisões responsável e a melhoria contínua.",
+      "f2Role": "Cofundador, Desenvolvimento de Negócio",
+      "f2Message": "A nossa responsabilidade vai além do crescimento do negócio. Estamos a construir uma organização assente na confiança, guiada pela integridade e dedicada a criar valor real para os nossos clientes, parceiros e comunidades.",
+      "f3Role": "Cofundador, Tecnologia e Inovação",
+      "f3Message": "À medida que a Trivoxa cresce, a nossa liderança continuará a defender os princípios que definem a nossa organização, ao mesmo tempo que abraça a inovação e novas oportunidades em mercados globais."
+    },
+    "ecosystem": {
+      "eyebrow": "O nosso ecossistema",
+      "title": "Uma rede interligada. Oportunidades sem limite.",
+      "lead": "A Trivoxa Group reúne experiência industrial, sourcing estratégico, tecnologia, logística e serviços profissionais num único ecossistema empresarial integrado.",
+      "e1Title": "Divisão de exportação de produtos",
+      "e1Desc": "Sourcing e entrega de produtos de qualidade através de parceiros de fabrico de confiança.",
+      "e2Title": "Divisão de exportação de serviços",
+      "e2Desc": "Tecnologia, design e serviços profissionais prestados por equipas qualificadas.",
+      "e3Title": "Rede de fabrico",
+      "e3Desc": "Ancorada pela Shiveshwar Textiles e por uma base de parceiros em crescimento.",
+      "e4Title": "Parceiros tecnológicos",
+      "e4Desc": "Especialistas que permitem a transformação digital e a automação.",
+      "e5Title": "Parceiros de logística",
+      "e5Desc": "Exportação, documentação e entrega da cadeia de fornecimento coordenadas.",
+      "e6Title": "Rede global de clientes",
+      "e6Desc": "Compradores e organizações que servimos em mercados internacionais."
+    },
+    "partners": {
+      "eyebrow": "Parceiros estratégicos",
+      "title": "A crescer através de parcerias de confiança.",
+      "lead": "As parcerias sólidas são a base de um negócio sustentável.",
+      "foundingTitle": "Parceiro de fabrico fundador — {name}",
+      "p1": "Como {relationship} da Trivoxa Group, a {name} fornece a experiência de fabrico e o conhecimento de setor que sustentam o nosso compromisso com a qualidade e a fiabilidade.",
+      "p2": "Juntamente com a {name}, continuamos a construir relações com fabricantes de confiança, fornecedores de logística, parceiros tecnológicos e especialistas de setor que partilham os nossos valores.",
+      "growthNote": "A nossa rede de parceiros continua a crescer nas áreas de fabrico, logística e tecnologia."
+    },
+    "commitments": {
+      "eyebrow": "Os nossos compromissos",
+      "title": "O nosso compromisso com cada relação.",
+      "lead": "Cada parceria começa com confiança e fortalece-se através de uma ação consistente. Comprometemo-nos a conduzir o negócio de forma responsável, a entregar soluções fiáveis e a melhorar continuamente a forma como servimos os nossos parceiros em todo o mundo.",
+      "tableNum": "N.º",
+      "tableCommitment": "Compromisso",
+      "tableDescription": "Breve descrição",
+      "c1Name": "Práticas empresariais éticas",
+      "c1Desc": "Conduzir cada relação com honestidade, justiça e responsabilidade.",
+      "c2Name": "Sourcing responsável",
+      "c2Desc": "Trabalhar com fabricantes que partilham os nossos padrões de qualidade e boas práticas.",
+      "c3Name": "Qualidade sem compromissos",
+      "c3Desc": "Manter cada produto e serviço num padrão digno de confiança.",
+      "c4Name": "Comunicação transparente",
+      "c4Desc": "Manter os parceiros informados através de um diálogo claro, consistente e honesto.",
+      "c5Name": "Parcerias de longo prazo",
+      "c5Desc": "Construir relações que se medem em anos, não em transações.",
+      "c6Name": "Crescimento empresarial sustentável",
+      "c6Desc": "Expandir de forma deliberada, criando valor duradouro.",
+      "c7Name": "Inovação contínua",
+      "c7Desc": "Melhorar a forma como trabalhamos, para servir melhor os parceiros que confiam em nós."
+    },
+    "lookingAhead": {
+      "eyebrow": "A olhar para o futuro",
+      "title": "A construir a próxima geração do negócio global.",
+      "p1": "O nosso percurso está apenas a começar.",
+      "p2": "Olhando para o futuro, a Trivoxa continuará a expandir-se para novos setores, a reforçar parcerias internacionais, a abraçar tecnologias emergentes e a desenvolver soluções inovadoras que criam valor duradouro.",
+      "p3": "A nossa ambição não é apenas crescer como negócio, mas construir uma organização que as gerações futuras terão orgulho em liderar e em que os parceiros globais continuarão a confiar."
+    },
+    "cta": {
+      "title": "Vamos construir o futuro juntos.",
+      "description": "Quer pretenda fazer sourcing de produtos, expandir para mercados internacionais ou estabelecer uma parceria de negócio de longo prazo, a nossa equipa está pronta para o ajudar a avançar com confiança.",
+      "ctaPartner": "Torne-se parceiro",
+      "ctaContact": "Contacte a nossa equipa"
+    }
+  },
+  "productExportsPage": {
+    "hero": {
+      "crumbBusinesses": "Negócios",
+      "crumbSelf": "Exportação de produtos",
+      "eyebrow": "Exportação de produtos",
+      "title": "Exportação global de produtos.",
+      "description": "Ligamos compradores internacionais a parceiros de fabrico cuidadosamente selecionados em toda a Índia, para entregar produtos de qualidade através de soluções fiáveis de sourcing e exportação.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaContact": "Contacte a nossa equipa"
+    },
+    "about": {
+      "eyebrow": "Sobre a exportação de produtos",
+      "title": "Uma porta de entrada única e de confiança para a força industrial da Índia.",
+      "lead": "De materiais industriais e têxteis a produtos de saúde e bens de consumo, o nosso foco é ligar compradores globais a soluções de fornecimento fiáveis que cumprem as expectativas internacionais.\n\nApoiados na base industrial da Shiveshwar Textiles, combinamos conhecimento prático de produção com uma rede crescente de parceiros de confiança."
+    },
+    "industriesSection": {
+      "eyebrow": "Setores que servimos",
+      "title": "Produtos em todos os setores principais.",
+      "lead": "Explore os setores que apoiamos através da nossa divisão de exportação de produtos."
+    },
+    "portfolio": {
+      "eyebrow": "Portefólio completo de produtos",
+      "title": "Pesquise tudo o que exportamos.",
+      "lead": "Todos os produtos publicados em todos os setores — pesquise por nome ou código SH, filtre por setor e incoterm, e adicione produtos diretamente ao seu RFQ."
+    },
+    "sourcing": {
+      "eyebrow": "Processo de sourcing global",
+      "title": "Um percurso estruturado, do requisito à entrega.",
+      "s1Title": "Compreender os requisitos",
+      "s1Desc": "Especificações, volumes, normas de qualidade e expectativas comerciais.",
+      "s2Title": "Identificar parceiros de fabrico",
+      "s2Desc": "Fazemos corresponder as suas necessidades aos produtores certos e devidamente validados em toda a Índia.",
+      "s3Title": "Coordenar a produção",
+      "s3Desc": "Gerimos prazos e comunicação em todas as etapas.",
+      "s4Title": "Qualidade e documentação",
+      "s4Desc": "Coordenação orientada para a qualidade, mais documentação de exportação completa.",
+      "s5Title": "Entrega global",
+      "s5Desc": "Coordenação logística e entrega internacional fiável."
+    },
+    "quality": {
+      "eyebrow": "Garantia de qualidade",
+      "title": "Qualidade em que pode confiar.",
+      "lead": "Cada encomenda é apoiada por um processo orientado para a qualidade e centrado na documentação, construído para o comércio internacional.",
+      "q1Title": "Coordenação orientada para a qualidade",
+      "q1Desc": "Coordenação orientada para a qualidade em cada etapa da produção.",
+      "q2Title": "Rigor nas especificações",
+      "q2Desc": "Atenção cuidadosa às especificações acordadas.",
+      "q3Title": "Parceiros validados",
+      "q3Desc": "Parceiros de fabrico de confiança e devidamente validados.",
+      "q4Title": "Documentação completa",
+      "q4Desc": "Documentação de exportação completa.",
+      "q5Title": "Entrega fiável",
+      "q5Desc": "Logística e entrega fiáveis."
+    },
+    "cta": {
+      "title": "Vamos fazer juntos o sourcing do seu próximo produto.",
+      "description": "Diga-nos o que precisa de adquirir e a nossa equipa irá ligá-lo aos parceiros de fabrico certos, com um processo de exportação fiável.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaTextile": "Explorar têxtil e vestuário"
+    }
+  },
+  "serviceExportsPage": {
+    "hero": {
+      "crumbBusinesses": "Negócios",
+      "crumbSelf": "Exportação de serviços",
+      "eyebrow": "Exportação de serviços",
+      "title": "Exportação global de serviços.",
+      "description": "Ajudamos organizações a acelerar o crescimento através de tecnologia, desenvolvimento de software, inteligência artificial, branding, marketing digital e serviços de apoio empresarial. Ao ligar empresas a profissionais qualificados da Índia, entregamos soluções práticas adaptadas aos desafios dos negócios modernos.",
+      "ctaConsult": "Pedir consulta",
+      "ctaExplore": "Explorar serviços"
+    },
+    "about": {
+      "eyebrow": "Sobre a exportação de serviços",
+      "title": "Os profissionais qualificados da Índia, a trabalhar como a sua equipa.",
+      "p1": "A nossa divisão de exportação de serviços liga organizações a profissionais qualificados que entregam soluções de tecnologia, design e negócio.",
+      "p2": "Isto é mais do que serviços subcontratados — é acesso a uma rede de talento. As equipas integram-se com a sua, comunicam com transparência e escalam à medida que as suas necessidades crescem.",
+      "p3": "De software e IA a branding e apoio empresarial, ajudamo-lo a avançar mais depressa com uma execução fiável e orientada para a qualidade."
+    },
+    "servicesSection": {
+      "eyebrow": "Categorias de serviço",
+      "title": "Um espectro completo de serviços profissionais."
+    },
+    "delivery": {
+      "eyebrow": "Processo de entrega",
+      "title": "Como entregamos, com fiabilidade.",
+      "s1Title": "Chamada de descoberta",
+      "s1Desc": "Objetivos, âmbito, necessidades técnicas e critérios de sucesso.",
+      "s2Title": "Requisitos e âmbito",
+      "s2Desc": "Uma definição clara e acordada do que será entregue.",
+      "s3Title": "Formação da equipa",
+      "s3Desc": "Ligamo-lo a profissionais qualificados adequados ao seu projeto.",
+      "s4Title": "Sprints de entrega",
+      "s4Desc": "Marcos claros e comunicação transparente ao longo do processo.",
+      "s5Title": "Apoio contínuo",
+      "s5Desc": "Entrega fiável, mais apoio contínuo à medida que escala."
+    },
+    "why": {
+      "eyebrow": "Porquê a Trivoxa",
+      "title": "Soluções práticas, parceria de longo prazo.",
+      "w1": "Rede de talento indiano",
+      "w2": "Vantagem de fuso horário",
+      "w3": "Coordenação de qualidade",
+      "w4": "Comunicação transparente",
+      "w5": "Equipas escaláveis",
+      "w6": "Parceria de longo prazo"
+    },
+    "cta": {
+      "title": "Vamos construir algo juntos.",
+      "description": "Partilhe o seu projeto ou desafio, e ligamo-lo à equipa certa para o entregar.",
+      "ctaBook": "Marcar consulta",
+      "ctaProposal": "Pedir proposta"
+    },
+    "digitalNote": "Trivoxa Digital — o braço de serviços tecnológicos dedicado da Trivoxa Group. Visite digital.trivoxagroup.com"
+  },
+  "industryDetail": {
+    "crumbIndustries": "Setores",
+    "eyebrowPrefix": "Setor — {name}",
+    "ctaRequestQuote": "Pedir orçamento para {name}",
+    "ctaContactTeam": "Contactar equipa",
+    "context": {
+      "eyebrow": "Contexto do setor",
+      "title": "Quem servimos em {name}",
+      "buyerTypesTitle": "Compradores típicos",
+      "complianceTitle": "O que os compradores devem saber"
+    },
+    "offer": {
+      "eyebrow": "O que oferecemos",
+      "title": "O que exportamos",
+      "lead": "Cada categoria é orçamentada com base em códigos SH reais, quantidades mínimas de encomenda e prazos de entrega reais — sem adivinhações antes de enviar um RFQ."
+    },
+    "explore": {
+      "eyebrow": "Explorar mais",
+      "browsePortfolio": "Ver o portefólio de produtos",
+      "exploreServices": "Explorar as nossas capacidades de serviço",
+      "exportsSuffix": "Exportações →",
+      "globalServiceExports": "Exportação global de serviços →"
+    },
+    "why": {
+      "eyebrow": "Porquê a Trivoxa",
+      "title": "Construída sobre a experiência. Impulsionada pela parceria."
+    },
+    "related": {
+      "eyebrow": "Setores relacionados",
+      "title": "Explorar outros setores"
+    },
+    "cta": {
+      "titleTemplate": "Pronto para fazer sourcing de {name}?",
+      "description": "Envie-nos o seu RFQ e a nossa equipa de sourcing responde no prazo de 24 horas úteis (IST).",
+      "ctaSendRfq": "Enviar o seu RFQ →"
+    }
   }
 }

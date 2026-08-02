@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
@@ -15,57 +16,49 @@ export const metadata: Metadata = {
     "Build a long-term career at Trivoxa Group — a culture driven by curiosity, integrity, innovation, and continuous growth.",
 };
 
-const values = [
-  { icon: "🚀", title: "Curiosity", description: "We ask better questions and stay hungry to learn across every market we enter." },
-  { icon: "🤝", title: "Integrity", description: "We do the right thing — with partners, customers, and each other." },
-  { icon: "✦", title: "Innovation", description: "We embrace new ideas, technology, and continuous improvement." },
-  { icon: "🌱", title: "Continuous Growth", description: "We invest in people who want to build something larger than themselves." },
-];
+export default async function CareersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("careers");
 
-const areas = [
-  { icon: "🌐", title: "Global Trade & Sourcing", description: "Coordinate product exports, supplier relationships, and international logistics." },
-  { icon: "💻", title: "Technology & Services", description: "Software, AI, design, and digital delivery for our service export division." },
-  { icon: "📈", title: "Business & Partnerships", description: "Growth, client relationships, and long-term partnership development." },
-];
+  const values = [
+    { icon: "🚀", title: t("culture.values.v1Title"), description: t("culture.values.v1Desc") },
+    { icon: "🤝", title: t("culture.values.v2Title"), description: t("culture.values.v2Desc") },
+    { icon: "✦", title: t("culture.values.v3Title"), description: t("culture.values.v3Desc") },
+    { icon: "🌱", title: t("culture.values.v4Title"), description: t("culture.values.v4Desc") },
+  ];
 
-/** What working here actually offers — growth mechanics, not perks theatre. */
-const benefits = [
-  { title: "International Exposure", description: "Work directly with buyers, manufacturers, and partners across six global regions from day one." },
-  { title: "Ownership Early", description: "Small teams and a growing group mean real responsibility — corridors, clients, and products you own." },
-  { title: "Two Worlds, One Company", description: "Physical trade and digital services under one roof — move between them as your interests grow." },
-  { title: "Learning as Default", description: "Export compliance, technology, negotiation — the group invests in the skills the work demands." },
-  { title: "A Clear Growth Path", description: "Contributor → coordinator → corridor or practice lead, reviewed openly against the work, not tenure." },
-  { title: "Built to Endure", description: "A long-term company, deliberately grown — careers here are measured in years, not projects." },
-];
+  const areas = [
+    { icon: "🌐", title: t("areas.a1Title"), description: t("areas.a1Desc") },
+    { icon: "💻", title: t("areas.a2Title"), description: t("areas.a2Desc") },
+    { icon: "📈", title: t("areas.a3Title"), description: t("areas.a3Desc") },
+  ];
 
-/** Real leadership voices from the master content doc — not invented
- * employee testimonials. */
-const voices = [
-  {
-    quote: "Leadership at Trivoxa is driven by a commitment to long-term thinking, responsible decision-making, and continuous improvement.",
-    name: "Parth Mangukiya",
-    role: "Founder & Managing Director",
-  },
-  {
-    quote: "We are building an organization founded on trust, guided by integrity, and dedicated to creating meaningful value for our customers, partners, and communities.",
-    name: "Dhruv Patel",
-    role: "Co-Founder, Business Development",
-  },
-  {
-    quote: "As Trivoxa grows, our leadership will continue to uphold the principles that define our organization while embracing innovation and new opportunities.",
-    name: "Tirth Kalathiya",
-    role: "Co-Founder, Technology & Innovation",
-  },
-];
+  /** What working here actually offers — growth mechanics, not perks theatre. */
+  const benefits = [
+    { title: t("benefits.b1Title"), description: t("benefits.b1Desc") },
+    { title: t("benefits.b2Title"), description: t("benefits.b2Desc") },
+    { title: t("benefits.b3Title"), description: t("benefits.b3Desc") },
+    { title: t("benefits.b4Title"), description: t("benefits.b4Desc") },
+    { title: t("benefits.b5Title"), description: t("benefits.b5Desc") },
+    { title: t("benefits.b6Title"), description: t("benefits.b6Desc") },
+  ];
 
-/** Where the work happens — the group's real manufacturing floor. */
-const culturePhotos = [
-  { src: "/images/foundation/exterior.jpg", caption: "Factory exterior — Shiveshwar Textiles" },
-  { src: "/images/foundation/weaving.jpg", caption: "The weaving floor" },
-  { src: "/images/foundation/inspection.jpg", caption: "Quality inspection" },
-];
+  /** Real leadership voices from the master content doc — not invented
+   * employee testimonials. */
+  const voices = [
+    { quote: t("voices.v1Quote"), name: "Parth Mangukiya", role: t("voices.v1Role") },
+    { quote: t("voices.v2Quote"), name: "Dhruv Patel", role: t("voices.v2Role") },
+    { quote: t("voices.v3Quote"), name: "Tirth Kalathiya", role: t("voices.v3Role") },
+  ];
 
-export default function CareersPage() {
+  /** Where the work happens — the group's real manufacturing floor. */
+  const culturePhotos = [
+    { src: "/images/foundation/exterior.jpg", caption: t("photoEssay.caption1") },
+    { src: "/images/foundation/weaving.jpg", caption: t("photoEssay.caption2") },
+    { src: "/images/foundation/inspection.jpg", caption: t("photoEssay.caption3") },
+  ];
+
   return (
     <TrivoxaShell>
       {/* Signature animation: one persistent canvas behind every section. A single
@@ -78,16 +71,13 @@ export default function CareersPage() {
       </div>
 
       <PageHero
-        eyebrow="Careers"
-        title="Build What's Next With Us."
-        description={
-          "Every great organization is built by people who believe in creating something larger than themselves.\n\n" +
-          "At Trivoxa, we're building a culture driven by curiosity, integrity, innovation, and continuous growth — where ambitious people come together to create meaningful impact across global industries."
-        }
-        actions={[{ label: "Explore Opportunities", href: "#opportunities" }, { label: "Get in Touch", href: "/contact/", variant: "ghost" }]}
+        eyebrow={t("hero.eyebrow")}
+        title={t("hero.title")}
+        description={t("hero.description")}
+        actions={[{ label: t("hero.ctaExplore"), href: "#opportunities" }, { label: t("hero.ctaContact"), href: "/contact/", variant: "ghost" }]}
       />
 
-      <Section id="culture" eyebrow="Our Culture" title="A Culture Built for Ambitious People." lead="We combine the discipline of a manufacturing heritage with the energy of a growing international business — a place to do meaningful, lasting work.">
+      <Section id="culture" eyebrow={t("culture.eyebrow")} title={t("culture.title")} lead={t("culture.lead")}>
         <div className="careers-values-list">
           {values.map((v, i) => (
             <div className="careers-value-row" key={v.title}>
@@ -100,7 +90,7 @@ export default function CareersPage() {
       </Section>
 
       {/* Culture photo essay + leadership voices (spec §4 — Careers) */}
-      <Section eyebrow="Where the Work Happens" title="From the Factory Floor to Global Markets.">
+      <Section eyebrow={t("photoEssay.eyebrow")} title={t("photoEssay.title")}>
         <div className="careers-photo-essay">
           {culturePhotos.map((p) => (
             <figure key={p.src}>
@@ -123,7 +113,7 @@ export default function CareersPage() {
         </div>
       </Section>
 
-      <Section id="areas" eyebrow="Where You Fit" title="Areas We're Growing." lead="As Trivoxa expands across industries and markets, we're building teams across trade, technology, and partnerships.">
+      <Section id="areas" eyebrow={t("areas.eyebrow")} title={t("areas.title")} lead={t("areas.lead")}>
         <div className="careers-dept-strip">
           {areas.map((a, i) => (
             <div className="careers-dept" key={a.title}>
@@ -136,7 +126,7 @@ export default function CareersPage() {
       </Section>
 
       {/* Benefits & growth paths (spec §4 — Careers) */}
-      <Section eyebrow="What You Get" title="Benefits Built Around Growth.">
+      <Section eyebrow={t("benefits.eyebrow")} title={t("benefits.title")}>
         <div className="tvx-statements">
           {benefits.map((b) => (
             <div className="tvx-statement" key={b.title}>
@@ -148,28 +138,28 @@ export default function CareersPage() {
         </div>
       </Section>
 
-      <Section id="opportunities" eyebrow="Current Opportunities" title="Open Roles at Trivoxa.">
+      <Section id="opportunities" eyebrow={t("opportunities.eyebrow")} title={t("opportunities.title")}>
         <JobBoard />
       </Section>
 
-      <Section eyebrow="Hiring Process" title="From Application to Welcome.">
+      <Section eyebrow={t("hiringProcess.eyebrow")} title={t("hiringProcess.title")}>
         <HorizontalTimeline
           steps={[
-            { title: "Application", description: "Send your application for an open role — or introduce yourself with an open application." },
-            { title: "Review", description: "Our team reviews your experience against the role and the team's needs." },
-            { title: "Interview", description: "A conversation about your background, interests, and how you like to work." },
-            { title: "Assessment", description: "A practical, role-relevant exercise where it helps both sides." },
-            { title: "Final Discussion", description: "Expectations, growth path, and any open questions — both directions." },
-            { title: "Offer", description: "A clear, written offer with role, compensation, and start details." },
-            { title: "Welcome to Trivoxa", description: "Structured onboarding into the team and the wider group." },
+            { title: t("hiringProcess.s1Title"), description: t("hiringProcess.s1Desc") },
+            { title: t("hiringProcess.s2Title"), description: t("hiringProcess.s2Desc") },
+            { title: t("hiringProcess.s3Title"), description: t("hiringProcess.s3Desc") },
+            { title: t("hiringProcess.s4Title"), description: t("hiringProcess.s4Desc") },
+            { title: t("hiringProcess.s5Title"), description: t("hiringProcess.s5Desc") },
+            { title: t("hiringProcess.s6Title"), description: t("hiringProcess.s6Desc") },
+            { title: t("hiringProcess.s7Title"), description: t("hiringProcess.s7Desc") },
           ]}
         />
       </Section>
 
       <CtaBand
-        title="Grow With a Company Built to Endure."
-        description="We're always interested in talented people who share our values. Introduce yourself and tell us how you'd like to contribute."
-        actions={[{ label: "Get in Touch", href: "/contact/" }, { label: "Learn About the Group", href: "/group/", variant: "ghost" }]}
+        title={t("cta.title")}
+        description={t("cta.description")}
+        actions={[{ label: t("cta.ctaContact"), href: "/contact/" }, { label: t("cta.ctaGroup"), href: "/group/", variant: "ghost" }]}
       />
     </TrivoxaShell>
   );

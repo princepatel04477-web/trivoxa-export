@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, CtaBand } from "@/components/trivoxa/ui";
 import CertificationsStrip from "@/components/sections/CertificationsStrip";
@@ -10,19 +11,19 @@ export const metadata: Metadata = {
     "Trivoxa Group's certifications and standards — active operational licensing, and sector certifications currently in progress.",
 };
 
-export default function CompliancePage() {
+export default async function CompliancePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("compliance");
+
   return (
     <TrivoxaShell film="footer-drift">
-      <PageHero
-        eyebrow="Compliance"
-        title="Certifications & Standards."
-        description="Operational licensing is active. Sector-specific certifications are being secured on a public timeline, listed here as they progress."
-      />
+      <PageHero eyebrow={t("hero.eyebrow")} title={t("hero.title")} description={t("hero.description")} />
       <CertificationsStrip />
       <CtaBand
-        title="Want to Verify Before You Order?"
-        description="Request a factory audit or site visit ahead of placing an order — a standard pre-order step we support directly."
-        actions={[{ label: "Request a Factory Audit / Site Visit", href: "/rfq/?path=audit" }, { label: "Contact Our Team", href: "/contact/", variant: "ghost" }]}
+        title={t("cta.title")}
+        description={t("cta.description")}
+        actions={[{ label: t("cta.ctaAudit"), href: "/rfq/?path=audit" }, { label: t("cta.ctaContact"), href: "/contact/", variant: "ghost" }]}
       />
     </TrivoxaShell>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import "@/app/styles/patterns.css";
 import "@/app/styles/product-exports-page.css";
 import "@/app/styles/product-grid.css";
@@ -30,79 +31,73 @@ export const metadata: Metadata = {
     "Trivoxa Group sources and delivers high-quality products through a trusted network of manufacturing partners across India.",
 };
 
-const sourcing = [
-  { title: "Understand Requirements", description: "Specifications, volumes, quality standards, and commercial expectations." },
-  { title: "Identify Manufacturing Partners", description: "We match your needs to the right vetted producers across India." },
-  { title: "Coordinate Production", description: "We manage timelines and communication through every stage." },
-  { title: "Quality & Documentation", description: "Quality-focused coordination plus complete export documentation." },
-  { title: "Global Delivery", description: "Logistics coordination and dependable international delivery." },
-];
+export default async function ProductExportsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("productExportsPage");
+  const ti = await getTranslations("industries.items");
 
-const quality = [
-  { title: "Quality-Focused Coordination", description: "Quality-focused coordination at every stage of production." },
-  { title: "Specification Discipline", description: "Careful attention to agreed specifications." },
-  { title: "Vetted Partners", description: "Trusted, vetted manufacturing partners." },
-  { title: "Complete Documentation", description: "Complete export documentation." },
-  { title: "Reliable Delivery", description: "Reliable logistics and delivery." },
-];
+  const sourcing = [
+    { title: t("sourcing.s1Title"), description: t("sourcing.s1Desc") },
+    { title: t("sourcing.s2Title"), description: t("sourcing.s2Desc") },
+    { title: t("sourcing.s3Title"), description: t("sourcing.s3Desc") },
+    { title: t("sourcing.s4Title"), description: t("sourcing.s4Desc") },
+    { title: t("sourcing.s5Title"), description: t("sourcing.s5Desc") },
+  ];
 
-export default function ProductExportsPage() {
+  const quality = [
+    { title: t("quality.q1Title"), description: t("quality.q1Desc") },
+    { title: t("quality.q2Title"), description: t("quality.q2Desc") },
+    { title: t("quality.q3Title"), description: t("quality.q3Desc") },
+    { title: t("quality.q4Title"), description: t("quality.q4Desc") },
+    { title: t("quality.q5Title"), description: t("quality.q5Desc") },
+  ];
+
   return (
     <TrivoxaShell film="product-exports">
       {/* 1. HERO */}
       <PageHero
-        crumb={[{ label: "Businesses", href: "/businesses/" }, { label: "Product Exports" }]}
-        eyebrow="Product Exports"
-        title="Global Product Exports."
-        description="We connect international buyers with carefully selected manufacturing partners across India to deliver quality products through dependable sourcing and export solutions."
-        actions={[{ label: "Request a Quote", modal: true }, { label: "Contact Our Team", href: "/contact/", variant: "ghost" }]}
+        crumb={[{ label: t("hero.crumbBusinesses"), href: "/businesses/" }, { label: t("hero.crumbSelf") }]}
+        eyebrow={t("hero.eyebrow")}
+        title={t("hero.title")}
+        description={t("hero.description")}
+        actions={[{ label: t("hero.ctaQuote"), modal: true }, { label: t("hero.ctaContact"), href: "/contact/", variant: "ghost" }]}
       />
 
       {/* 2. ABOUT PRODUCT EXPORTS */}
-      <Section
-        eyebrow="About Product Exports"
-        title="A Single, Trusted Gateway to India's Manufacturing Strength."
-        lead={
-          "From industrial materials and textiles to healthcare products and consumer goods, our focus is on connecting global buyers with dependable supply solutions that meet international expectations.\n\n" +
-          "Backed by the manufacturing foundation of Shiveshwar Textiles, we combine practical production knowledge with a growing network of trusted partners."
-        }
-      />
+      <Section eyebrow={t("about.eyebrow")} title={t("about.title")} lead={t("about.lead")} />
 
       {/* 3. INDUSTRIES WE SERVE — 7-row manifest into category pages */}
-      <Section eyebrow="Industries We Serve" title="Products Across Every Major Sector." lead="Explore the industries we support through our product export division.">
+      <Section eyebrow={t("industriesSection.eyebrow")} title={t("industriesSection.title")} lead={t("industriesSection.lead")}>
         <IndustryManifest
           rows={liveExportCategories.map((c) => ({
-            name: c.name,
-            description: c.description,
+            name: ti(`${c.slug}.name`),
+            description: ti(`${c.slug}.description`),
             href: `/businesses/product-exports/${c.slug}/`,
           }))}
         />
       </Section>
 
       {/* 3b. FULL PRODUCT PORTFOLIO — searchable, filterable, RFQ-ready */}
-      <Section
-        eyebrow="Full Product Portfolio"
-        title="Search Everything We Export."
-        lead="Every published product across all industries — search by name or HS code, filter by industry and incoterm, and add products straight to your RFQ."
-      >
+      <Section eyebrow={t("portfolio.eyebrow")} title={t("portfolio.title")} lead={t("portfolio.lead")}>
         <ProductGrid products={allProducts} showIndustryFilter />
       </Section>
 
       {/* 4. GLOBAL SOURCING PROCESS — horizontal timeline */}
-      <Section eyebrow="Global Sourcing Process" title="A Structured Path From Requirement to Delivery.">
+      <Section eyebrow={t("sourcing.eyebrow")} title={t("sourcing.title")}>
         <HorizontalTimeline steps={sourcing} />
       </Section>
 
       {/* 5. QUALITY ASSURANCE */}
-      <Section eyebrow="Quality Assurance" title="Quality You Can Rely On." lead="Every order is supported by a quality-focused, documentation-driven process built for international trade.">
+      <Section eyebrow={t("quality.eyebrow")} title={t("quality.title")} lead={t("quality.lead")}>
         <NumberedList items={quality} />
       </Section>
 
       {/* 6. CTA */}
       <CtaBand
-        title="Let's Source Your Next Product Together."
-        description="Tell us what you need to source, and our team will connect you with the right manufacturing partners and a dependable export process."
-        actions={[{ label: "Request a Quote", modal: true }, { label: "Explore Textile & Apparel", href: "/businesses/product-exports/textile-apparel/", variant: "ghost" }]}
+        title={t("cta.title")}
+        description={t("cta.description")}
+        actions={[{ label: t("cta.ctaQuote"), modal: true }, { label: t("cta.ctaTextile"), href: "/businesses/product-exports/textile-apparel/", variant: "ghost" }]}
       />
     </TrivoxaShell>
   );

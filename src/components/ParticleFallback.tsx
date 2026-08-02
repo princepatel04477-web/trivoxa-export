@@ -34,6 +34,27 @@ function project(lat: number, lon: number) {
 
 const POINTS = HOTSPOTS.map((h) => ({ ...project(h.lat, h.lon), origin: h.origin }));
 
+function seeded(i: number) {
+  const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+const DUST = Array.from({ length: 760 }, (_, i) => {
+  const y = 1 - (2 * (i + 0.5)) / 760;
+  const radius = Math.sqrt(Math.max(0, 1 - y * y));
+  const theta = i * Math.PI * (3 - Math.sqrt(5));
+  const x = Math.cos(theta) * radius;
+  const z = Math.sin(theta) * radius;
+  const sideBias = x > 0.15 ? 1 : x > -0.15 ? 0.42 : 0.14;
+
+  return {
+    x: CX + x * R,
+    y: CY - y * R + z * 2,
+    r: 0.28 + seeded(i) * 0.38,
+    opacity: sideBias * (0.38 + seeded(i + 41) * 0.42),
+  };
+});
+
 /** Static, zero-cost substitute for the WebGL particle globe/field — shown
  * when isLowEndDevice() gates it pre-mount, when WebGL init fails, or when
  * the runtime frame-budget monitor hands off after sustained sub-50fps
@@ -49,16 +70,23 @@ export default function ParticleFallback() {
         viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle className="particle-fallback__disc" cx={CX} cy={CY} r={R} />
-        <ellipse className="particle-fallback__equator" cx={CX} cy={CY} rx={R} ry={R * 0.32} />
-        <circle className="particle-fallback__rim" cx={CX} cy={CY} r={R} />
+        {DUST.map((p, i) => (
+          <circle
+            key={`grain-${i}`}
+            className="particle-fallback__grain"
+            cx={p.x}
+            cy={p.y}
+            r={p.r}
+            opacity={p.opacity}
+          />
+        ))}
         {POINTS.filter((p) => p.visible).map((p, i) => (
           <circle
-            key={i}
+            key={`hub-${i}`}
             className={p.origin ? "particle-fallback__hub particle-fallback__hub--origin" : "particle-fallback__hub"}
             cx={p.x}
             cy={p.y}
-            r={p.origin ? 3.2 : 2.2}
+            r={p.origin ? 1.45 : 0.95}
           />
         ))}
       </svg>

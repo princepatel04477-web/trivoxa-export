@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section } from "@/components/trivoxa/ui";
 import { Link } from "@/i18n/navigation";
@@ -10,33 +11,33 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function ThankYouPage() {
+export default async function ThankYouPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("thankYou");
+
   return (
     <TrivoxaShell film="footer-drift">
-      <PageHero
-        eyebrow="Message Received"
-        title="Thank You for Reaching Out."
-        description="An export specialist will respond within one business day. In the meantime, explore what we source and where we operate."
-      />
+      <PageHero eyebrow={t("hero.eyebrow")} title={t("hero.title")} description={t("hero.description")} />
 
-      <Section eyebrow="What Happens Next" title="Here's What to Expect.">
+      <Section eyebrow={t("whatNext.eyebrow")} title={t("whatNext.title")}>
         <ol className="thank-you-steps">
-          <li>Our team reviews your message and routes it to the right specialist.</li>
-          <li>You&rsquo;ll hear back by email within one business day.</li>
-          <li>If your inquiry involves sourcing, we&rsquo;ll follow up with next steps to formalize an RFQ.</li>
+          <li>{t("whatNext.s1")}</li>
+          <li>{t("whatNext.s2")}</li>
+          <li>{t("whatNext.s3")}</li>
         </ol>
       </Section>
 
-      <Section eyebrow="While You Wait" title="Explore Trivoxa Group.">
+      <Section eyebrow={t("whileWait.eyebrow")} title={t("whileWait.title")}>
         <div className="thank-you-links">
           <Link className="tvx-btn tvx-btn--primary" href="/businesses/product-exports/">
-            Explore Product Exports →
+            {t("whileWait.linkProduct")}
           </Link>
           <Link className="tvx-btn tvx-btn--ghost" href="/industries/">
-            Browse Industries We Serve →
+            {t("whileWait.linkIndustries")}
           </Link>
           <Link className="tvx-btn tvx-btn--ghost" href="/">
-            Back to Home →
+            {t("whileWait.linkHome")}
           </Link>
         </div>
       </Section>

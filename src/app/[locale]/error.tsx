@@ -23,6 +23,19 @@ export default function RouteError({
 }) {
   useEffect(() => {
     console.error("Route error boundary caught:", error);
+
+    const text = `${error.name} ${error.message}`.toLowerCase();
+    const isChunkLoadFailure =
+      text.includes("chunk") ||
+      text.includes("loading css chunk") ||
+      text.includes("failed to fetch dynamically imported module");
+
+    if (!isChunkLoadFailure) return;
+
+    const key = "trivoxa:chunk-reload";
+    if (sessionStorage.getItem(key) === "1") return;
+    sessionStorage.setItem(key, "1");
+    window.location.reload();
   }, [error]);
 
   return (

@@ -65,10 +65,13 @@ export default function ParticleCanvas({ config }: ParticleCanvasProps) {
         }
         sceneRef.current = scene;
         containerRef.current?.appendChild(scene.domElement);
-        // Only the scene instance that actually mounted (not one torn down
-        // mid-load, e.g. by a dev Strict Mode remount) gets to signal that
-        // the hero is ready to reveal.
-        markPreloaderDone();
+        scene.ready.then(() => {
+          if (cancelled || sceneRef.current !== scene) return;
+          // Only the scene instance that actually mounted (not one torn down
+          // mid-load, e.g. by a dev Strict Mode remount) gets to signal that
+          // the hero is ready to reveal.
+          markPreloaderDone();
+        });
       })
       .catch((err) => {
         // This previously had no .catch() at all — a rejected scene creation
