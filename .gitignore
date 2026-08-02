@@ -68,3 +68,5 @@ next-env.d.ts
 
 .vercel
 .env*
+
+cloudflare-env.d.ts

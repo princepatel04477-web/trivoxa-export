@@ -1,22 +1,26 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
+	"$schema": "./node_modules/wrangler/config-schema.json",
 	"main": ".open-next/worker.js",
 	"name": "trivoxa-group",
-	"compatibility_date": "2026-07-30",
+	"compatibility_date": "2026-08-01",
+	// `nodejs_compat` is mandatory for the OpenNext server bundle.
+	// `global_fetch_strictly_public` keeps same-origin fetch() going out to the
+	// public internet instead of looping back into this Worker — required by the
+	// adapter's own template.
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
 	"images": {
-		// Powers next/image optimization on Workers.
-		// see https://opennext.js.org/cloudflare/howtos/image
+		// next/image optimization runs through Cloudflare Images on Workers,
+		// not sharp. Without this binding images degrade to unoptimized originals.
 		"binding": "IMAGES"
 	},
 	"observability": {
 		"enabled": true
 	}
-	// No R2/KV incremental cache binding: every route is statically prerendered
-	// at build time and nothing calls revalidate*, so the static-assets cache
+	// No R2/KV incremental cache binding: every route is prerendered at build
+	// time and nothing calls revalidate*, so the static-assets cache
 	// (see open-next.config.ts) covers it without extra Cloudflare resources.
 }
