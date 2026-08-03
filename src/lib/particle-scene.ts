@@ -709,13 +709,34 @@ ${
   holder.add(spin);
   scene.add(holder);
 
-  // Responsive fit — the globe (and every formation) scales with the viewport
-  // so the field never dominates a smaller laptop screen the way a fixed
-  // world-space size does. Keyed off the shorter viewport dimension and
-  // recomputed on resize (see handleResize).
+  // Responsive fit — every formation is sized to occupy a consistent share of
+  // what the camera can actually SEE, so the morph reads the same on a 13"
+  // laptop as it does on a 27" monitor.
+  //
+  // This used to be `clamp(min(innerWidth, innerHeight) / 1200, 0.5, 0.82)`,
+  // which is wrong: a perspective camera's vertical FOV is fixed, so the
+  // visible world height is CONSTANT (~11.35 units here) no matter how large
+  // the window is. Dividing by a pixel count therefore shrank the formation on
+  // smaller windows for a reason that does not optically exist — the field
+  // rendered at ~81% of the visible height on a large desktop but only ~54-65%
+  // on a laptop, roughly half the area, which is why the morph looked small and
+  // easy to miss on anything but a big screen.
+  //
+  // Deriving it from the frustum instead makes apparent size independent of
+  // window pixels. Width still constrains it on narrow/portrait windows, where
+  // the horizontal extent genuinely is the limiting dimension.
+  const CAMERA_BASE_Z = camera.position.z; // captured before any orbit dolly
+  const FORMATION_VIEWPORT_FRACTION = 0.81; // matches what large desktops already render
   const fitScale = () => {
-    const vpMin = Math.min(window.innerWidth, window.innerHeight);
-    return THREE.MathUtils.clamp(vpMin / 1200, 0.5, 0.82);
+    const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * CAMERA_BASE_Z;
+    const halfW = halfH * (window.innerWidth / window.innerHeight);
+    const limiting = Math.min(halfH, halfW);
+    const nominalRadius = globeRadius * formationScale;
+    return THREE.MathUtils.clamp(
+      (limiting * FORMATION_VIEWPORT_FRACTION) / nominalRadius,
+      0.5,
+      0.82
+    );
   };
   holder.scale.setScalar(fitScale());
   // Start at the formation size so the hero globe doesn't visibly grow in from
