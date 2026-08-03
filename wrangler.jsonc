@@ -8,6 +8,13 @@
 	// public internet instead of looping back into this Worker — required by the
 	// adapter's own template.
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// Must be explicit. Wrangler disables workers.dev by default the moment a
+	// `routes` block exists, so adding custom domains silently took the
+	// *.workers.dev URL offline — with the custom domain also failing to
+	// attach, that left the Worker unreachable on every hostname at once.
+	// Pinning it true keeps this URL as a permanent fallback regardless of what
+	// happens to the apex domain's DNS.
+	"workers_dev": true,
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
