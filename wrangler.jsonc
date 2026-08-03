@@ -15,6 +15,16 @@
 	// Pinning it true keeps this URL as a permanent fallback regardless of what
 	// happens to the apex domain's DNS.
 	"workers_dev": true,
+	// Production hostnames, declared so a fresh deploy re-asserts them rather
+	// than depending on dashboard state. `custom_domain` means Wrangler owns the
+	// DNS record for each name — it touches only these two, never the zone's MX
+	// or TXT records. These can only attach once no other record claims the
+	// hostname (a leftover A/CNAME pointing elsewhere makes Cloudflare reject it
+	// with error 100117).
+	"routes": [
+		{ "pattern": "trivoxagroup.com", "custom_domain": true },
+		{ "pattern": "www.trivoxagroup.com", "custom_domain": true }
+	],
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
