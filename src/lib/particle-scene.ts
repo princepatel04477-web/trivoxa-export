@@ -726,15 +726,24 @@ ${
   // window pixels. Width still constrains it on narrow/portrait windows, where
   // the horizontal extent genuinely is the limiting dimension.
   const CAMERA_BASE_Z = camera.position.z; // captured before any orbit dolly
-  const FORMATION_VIEWPORT_FRACTION = 0.81; // matches what large desktops already render
+  // Share of the limiting visible dimension the formation spans. At 0.81 the
+  // hero globe filled ~82% of the viewport height, which crowded the right edge
+  // and collided with the nav — correct in principle but too dominant in
+  // practice. 0.62 keeps the whole form comfortably in frame with margin on
+  // every side while still reading large.
+  const FORMATION_VIEWPORT_FRACTION = 0.62;
   const fitScale = () => {
     const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * CAMERA_BASE_Z;
     const halfW = halfH * (window.innerWidth / window.innerHeight);
     const limiting = Math.min(halfH, halfW);
     const nominalRadius = globeRadius * formationScale;
+    // Floor is 0.3, not 0.5: on a narrow window width is the limiting dimension
+    // and a 0.5 floor held the formation wider than the frustum, pushing it off
+    // both edges on phones. The floor exists to stop the field vanishing, not to
+    // override the fit.
     return THREE.MathUtils.clamp(
       (limiting * FORMATION_VIEWPORT_FRACTION) / nominalRadius,
-      0.5,
+      0.3,
       0.82
     );
   };
