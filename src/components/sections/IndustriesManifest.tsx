@@ -1,15 +1,32 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import { taxonomy, featuredTaxonomy } from "@/lib/data/taxonomy";
 
 const TOTAL = String(featuredTaxonomy.length).padStart(2, "0");
 
+/**
+ * Industries — a sticky index, scroll-driven.
+ *
+ * This replaced a pinned horizontal carousel. The carousel had to hijack the
+ * scroll wheel to work: it pinned the page, converted vertical scroll into
+ * horizontal travel, and snapped between panels, so a reader could not skim past
+ * it at their own pace and the section owned the viewport until it was done.
+ *
+ * INTERACTION MODEL: scroll-driven, IntersectionObserver-style. Nothing here is
+ * click-driven. The index on the left is sticky; each industry's panel scrolls
+ * past it normally, and whichever panel is crossing the reading line marks
+ * itself active. Scroll direction and speed stay the reader's.
+ *
+ * The index is still clickable as an affordance for keyboard and pointer users,
+ * but clicking is a shortcut to a scroll position, not the mechanism.
+ */
 export default function IndustriesManifest() {
   const t = useTranslations("home.industries");
   const tm = useTranslations("megaMenu");
@@ -20,100 +37,147 @@ export default function IndustriesManifest() {
     desc: entry.homeDescKey ? t(entry.homeDescKey) : entry.shortDescription,
     image: entry.image ?? "/images/industries/textile-editorial.webp",
   }));
+
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLSpanElement>(null);
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [active, setActive] = useState(0);
 
-  // Layout effect, not useEffect: this pins the section (see
-  // use-isomorphic-layout-effect.ts for why pinning requires it).
   useIsomorphicLayoutEffect(() => {
-    if (!sectionRef.current || !trackRef.current) return;
-
+    if (!sectionRef.current) return;
     const reduced = prefersReducedMotion();
 
     const ctx = gsap.context(() => {
-      const head = ".industries-folio__eyebrow, .industries-folio__title";
+      const head = ".industries-index__eyebrow, .industries-index__title";
       if (reduced) {
         gsap.set(head, { opacity: 1, y: 0 });
-      } else {
-        gsap.to(head, {
+        gsap.set(".industries-index__panel", { opacity: 1, y: 0 });
+        return;
+      }
+
+      gsap.to(head, {
+        opacity: 1,
+        y: 0,
+        duration: DURATION.standard,
+        ease: EASE.entry,
+        stagger: STAGGER,
+        scrollTrigger: { trigger: sectionRef.current, start: "top 78%", invalidateOnRefresh: true },
+      });
+
+      panelRefs.current.forEach((panel, i) => {
+        if (!panel) return;
+
+        // Entrance. Each panel rises into place on its own trigger — no pin, so
+        // the reader's scroll is never captured.
+        gsap.to(panel.querySelectorAll(".industries-index__reveal"), {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.06,
-          scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
+          duration: DURATION.standard,
+          ease: EASE.entry,
+          stagger: STAGGER,
+          scrollTrigger: { trigger: panel, start: "top 80%", invalidateOnRefresh: true },
         });
-      }
 
-      // Under reduced motion the whole horizontal act is skipped: no pin, no
-      // scrub, no snap. The stylesheet stacks the track vertically at the same
-      // media condition, so all six panels are reachable by ordinary scrolling
-      // — without this the carousel simply pinned and the reader could never
-      // reach panels 2-6 without the scrubbed motion they opted out of.
-      if (!reduced && window.innerWidth > 767) {
-        const track = trackRef.current!;
-        const panels = gsap.utils.toArray<HTMLElement>(".industries-folio__panel", track);
+        // The hairline wipes open left→right as the panel arrives, which is what
+        // gives the list its rhythm — the rule draws, then the copy lands.
+        gsap.to(panel.querySelector(".industries-index__rule"), {
+          scaleX: 1,
+          duration: DURATION.long,
+          ease: EASE.entry,
+          scrollTrigger: { trigger: panel, start: "top 80%", invalidateOnRefresh: true },
+        });
 
-        gsap.to(track, {
-          x: () => -(track.scrollWidth - window.innerWidth),
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: () => "+=" + (track.scrollWidth - window.innerWidth),
-            scrub: 1,
-            pin: true,
-            invalidateOnRefresh: true,
-            // Settle on whole panels so the carousel never comes to rest
-            // mid-transition (which clips the active title on the left and
-            // lets the next panel peek in on the right).
-            snap: {
-              snapTo: 1 / (panels.length - 1),
-              duration: { min: 0.15, max: 0.4 },
-              ease: "power1.inOut",
-            },
-            onUpdate: (self) => {
-              const idx = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
-              if (progressRef.current) progressRef.current.textContent = String(idx + 1).padStart(2, "0");
-            },
+        // Active tracking. A band across the middle of the viewport is the
+        // reading line; whichever panel is crossing it owns the index.
+        ScrollTrigger.create({
+          trigger: panel,
+          start: "top 55%",
+          end: "bottom 45%",
+          invalidateOnRefresh: true,
+          onToggle: (self) => {
+            if (self.isActive) setActive(i);
           },
         });
+      });
 
-        ScrollTrigger.refresh();
-      }
+      ScrollTrigger.refresh();
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
+  const goTo = (i: number) => {
+    const panel = panelRefs.current[i];
+    if (!panel) return;
+    panel.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      block: "center",
+    });
+  };
+
   return (
-    <section className="hp-sec-2 industries-folio" ref={sectionRef}>
-      <div className="industries-folio__head container">
-        <span className="industries-folio__eyebrow">{t("eyebrow")}</span>
-        <h2 className="industries-folio__title">{t("heading")}</h2>
+    <section className="hp-sec-2 industries-index" ref={sectionRef}>
+      <div className="industries-index__head container">
+        <span className="industries-index__eyebrow">{t("eyebrow")}</span>
+        <h2 className="industries-index__title">{t("heading")}</h2>
       </div>
-      <div className="industries-folio__track" ref={trackRef}>
-        {INDUSTRIES.map((ind, i) => (
-          <div className="industries-folio__panel" key={ind.name}>
-            <div className="industries-folio__text">
-              <span className="industries-folio__index">{String(i + 1).padStart(2, "0")}</span>
-              <h3 className="industries-folio__name">{ind.name}</h3>
-              <p className="industries-folio__desc">{ind.desc}</p>
-            </div>
-            <div
-              className="industries-folio__image"
-              style={{ backgroundImage: `url(${ind.image})` }}
-              role="img"
-              aria-label={ind.name}
-            />
+
+      <div className="industries-index__body container">
+        {/* Sticky index. aria-hidden: it duplicates the headings below for
+            sighted navigation, and a screen reader should meet each industry
+            once, in the panel itself. */}
+        <nav className="industries-index__rail" aria-hidden="true">
+          <ol className="industries-index__list">
+            {INDUSTRIES.map((ind, i) => (
+              <li
+                key={ind.name}
+                className={
+                  "industries-index__item" +
+                  (i === active ? " is-active" : "")
+                }
+              >
+                <button type="button" tabIndex={-1} onClick={() => goTo(i)}>
+                  <span className="industries-index__num">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="industries-index__label">{ind.name}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="industries-index__count">
+            <span>{String(active + 1).padStart(2, "0")}</span> / {TOTAL}
           </div>
-        ))}
+        </nav>
+
+        <div className="industries-index__panels">
+          {INDUSTRIES.map((ind, i) => (
+            <div
+              className={
+                "industries-index__panel" + (i === active ? " is-active" : "")
+              }
+              key={ind.name}
+              ref={(el) => {
+                panelRefs.current[i] = el;
+              }}
+            >
+              <span className="industries-index__rule" aria-hidden="true" />
+              <div className="industries-index__text">
+                <span className="industries-index__index industries-index__reveal">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="industries-index__name industries-index__reveal">{ind.name}</h3>
+                <p className="industries-index__desc industries-index__reveal">{ind.desc}</p>
+              </div>
+              <div
+                className="industries-index__image industries-index__reveal"
+                style={{ backgroundImage: `url(${ind.image})` }}
+                role="img"
+                aria-label={ind.name}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="industries-folio__progress">
-        <span ref={progressRef}>01</span> / {TOTAL}
-      </div>
-      <div className="industries-folio__viewall container">
+
+      <div className="industries-index__viewall container">
         <Link href="/industries/" className="btn-ghost">
           {t("viewAll", { count: taxonomy.length })} →
         </Link>

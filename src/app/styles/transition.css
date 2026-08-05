@@ -1,0 +1,59 @@
+/* ============================================================
+   PAGE TRANSITION PANEL
+
+   One fixed panel that covers the viewport while a route swaps,
+   then keeps travelling in the same direction to reveal the new
+   one. Geometry only — the timing, the curves and the fail-safe
+   all live in src/components/providers/TransitionProvider.tsx
+   and src/lib/motion.ts.
+
+   Stacking: above everything the page draws, and above the
+   fixed particle canvas (z-index -1), but BELOW the grain field
+   (9999) — grain is the site's photographic surface and it
+   should sit over the transition the way it sits over
+   everything else, rather than blinking off mid-navigation.
+   ============================================================ */
+.tvx-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  /* The panel is parked fully below the viewport. `translate3d` rather than
+     `top`/`bottom` so the whole travel is compositor-only: a route change is
+     the worst possible moment to be running layout, because React is already
+     committing a new tree on the same frame. */
+  transform: translate3d(0, 100%, 0);
+  background: var(--bg);
+  /* Promoted only while it is actually moving — see the provider. A panel that
+     sits permanently promoted is a full-viewport layer held for the entire
+     session to serve a half-second animation. */
+  will-change: auto;
+}
+
+/* Covering or revealing. The provider owns the transform; this only takes the
+   panel out of the compositor's cheap path for the duration. */
+.tvx-transition[data-active] {
+  will-change: transform;
+}
+
+/* The incoming page settles the last of the way in under the panel, so arrival
+   has a beat of its own rather than the panel simply uncovering a finished
+   screen. Opacity and transform only. */
+.tvx-transition-root {
+  will-change: auto;
+}
+
+/* Reduced motion: no panel, no travel, no settle. Navigation is instant and the
+   page must look deliberate on arrival rather than mid-animation. */
+@media (prefers-reduced-motion: reduce) {
+  .tvx-transition {
+    display: none;
+  }
+}
+
+/* The panel carries no information — under forced colours it is only in the way. */
+@media (forced-colors: active) {
+  .tvx-transition {
+    display: none;
+  }
+}

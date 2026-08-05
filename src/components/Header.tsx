@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE } from "@/lib/motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { on } from "@/lib/site-events";
 import { getLenis } from "@/components/providers/LenisProvider";
@@ -106,7 +107,12 @@ export default function Header() {
       if (next === hidden) return;
       hidden = next;
       if (next) setOpenMenu(null); // close panels when the bar slides away
-      gsap.to(el, { yPercent: next ? -130 : 0, duration: 0.4, ease: "power2.out", overwrite: "auto" });
+      gsap.to(el, {
+        yPercent: next ? -130 : 0,
+        duration: DURATION.short,
+        ease: EASE.entry,
+        overwrite: "auto",
+      });
     };
     const apply = (y: number) => {
       const nextCondensed = y > HEADER_CONDENSE_AT;

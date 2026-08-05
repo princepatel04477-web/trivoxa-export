@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
 import { revealBody } from "@/hooks/useScrollAnimations";
+import { BEZIER, DURATION } from "@/lib/motion";
 
 const VALUE_KEYS = ["curiosity", "integrity", "innovation", "growth"] as const;
 
@@ -45,7 +46,7 @@ export default function ValuesHoverList() {
                     initial={{ opacity: 0, x: 32 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 32 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: DURATION.short, ease: BEZIER.entry }}
                   >
                     {v.d}
                   </motion.span>

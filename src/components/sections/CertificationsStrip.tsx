@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 import { ScrollTrigger } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { ACTIVE_MARKS, IN_PROGRESS_MARKS, type CertMark } from "@/lib/data/certifications";
@@ -55,10 +56,10 @@ export default function CertificationsStrip() {
         {
           opacity: 1,
           y: 0,
-          stagger: 0.05,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
+          stagger: STAGGER,
+          duration: DURATION.standard,
+          ease: EASE.entry,
+          scrollTrigger: { trigger: sectionRef.current, start: "top 78%", invalidateOnRefresh: true },
         }
       );
     }, sectionRef);

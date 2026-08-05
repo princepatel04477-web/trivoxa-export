@@ -100,7 +100,7 @@
   gap: 8px;
   font-size: 13.5px;
   color: color-mix(in srgb, var(--text) 55%, transparent);
-  transition: color 0.3s ease;
+  transition: color var(--dur-base) var(--ease-entry);
   width: fit-content;
 }
 
@@ -211,12 +211,11 @@
   letter-spacing: 0.01em;
   color: color-mix(in srgb, var(--text) 55%, transparent);
   display: inline-block;
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .footer .footer-content ul li a:hover {
   color: var(--color-accent, var(--gold));
-  transform: translateX(4px);
 }
 
 .footer .footer-content ul li:not(:last-child) {
@@ -237,7 +236,7 @@
   align-items: center;
   border-bottom: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
   padding-bottom: 10px;
-  transition: border-color 0.3s ease;
+  transition: border-color var(--dur-base) var(--ease-entry);
 }
 
 .footer-newsletter__form:focus-within {
@@ -266,11 +265,10 @@
   line-height: 1;
   cursor: pointer;
   padding: 4px 0 4px 12px;
-  transition: transform 0.25s ease;
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 .footer-newsletter__form button:hover {
-  transform: translateX(4px);
 }
 
 .footer-newsletter__thanks {
@@ -298,7 +296,7 @@
 
 .footer-bottom a {
   color: color-mix(in srgb, var(--text) 40%, transparent);
-  transition: color 0.3s ease;
+  transition: color var(--dur-base) var(--ease-entry);
 }
 
 .footer-bottom a:hover {

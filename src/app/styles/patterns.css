@@ -71,7 +71,7 @@
   color: inherit;
   text-align: left;
   cursor: default;
-  transition: opacity 0.35s ease;
+  transition: opacity var(--dur-base) var(--ease-entry);
 }
 
 .numbered-list__row:last-child {
@@ -143,7 +143,7 @@
   height: var(--fill);
   background: linear-gradient(var(--gold), var(--gold-hover));
   box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 55%, transparent);
-  transition: height 0.15s linear;
+  transition: height var(--dur-fast) linear;
 }
 
 .process-loader__list {
@@ -168,8 +168,8 @@
   background: color-mix(in srgb, var(--bg-card) 55%, transparent);
   opacity: 0.55;
   transform: translateX(0);
-  transition: opacity 0.4s var(--ease-out), border-color 0.4s var(--ease-out),
-    background 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+  transition: opacity var(--dur-base) var(--ease-entry), border-color var(--dur-base) var(--ease-entry),
+    background var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .process-loader__step.is-active,
@@ -200,8 +200,8 @@
   border-radius: 50%;
   background: var(--bg-elev);
   color: var(--text-2);
-  transition: border-color 0.4s var(--ease-out), background 0.4s var(--ease-out),
-    color 0.4s var(--ease-out);
+  transition: border-color var(--dur-base) var(--ease-entry), background var(--dur-base) var(--ease-entry),
+    color var(--dur-base) var(--ease-entry);
 }
 
 .process-loader__step.is-active .process-loader__node {
@@ -229,7 +229,7 @@
   height: 55%;
   opacity: 0;
   transform: scale(0.6);
-  transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+  transition: opacity var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .process-loader__step.is-done .process-loader__num {
@@ -251,7 +251,7 @@
   font-size: clamp(1.25rem, 2.6vw, 1.6rem);
   letter-spacing: -0.01em;
   color: var(--text);
-  transition: color 0.4s var(--ease-out);
+  transition: color var(--dur-base) var(--ease-entry);
 }
 
 .process-loader__step.is-active .process-loader__title {
@@ -283,7 +283,7 @@
   transform: scaleX(0);
   transform-origin: left;
   background: linear-gradient(90deg, var(--gold), var(--gold-hover));
-  transition: transform 0.6s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 .process-loader__step.is-active .process-loader__bar::after {

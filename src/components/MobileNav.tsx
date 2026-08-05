@@ -1,6 +1,7 @@
 "use client";
 
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -42,8 +43,13 @@ export default function MobileNav() {
     const items = nav.querySelectorAll(".nav__content > ul > li");
 
     const tl = gsap.timeline({ paused: true });
-    tl.fromTo(nav, {}, { clipPath: "circle(130% at 50% 0%)", y: 0, duration: 1.5 });
-    tl.fromTo(items, {}, { opacity: 1, y: 0, delay: 1, stagger: 0.07, duration: 1 }, "<");
+    tl.fromTo(nav, {}, { clipPath: "circle(130% at 50% 0%)", y: 0, duration: DURATION.long, ease: EASE.entry });
+    tl.fromTo(
+      items,
+      {},
+      { opacity: 1, y: 0, delay: 1, stagger: STAGGER, duration: DURATION.standard, ease: EASE.entry },
+      "<"
+    );
     tlRef.current = tl;
 
     return () => {

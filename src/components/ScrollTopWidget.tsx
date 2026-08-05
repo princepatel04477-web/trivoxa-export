@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, SCRUB } from "@/lib/motion";
 import { CircleProgressIcon } from "@/components/icons";
 import { on } from "@/lib/site-events";
 import { getLenis } from "@/components/providers/LenisProvider";
@@ -50,26 +51,28 @@ export default function ScrollTopWidget() {
             trigger: ".footer",
             start: "top bottom",
             end: "bottom bottom",
-            scrub: true,
+            scrub: SCRUB,
+            invalidateOnRefresh: true,
           },
         });
         if (arrowRef.current) {
-          tl.to(arrowRef.current, { rotation: 180, duration: 1.5, ease: "power1.inOut" }, 0);
+          // ease: none on a scrub-linked child — the scroll supplies the curve.
+          tl.to(arrowRef.current, { rotation: 180, duration: DURATION.long, ease: EASE.scrub }, 0);
         }
         tl.to(
           wrapperRef.current,
           {
             cursor: "pointer",
             pointerEvents: "auto",
-            duration: 1.5,
-            ease: "power1.inOut",
+            duration: DURATION.long,
+            ease: EASE.scrub,
           },
           0
         );
 
         const clickHandler = () => {
           const current = getLenis();
-          if (current) current.scrollTo(0, { duration: 1.5 });
+          if (current) current.scrollTo(0, { duration: DURATION.long });
           else window.scrollTo({ top: 0, behavior: "smooth" });
         };
         wrapperRef.current?.addEventListener("click", clickHandler);

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { MotionConfig } from "framer-motion";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { LENIS } from "@/lib/motion";
 import { on, emit } from "@/lib/site-events";
 
 let lenisInstance: Lenis | null = null;
@@ -56,14 +57,29 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
 
+    // A mobile browser fires `resize` every time the URL bar moves, and every
+    // one of those makes ScrollTrigger re-measure the whole page mid-scroll.
+    // That refresh storm is indistinguishable from scrub jitter at the point of
+    // use. Height-driven refreshes are the ones being suppressed; a real
+    // rotation still refreshes, because it changes the width.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     const lenis = new Lenis({
-      lerp: 0.09,
-      duration: 1.2,
+      lerp: LENIS.lerp,
+      duration: LENIS.duration,
       smoothWheel: true,
     });
     lenisInstance = lenis;
     emit("lenis:init");
 
+    // ONE update loop, and one only.
+    //
+    // Lenis defaults to `autoRaf: false`, so it runs no rAF of its own; GSAP's
+    // ticker drives it and ScrollTrigger updates from Lenis's own scroll event.
+    // Two loops contending for the same surface is the primary cause of scrub
+    // jitter — verify this stays a single path before adding anything here.
+    // ScrollTrigger.normalizeScroll is deliberately NOT enabled: it and Lenis
+    // fight over the same surface.
     lenis.on("scroll", ScrollTrigger.update);
 
     const raf = (time: number) => lenis.raf(time * 1000);

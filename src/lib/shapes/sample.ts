@@ -25,11 +25,24 @@ export function sampleGeometry(geo: THREE.BufferGeometry, name: string, count: n
 
 /**
  * Merge a set of primitive parts into one geometry and sample it, disposing
- * every part. All parts must be indexed (every THREE primitive is), or
- * mergeGeometries returns null.
+ * every part.
+ *
+ * mergeGeometries requires every part to agree on indexed-ness. The THREE
+ * primitives are all indexed, but ExtrudeGeometry — which is how a hull profile
+ * gets built — is not, and mixing the two returns null. So the list is
+ * normalised first: if ANY part is non-indexed, they all get flattened.
+ * Sampling is area-weighted over triangles either way, so this costs a little
+ * memory during the build and nothing in the result.
  */
 export function sampleParts(parts: THREE.BufferGeometry[], name: string, count: number): Shape {
-  const merged = mergeGeometries(parts, false)!;
+  const mixed = parts.some((g) => !g.index);
+  const normalised = mixed ? parts.map((g) => (g.index ? g.toNonIndexed() : g)) : parts;
+  const merged = mergeGeometries(normalised, false);
+  if (!merged) throw new Error(`sampleParts("${name}"): geometries could not be merged`);
+  // Dispose the throwaway conversions as well as the originals.
+  normalised.forEach((g, i) => {
+    if (g !== parts[i]) g.dispose();
+  });
   parts.forEach((g) => g.dispose());
   return sampleGeometry(merged, name, count);
 }

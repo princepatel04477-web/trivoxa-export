@@ -214,7 +214,7 @@
   font-weight: 500;
   letter-spacing: 0.2px;
   cursor: pointer;
-  transition: transform 0.25s ease, background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: transform var(--dur-base) var(--ease-entry), background var(--dur-base) var(--ease-entry), border-color var(--dur-base) var(--ease-entry), color var(--dur-base) var(--ease-entry);
   border: 1px solid transparent;
 }
 .tvx-btn--primary {
@@ -223,7 +223,6 @@
 }
 .tvx-btn--primary:hover {
   background: var(--gold-bright);
-  transform: translateY(-2px);
 }
 .tvx-btn--ghost {
   border-color: var(--hair-strong);
@@ -337,7 +336,7 @@
   background: var(--surface);
   font-size: 13.5px;
   color: var(--muted);
-  transition: border-color 0.25s ease, color 0.25s ease;
+  transition: border-color var(--dur-base) var(--ease-entry), color var(--dur-base) var(--ease-entry);
 }
 .tvx-pill:hover {
   border-color: var(--gold);
@@ -429,7 +428,7 @@
   color: var(--text);
   font: inherit;
   font-size: 15px;
-  transition: border-color 0.25s ease;
+  transition: border-color var(--dur-base) var(--ease-entry);
 }
 .tvx .contact-form input::placeholder,
 .tvx .contact-form textarea::placeholder { color: color-mix(in srgb, var(--text) 50%, transparent); }
@@ -445,7 +444,7 @@
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background var(--dur-base) var(--ease-entry);
 }
 .tvx .contact-form .form-submit:hover { background: var(--gold-bright); }
 .tvx-info-row {

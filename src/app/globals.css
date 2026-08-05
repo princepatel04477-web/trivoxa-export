@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* The shared hover vocabulary. Imported here so it lands BEFORE every
+   per-route stylesheet in the cascade — an existing page rule always wins a
+   conflict, and the primitives are strictly additive on top of it. */
+@import "./styles/hover.css";
+/* The page-transition panel. Geometry only; timing lives in motion.ts. */
+@import "./styles/transition.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -70,10 +76,17 @@
      Every surface/text/accent color in the app resolves through
      these. Do NOT hardcode hex in components or page CSS.
      ============================================================ */
-  --bg:            #0B1325;  /* page background, hero, canvas ground */
-  --bg-elev:       #121D36;  /* alternating sections, scrolled navbar */
-  --bg-card:       #16233E;  /* cards, panels, insight tiles, compliance chips */
-  --line:          #223251;  /* borders, dividers, ticker rules */
+  /* GROUND — pure black, neutral ramp.
+     Was Midnight Navy (#0B1325 / #121D36 / #16233E / #223251). The ramp above
+     the base is neutral rather than navy-tinted so nothing reads as "dark blue"
+     next to a true black page ground; the steps are close together on purpose,
+     because separation on black comes from the hairline, not from surface
+     lightness. Every --advida-* alias and every color-mix() that references
+     these migrates automatically. */
+  --bg:            #000000;  /* page background, hero, canvas ground */
+  --bg-elev:       #0B0B0C;  /* alternating sections, scrolled navbar */
+  --bg-card:       #121214;  /* cards, panels, insight tiles, compliance chips */
+  --line:          #232326;  /* borders, dividers, ticker rules */
   --text:          #EDF1F8;  /* headlines + body — never pure #FFFFFF */
   --text-2:        #9FACC4;  /* supporting copy */
   --text-3:        #7E8CA8;  /* captions, footer meta (lightened from spec #64738F to clear WCAG AA on --bg-card) */
@@ -88,6 +101,17 @@
   --port-dest-dot:    #8894AC;
   --port-dest-text:   #9BA6BC;
   --route:         #8FB4E8;  /* trade-route arc lines ONLY */
+
+  /* PARTICLE SPECTRUM — the field's four colour stops, cool to warm.
+     The field was two-tone gold, which is why it read as a watermark rather
+     than as a light source. These four ramp across the form per particle.
+     The warm end is deliberately the brand gold family, so the spectrum
+     resolves INTO the identity instead of away from it. Revert the field to
+     two-tone by pointing all four at --gold-particle. */
+  --particle-a:    #4B7BD4;  /* cool anchor  */
+  --particle-b:    #8A5FA8;  /* violet       */
+  --particle-c:    #D8556E;  /* rose         */
+  --particle-d:    #E8A24B;  /* amber — the gold family */
   --success:       #5FA97C;  /* DELIVERED ticker state */
 
   /* Hallmark System Variables — repointed onto Midnight Navy */
@@ -144,7 +168,49 @@ html[lang="ru"] {
   --space-xl: 3rem;
   --space-2xl: 4.5rem;
   --space-3xl: 7rem;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ============================================================
+     MOTION VOCABULARY
+
+     The CSS half of src/lib/motion.ts. Same three curves, same
+     names, same coefficients — GSAP registers them through
+     CustomEase so a hover transition and a scroll tween are
+     literally the same curve rather than two approximations of it.
+
+     TWO durations carry the whole interface. The interface
+     previously spoke fourteen (0.15s through 0.8s), which reads as
+     accidental; a small vocabulary reads as authored. Which
+     properties transition is unchanged — only how long they take.
+     ============================================================ */
+  --ease-entry: cubic-bezier(0.5, 1, 0.89, 1);
+  --ease-exit: cubic-bezier(0.11, 0, 0.5, 0);
+  --ease-ambient: cubic-bezier(0.45, 0, 0.55, 1);
+  /* Retained as an alias so no rule has to change to keep working;
+     it now resolves to the shared entry curve. */
+  --ease-out: var(--ease-entry);
+  --dur-fast: 0.2s;
+  --dur-base: 0.3s;
+
+  /* ============================================================
+     GRAIN — the single tokenized intensity and the tile geometry.
+     See `.grain-overlay` for the full reasoning. Nothing else on
+     the site declares a grain value.
+     ============================================================ */
+  /* Calibrated for the BLACK ground. On the previous navy this was 0.13 under
+     soft-light; on #000 soft-light is not weak, it is mathematically null —
+     both of its branches multiply by the backdrop, and the backdrop is zero, so
+     the field would have disappeared completely. `screen` is the blend that
+     still has range against black (result = source), which is also the correct
+     photographic behaviour: film grain lives in the shadows and barely touches
+     the highlights. 0.07 there lifts the ground by up to ~18/255 while moving
+     body text by under 2/255. Tunable 0.04 - 0.10. */
+  --grain-opacity: 0.07;
+  /* One step down the degradation ladder. Thinner, never absent. */
+  --grain-opacity-dim: 0.04;
+  --grain-tile: 320px;
+  /* The calibration law, mirrored from GRAIN_SIZE_CSS_PX in
+     src/lib/motion.ts. Documentation of the baked baseFrequency —
+     an SVG data URI cannot read a custom property. */
+  --grain-cell: 1.5px;
 
   /* ============================================================
      SAFE AREAS (§3.3) — the notch, the home indicator, and the
@@ -419,7 +485,7 @@ html {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--line);
-  transition: background 0.3s ease;
+  transition: background var(--dur-base) var(--ease-entry);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gold);
@@ -455,9 +521,9 @@ html {
 
 /* Global transition for interactive elements */
 a, button {
-  transition: color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-              border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-              background-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: color var(--dur-base) var(--ease-entry),
+              border-color var(--dur-base) var(--ease-entry),
+              background-color var(--dur-base) var(--ease-entry);
 }
 
 /* preloader spinner */
@@ -497,7 +563,7 @@ a, button {
 }
 .odometer-ribbon-inner {
   display: block;
-  transition: transform 4s ease-out !important;
+  transition: transform var(--dur-base) var(--ease-entry) !important;
 }
 .odometer-value {
   display: block;
@@ -716,13 +782,39 @@ a, button {
    scoped canvas grain behind each page's hero (.hero-grain). Interactive chrome
    (header, mobile nav, cursor, modals) is raised above z-index 9999 so grain
    never dims what the user reads/clicks; pointer-events:none passes clicks. */
+/* ============================================================
+   THE GRAIN FIELD — one source, one intensity, every pixel.
+
+   This is the ONLY grain on the site. It is fixed, full-viewport
+   and topmost, so it covers the WebGL canvas, the content, the
+   navigation and the footer as one unbroken photographic surface.
+   The in-canvas postprocess grain and the three region-scoped
+   grain canvases were reconciled OUT (see particle-scene.ts and
+   hero/GrainOverlay.tsx): a page-wide field plus a region field
+   is two grain densities with a visible seam between them, and
+   that seam is what made the hero read as textured and the body
+   read as flat.
+   ============================================================ */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: soft-light;
+  /* THE tokenized intensity. One value, site-wide, nothing local.
+     soft-light against the near-black ground swings the shadows
+     hard (0.043 -> 0.002..0.207 at full strength) while barely
+     touching the highlights, which is how film behaves; the source
+     is fully desaturated, so the pass modulates luminance and
+     introduces no hue at any strength.
+     Tunable range 0.08 - 0.20. Above that, re-run the contrast
+     check on --text-3 over --bg-card before shipping. */
+  opacity: var(--grain-opacity);
+  /* See --grain-opacity: soft-light has zero range against a black backdrop.
+     `screen` only ever adds light, which is what puts the grain in the shadows
+     where film grain belongs and leaves the highlights and body copy alone.
+     The source is fully desaturated, so this still modulates luminance only and
+     introduces no hue. */
+  mix-blend-mode: screen;
   overflow: hidden; /* clips the oversized inner layer as it shifts */
 }
 
@@ -740,12 +832,32 @@ a, button {
    as a cycle. */
 .grain-overlay__layer {
   position: absolute;
-  inset: -180px;
+  /* Inset far enough that the shift below can never expose an edge. Kept to
+     ~1.4x viewport area rather than the 2x an oversized layer would cost — a
+     blended full-viewport layer is the one real compositing expense here. */
+  inset: calc(var(--grain-tile) * -0.6);
   background-repeat: repeat;
-  background-size: 160px 160px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: var(--grain-tile) var(--grain-tile);
+  /* Resolution-independent by construction: feTurbulence is rasterised at the
+     DEVICE scale factor, so one noise cell occupies --grain-cell CSS pixels at
+     DPR 1, 2 and 3 alike. baseFrequency is 213/320 = 0.665625, which is both
+     an exact integer number of periods across the tile (so stitchTiles seams
+     perfectly) and a 1.502 CSS-pixel cell — inside the 1.5-2.0 calibration law
+     this site already runs (GRAIN_SIZE_CSS_PX, src/lib/motion.ts). Changing the
+     tile means recomputing the frequency; they are one number, not two.
+     feColorMatrix saturate=0 is what guarantees a hue-free source. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.665625' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* The one permanently promoted layer on the site. Everything else releases
+     will-change on completion (see hover.css). */
   will-change: transform;
-  animation: grain-shift 1.05s steps(1, end) infinite;
+  /* 8 offsets over 0.32s = 25 Hz — inside the 24-30 Hz film band.
+     TIME-based, not frame-based: a CSS animation resolves identically on a
+     60Hz and a 120Hz panel, where a per-frame JS reseed strobes on one and
+     crawls on the other. Stepped rather than tweened, so the field jumps to a
+     new seed instead of sliding — a slide reads as a moving texture, a jump
+     reads as film. The offsets are irregular so the 8-frame loop is not
+     perceptible as a cycle. */
+  animation: grain-shift 0.32s steps(1, end) infinite;
 }
 
 @keyframes grain-shift {
@@ -759,8 +871,23 @@ a, button {
   87.5%  { transform: translate3d(-62px, 47px, 0); }
 }
 
-/* Grain is a permanent brand texture, but it is still a non-essential
-   animation — hold a single static field when reduced motion is asked for. */
+/* ---- Grain tiering ----------------------------------------------------
+   Grain is NEVER removed — a page without it does not match its siblings and
+   a missing texture reads as a rendering fault. Degradation stops the
+   animation and, one further step down, thins the field. The texture always
+   remains. Set from src/lib/grain.ts: the device floor at mount, escalated by
+   the particle engine's frame-budget ladder. */
+:root[data-grain="static"] .grain-overlay__layer,
+:root[data-grain="dim"] .grain-overlay__layer {
+  animation: none;
+}
+
+:root[data-grain="dim"] .grain-overlay {
+  opacity: var(--grain-opacity-dim);
+}
+
+/* Reduced motion: a static field at FULL intensity. The page must read as a
+   deliberately still design, never as an animation that failed to start. */
 @media (prefers-reduced-motion: reduce) {
   .grain-overlay__layer {
     animation: none;

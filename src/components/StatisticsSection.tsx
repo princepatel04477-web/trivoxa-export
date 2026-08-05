@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FC } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { DURATION, EASE, SCRUB, STAGGER_CHAR } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { TitleChars } from "@/lib/split-text";
 
@@ -78,6 +79,7 @@ export default function StatisticsSection() {
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: ".hp-sec-3 .statistics",
+        invalidateOnRefresh: true,
         onEnter: () => {
           if (!triggered.current) {
             triggered.current = true;
@@ -89,19 +91,39 @@ export default function StatisticsSection() {
       gsap.fromTo(
         ".hp-sec-3 h2",
         { scale: 0.94 },
-        { scale: 1, duration: 2.4, ease: "power3.out", scrollTrigger: { trigger: ".hp-sec-3 .statistics" } }
+        {
+          scale: 1,
+          duration: DURATION.long,
+          ease: EASE.entry,
+          scrollTrigger: { trigger: ".hp-sec-3 .statistics", invalidateOnRefresh: true },
+        }
       );
       gsap.fromTo(
         ".hp-sec-3 .word_inner",
         { opacity: 0, filter: "blur(6px)" },
-        { opacity: 1, filter: "blur(0px)", stagger: 0.04, scrollTrigger: { trigger: ".hp-sec-3 .statistics" } }
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: DURATION.standard,
+          ease: EASE.entry,
+          stagger: STAGGER_CHAR,
+          scrollTrigger: { trigger: ".hp-sec-3 .statistics", invalidateOnRefresh: true },
+        }
       );
 
       if (window.innerWidth > 767) {
         gsap.fromTo(
           ".hp-sec-3 .left-text-wrapper .left-text .top",
           { x: 80 },
-          { x: 0, scrollTrigger: { trigger: ".hp-sec-3 .statistics", scrub: true } }
+          {
+            x: 0,
+            ease: EASE.scrub,
+            scrollTrigger: {
+              trigger: ".hp-sec-3 .statistics",
+              scrub: SCRUB,
+              invalidateOnRefresh: true,
+            },
+          }
         );
       }
 

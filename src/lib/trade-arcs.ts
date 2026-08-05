@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 import { latLonToVec3, latLonToFlatVec3 } from "./geo-sphere";
 import { canvasFont, tokenColor } from "./design-tokens";
 import { TRADE_CITIES, tradeDestinations, tradeOrigin, type TradeCity } from "@/data/trade-cities";
@@ -426,7 +427,14 @@ export class TradeArcs {
       node.group.scale.setScalar(node.city.origin ? 1 : 0.01);
       if (node.city.origin) return;
       this.tweens.push(
-        gsap.to(node.group.scale, { x: 1, y: 1, z: 1, duration: 0.5, delay: i * 0.04, ease: "back.out(2)" })
+        gsap.to(node.group.scale, {
+          x: 1,
+          y: 1,
+          z: 1,
+          duration: DURATION.short,
+          delay: i * STAGGER,
+          ease: EASE.entry,
+        })
       );
     });
   }
@@ -445,11 +453,11 @@ export class TradeArcs {
     this.tweens.push(
       gsap.to(
         this.arcs.map((a) => a.lineMaterial),
-        { opacity: 0, duration: 0.4, onComplete: () => (group.visible = false) }
+        { opacity: 0, duration: DURATION.short, ease: EASE.exit, onComplete: () => (group.visible = false) }
       )
     );
-    this.arcs.forEach((a) => this.tweens.push(gsap.to(a.packetMaterial, { opacity: 0, duration: 0.3 })));
-    this.nodes.forEach((n) => this.tweens.push(gsap.to(n.labelMaterial, { opacity: 0, duration: 0.3 })));
+    this.arcs.forEach((a) => this.tweens.push(gsap.to(a.packetMaterial, { opacity: 0, duration: DURATION.short, ease: EASE.exit })));
+    this.nodes.forEach((n) => this.tweens.push(gsap.to(n.labelMaterial, { opacity: 0, duration: DURATION.short, ease: EASE.exit })));
   }
 
   /** Is this node's label shown at the current tier? */

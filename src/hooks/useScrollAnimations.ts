@@ -1,9 +1,16 @@
 "use client";
 
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 
-/** Signature reveal ease — matches --ease-out (cubic-bezier(0.16, 1, 0.3, 1)). */
-export const REVEAL_EASE = "expo.out";
+/**
+ * Signature reveal ease.
+ *
+ * Now the shared entry curve — cubic-bezier(0.5, 1, 0.89, 1) — registered once
+ * in lib/motion.ts and identical to the CSS custom property, rather than an
+ * approximation of it by a named GSAP easing.
+ */
+export const REVEAL_EASE = EASE.entry;
 
 /**
  * Drops the data-reveal-* attribute and the GSAP-set inline styles once a reveal
@@ -42,10 +49,10 @@ export function revealHeadings(scope: Element, selector = "[data-reveal-heading]
       {
         clipPath: "inset(0 0 0% 0)",
         // Task 5 — establishment motion discipline: slower, ease-out, restrained.
-        duration: 0.8,
+        duration: DURATION.standard,
         ease: REVEAL_EASE,
         onComplete: () => releaseReveal(el, "data-reveal-heading"),
-        scrollTrigger: { trigger: el, start: "top 80%" },
+        scrollTrigger: { trigger: el, start: "top 80%", invalidateOnRefresh: true },
       }
     );
   });
@@ -66,11 +73,11 @@ export function revealBody(scope: Element, selector = "[data-reveal-body]") {
       y: 0,
       opacity: 1,
       // Task 5 — 22px travel (within 16-24px), slower, gentle ease-out.
-      duration: 0.7,
-      ease: "power2.out",
-      stagger: 0.06,
+      duration: DURATION.standard,
+      ease: EASE.entry,
+      stagger: STAGGER,
       onComplete: () => els.forEach((el) => releaseReveal(el, "data-reveal-body")),
-      scrollTrigger: { trigger: els[0], start: "top 80%" },
+      scrollTrigger: { trigger: els[0], start: "top 80%", invalidateOnRefresh: true },
     }
   );
 }
@@ -89,10 +96,10 @@ export function revealImages(scope: Element, selector = "[data-reveal-image]") {
         scale: 1,
         opacity: 1,
         // Task 5 — restrained: 4% zoom instead of 8%, 0.8s instead of 1.2s.
-        duration: 0.8,
+        duration: DURATION.standard,
         ease: REVEAL_EASE,
         onComplete: () => releaseReveal(el, "data-reveal-image"),
-        scrollTrigger: { trigger: el, start: "top 80%" },
+        scrollTrigger: { trigger: el, start: "top 80%", invalidateOnRefresh: true },
       }
     );
   });

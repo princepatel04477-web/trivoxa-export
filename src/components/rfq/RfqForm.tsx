@@ -20,6 +20,7 @@ import {
   rfqTermsSchema,
 } from "@/lib/validation/rfq";
 import LazyCrane from "@/components/LazyCrane";
+import { BEZIER, DURATION } from "@/lib/motion";
 
 /** Which conversation the visitor wants to have (spec §4 — RFQ paths). */
 type RfqPath = "product" | "service" | "partnership" | "career" | "audit";
@@ -312,7 +313,7 @@ export default function RfqForm() {
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -24 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: DURATION.short, ease: BEZIER.entry }}
         >
           {step === 0 && (
             <div className="rfq-grid">

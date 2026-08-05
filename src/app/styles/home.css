@@ -78,9 +78,9 @@
   font-size: 15px;
   letter-spacing: 0.3px;
   cursor: pointer;
-  transition: background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-    border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-    color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.3s ease;
+  transition: background var(--dur-base) var(--ease-entry),
+    border-color var(--dur-base) var(--ease-entry),
+    color var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .btn-gold {
@@ -93,7 +93,6 @@
 .btn-gold:hover {
   background: transparent;
   color: var(--advida-accent, var(--gold));
-  transform: translateY(-2px);
 }
 
 .btn-ghost {
@@ -106,7 +105,6 @@
   border-color: var(--advida-accent, var(--gold));
   color: var(--advida-accent, var(--gold));
   background: color-mix(in srgb, var(--gold) 6%, transparent);
-  transform: translateY(-1px);
 }
 
 /* ---------- About Preview ---------- */
@@ -241,12 +239,11 @@
   overflow: hidden;
   background: color-mix(in srgb, var(--bg-card) 55%, transparent);
   backdrop-filter: blur(6px);
-  transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
-    border-color 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform var(--dur-base) var(--ease-entry),
+    border-color var(--dur-base) var(--ease-entry);
 }
 
 .article-card:hover {
-  transform: translateY(-6px);
   border-color: color-mix(in srgb, var(--gold) 50%, transparent);
 }
 
@@ -298,7 +295,7 @@
   gap: 10px;
   font-size: 14px;
   color: color-mix(in srgb, var(--text) 75%, transparent);
-  transition: gap 0.3s ease, color 0.3s ease;
+  transition: gap var(--dur-base) var(--ease-entry), color var(--dur-base) var(--ease-entry);
 }
 
 .article-card:hover .read {
@@ -325,12 +322,11 @@
   border-radius: 14px;
   padding: 26px 24px;
   background: color-mix(in srgb, var(--bg-card) 50%, transparent);
-  transition: border-color 0.4s ease, transform 0.4s ease;
+  transition: border-color var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .hp-careers .highlight:hover {
   border-color: color-mix(in srgb, var(--gold) 45%, transparent);
-  transform: translateY(-4px);
 }
 
 .hp-careers .highlight .dot {
@@ -451,12 +447,11 @@
   border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg) 40%, transparent);
-  transition: border-color 0.4s var(--ease-out, ease),
-    transform 0.3s var(--ease-out, ease);
+  transition: border-color var(--dur-base) var(--ease-entry),
+    transform var(--dur-base) var(--ease-entry);
 }
 .hp-trust .trust-card:hover {
   border-color: var(--advida-accent, var(--gold));
-  transform: translateY(-3px);
 }
 .hp-trust .trust-card__title {
   font-family: var(--font-display);

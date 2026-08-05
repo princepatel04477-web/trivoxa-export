@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { SCRUB } from "@/lib/motion";
 
 export interface ProcessStep {
   title: string;
@@ -42,7 +43,8 @@ export default function ProcessLoader({ steps }: { steps: ProcessStep[] }) {
           trigger: root,
           start: "top 75%",
           end: "bottom 60%",
-          scrub: 0.5,
+          scrub: SCRUB,
+          invalidateOnRefresh: true,
           onUpdate: (self) => setActive(self.progress),
         });
         return () => st.kill();

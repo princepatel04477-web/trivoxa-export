@@ -104,20 +104,30 @@ section {
   z-index: 1;
 }
 
-/* Refined button underline with premium easing */
+/* Refined button underline with premium easing.
+
+   Built on scaleX rather than width: the two are visually identical here (a
+   1px rule growing left to right at the same duration and curve), but width is
+   a layout-triggering property and animating it forces a layout pass on every
+   frame of the hover — on a page that is also scrubbing a WebGL morph, that is
+   frames spent for nothing. See src/app/styles/hover.css for the shared
+   primitive this shape belongs to. */
 .primary-button::before {
   content: "";
   position: absolute;
-  width: 0;
+  width: 100%;
   height: 1px;
   background-color: var(--advida-accent, var(--gold));
   bottom: -5px;
   left: 0;
-  transition: width 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-fast) var(--ease-entry);
 }
 
 .primary-button:hover::before {
-  width: 100%;
+  transform: scaleX(1);
+  transition-duration: var(--dur-base);
 }
 
 /* ---------- Crane animation component (spec §2) ---------- */
@@ -216,11 +226,10 @@ section {
   border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
   color: var(--gold-bright, var(--gold));
   box-shadow: 0 10px 30px rgba(4, 9, 20, 0.5);
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: transform var(--dur-base) var(--ease-entry), border-color var(--dur-base) var(--ease-entry);
 }
 
 .wa-fab:hover {
-  transform: translateY(-2px);
   border-color: var(--gold);
 }
 
@@ -243,9 +252,9 @@ section {
 
 /* Subtle card interaction lift */
 .card-lift {
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform var(--dur-base) var(--ease-entry),
+              border-color var(--dur-base) var(--ease-entry),
+              box-shadow var(--dur-base) var(--ease-entry);
 }
 
 /* Gold accent dot separator */
@@ -257,10 +266,22 @@ section {
   opacity: 0.6;
 }
 
-/* Section divider line — subtle gold line between major sections */
+/* Section divider line — subtle gold line between major sections.
+ *
+ * The divider now also carries the page's vertical RHYTHM. Previously sections
+ * butted against a bare 1px rule and the page read as a stack of blocks with no
+ * air; the reference paces itself by leaving roughly half a viewport of nothing
+ * between beats, which is what lets each section arrive as its own moment
+ * instead of as the next row. Margin lives here rather than on every section so
+ * there is one number to tune, and so sections keep their own internal padding.
+ *
+ * Uses vh, deliberately: the gap should scale with the reader's viewport, not
+ * with their font size — the point is "a beat of empty screen".
+ */
 .section-divider {
   width: 100%;
   height: 1px;
+  margin-block: clamp(64px, 18vh, 200px);
   background: linear-gradient(
     90deg,
     transparent 0%,
@@ -269,6 +290,14 @@ section {
     color-mix(in srgb, var(--gold) 15%, transparent) 80%,
     transparent 100%
   );
+}
+
+/* On short/handheld viewports the same vh figure eats the screen — a reader on
+   a phone would scroll through more emptiness than content. */
+@media (max-width: 767px) {
+  .section-divider {
+    margin-block: clamp(40px, 8vh, 72px);
+  }
 }
 
 /* Headings resolve through the single establishment type scale (globals.css
@@ -350,11 +379,10 @@ ul {
 /* Primary button used across the site */
 .primary-button {
   position: relative;
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 .primary-button:hover {
-  transform: translateY(-1px);
 }
 
 .primary-button a {
@@ -366,7 +394,7 @@ ul {
   font-weight: 300;
   font-size: 16px;
   line-height: 21px;
-  transition: transform 0.3s;
+  transition: transform var(--dur-base);
 }
 
 .primary-button .img {
@@ -381,8 +409,8 @@ ul {
   padding: 16px 42px;
   border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
   border-radius: 40px;
-  transition: border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: border-color var(--dur-base) var(--ease-entry),
+              background var(--dur-base) var(--ease-entry);
 }
 
 .primary-button.style-2:hover a {
@@ -397,7 +425,7 @@ ul {
 .primary-button.style-2 .arrow {
   margin-left: 24px;
   display: flex;
-  transition: transform 0.3s ease;
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 .primary-button.style-2:hover .arrow {

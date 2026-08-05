@@ -14,7 +14,15 @@
  * pointer coarseness, so a device keeps its class when it is rotated.
  */
 
-export type DeviceClass = "mobile" | "tablet" | "desktop";
+import {
+  CHROME_HEIGHT_TOLERANCE_PX,
+  DPR_CEILING,
+  DPR_CEILING_WEBKIT,
+  REFIT_DEBOUNCE_MS,
+  type DeviceTier,
+} from "@/lib/motion";
+
+export type DeviceClass = DeviceTier;
 
 /** Breakpoint ladder rungs, in px. See §3.1 of the mobile directive. */
 export const BREAKPOINT = {
@@ -27,20 +35,6 @@ export const BREAKPOINT = {
   /** 768–1023 — tablet portrait */
   lg: 1024,
 } as const;
-
-/**
- * DPR ceilings per class.
- *
- * Uncapped DPR was the single largest cost in the mobile profile: a DPR-3
- * handset renders 9× the fragments of a DPR-1 one for a difference no eye can
- * resolve on a 6" panel. 1.5 is the point past which additional device pixels
- * stop buying perceptible sharpness on a hand-held display.
- */
-const MAX_DPR: Record<DeviceClass, number> = {
-  mobile: 1.5,
-  tablet: 1.75,
-  desktop: 2,
-};
 
 let cached: DeviceClass | null = null;
 
@@ -94,11 +88,27 @@ export function isMobileDevice(): boolean {
   return deviceClass() === "mobile";
 }
 
-/** The DPR ceiling for this device, already intersected with its real DPR. */
+/**
+ * The DPR ceiling for this device, from the shared motion config.
+ *
+ * WebKit on Apple hardware takes the lower ceiling where one is declared — it is
+ * the renderer family with the least fill-rate headroom at a given nominal tier.
+ */
+export function dprCeiling(): number {
+  const tier = deviceClass();
+  if (isAppleWebKit()) return DPR_CEILING_WEBKIT[tier] ?? DPR_CEILING[tier];
+  return DPR_CEILING[tier];
+}
+
+/**
+ * THE pixel-ratio authority. One function, consumed by every canvas on every
+ * route — no surface reads `window.devicePixelRatio` itself, which is how the
+ * site previously ended up with four ratio policies that disagreed.
+ */
 export function pixelRatio(scale = 1): number {
   if (typeof window === "undefined") return 1;
   const dpr = window.devicePixelRatio || 1;
-  return Math.min(dpr, MAX_DPR[deviceClass()]) * scale;
+  return Math.min(dpr, dprCeiling()) * scale;
 }
 
 /** Applies the clamped ratio to a THREE.WebGLRenderer-shaped object. */
@@ -109,6 +119,106 @@ export function clampPixelRatio(
   const ratio = pixelRatio(scale);
   renderer.setPixelRatio(ratio);
   return ratio;
+}
+
+/**
+ * The backing store for a canvas of `cssWidth` × `cssHeight` at the clamped
+ * ratio, rounded to integers.
+ *
+ * Rounding is not cosmetic. Subpixel accumulation across repeated re-fits is
+ * what drifts a nominally 2.0× backing store to 2.2× after a layout change — a
+ * silently different render target that changes grain character and sharpness
+ * without changing anything visible about the layout.
+ */
+export function backingStore(cssWidth: number, cssHeight: number, scale = 1) {
+  const ratio = pixelRatio(scale);
+  return {
+    ratio,
+    width: Math.round(cssWidth * ratio),
+    height: Math.round(cssHeight * ratio),
+  };
+}
+
+/**
+ * Development-only invariant. Any inequality is a failure, not a rounding
+ * tolerance — if this fires, some path is sizing the canvas outside the single
+ * authority above.
+ */
+export function assertBackingStore(
+  canvas: HTMLCanvasElement,
+  cssWidth: number,
+  cssHeight: number,
+  ratio: number,
+  label: string
+): void {
+  if (process.env.NODE_ENV === "production") return;
+  const w = Math.round(cssWidth * ratio);
+  const h = Math.round(cssHeight * ratio);
+  if (canvas.width !== w || canvas.height !== h) {
+    console.error(
+      `[${label}] backing-store assertion failed: ` +
+        `have ${canvas.width}×${canvas.height}, want ${w}×${h} ` +
+        `(css ${cssWidth}×${cssHeight} @ ${ratio})`
+    );
+  }
+}
+
+/**
+ * Drives a re-fit from a `ResizeObserver` on the canvas's own container.
+ *
+ * NOT from `window.resize`: that fires on every mobile URL-bar movement (which
+ * is chrome, not a resize) and does NOT fire on a container-only layout change
+ * (which is a resize). Both are wrong in the direction that matters.
+ *
+ * Debounced at REFIT_DEBOUNCE_MS, but `orientationchange` re-fits immediately
+ * and unconditionally — a rotation must not wait out a debounce mid-morph.
+ *
+ * Height-only deltas below CHROME_HEIGHT_TOLERANCE_PX are suppressed ONLY on a
+ * coarse pointer. On a fine pointer every height change is a genuine window
+ * drag and must be honoured.
+ */
+export function observeContainerResize(
+  container: Element,
+  refit: () => void
+): () => void {
+  let timer = 0;
+  let lastW = 0;
+  let lastH = 0;
+  const coarse = isTouchPrimary();
+
+  const run = () => {
+    timer = 0;
+    const rect = container.getBoundingClientRect();
+    lastW = rect.width;
+    lastH = rect.height;
+    refit();
+  };
+
+  const schedule = () => {
+    const rect = container.getBoundingClientRect();
+    const dw = Math.abs(rect.width - lastW);
+    const dh = Math.abs(rect.height - lastH);
+    // URL-bar chrome on a handset: height moved a little, width did not move at
+    // all. Anything else — including any width change — is a real resize.
+    if (coarse && dw < 1 && dh < CHROME_HEIGHT_TOLERANCE_PX) return;
+    if (timer) window.clearTimeout(timer);
+    timer = window.setTimeout(run, REFIT_DEBOUNCE_MS);
+  };
+
+  const immediate = () => {
+    if (timer) window.clearTimeout(timer);
+    run();
+  };
+
+  const observer = new ResizeObserver(schedule);
+  observer.observe(container);
+  window.addEventListener("orientationchange", immediate);
+
+  return () => {
+    if (timer) window.clearTimeout(timer);
+    observer.disconnect();
+    window.removeEventListener("orientationchange", immediate);
+  };
 }
 
 /** `prefers-reduced-motion: reduce`, read synchronously. */

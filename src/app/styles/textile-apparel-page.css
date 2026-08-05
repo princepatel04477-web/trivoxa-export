@@ -30,7 +30,7 @@
   background:
     radial-gradient(120% 120% at var(--tvx-glow-x, 30%) var(--tvx-glow-y, 20%), color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 62%),
     linear-gradient(165deg, var(--color-paper-2), var(--color-paper));
-  transition: background 0.5s ease;
+  transition: background var(--dur-base) var(--ease-entry);
 }
 
 .tvx-lookbook-row--reverse .tvx-lookbook-row__content {
@@ -92,14 +92,14 @@
   text-decoration: underline;
   text-decoration-color: transparent;
   text-underline-offset: 5px;
-  transition: color 0.3s ease, text-decoration-color 0.3s ease;
+  transition: color var(--dur-base) var(--ease-entry), text-decoration-color var(--dur-base) var(--ease-entry);
 }
 
 .tvx-lookbook-row__link::after {
   content: "\2192";
   display: inline-block;
   margin-left: 0.4em;
-  transition: transform 0.3s ease;
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 .tvx-lookbook-row:hover .tvx-lookbook-row__link {

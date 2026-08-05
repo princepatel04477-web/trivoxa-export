@@ -16,6 +16,7 @@
  * remount reuses the buffer instead of re-decoding.
  */
 
+import { SHAPE_SPECTRUM } from "./palettes";
 import type { Shape, ShapeContext } from "./types";
 
 /** The homepage brand mark. */
@@ -42,7 +43,7 @@ export function buildEagleStage(ctx: ShapeContext): Promise<Shape> {
   let pending = cache.get(key);
   if (!pending) {
     pending = sampleAlphaMask(EAGLE_ASSET, "eagle", EAGLE_WIDTH * ctx.S, ctx.count).then(
-      (shape) => ({ ...shape, drift: ctx.R * EAGLE_DRIFT })
+      (shape) => ({ ...shape, drift: ctx.R * EAGLE_DRIFT, spectrum: SHAPE_SPECTRUM.logo })
     );
     cache.set(key, pending);
   }

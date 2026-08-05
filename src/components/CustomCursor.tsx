@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, PERIOD } from "@/lib/motion";
 
 const INTERACTIVE_SELECTOR = "a, button, [role='button'], input, textarea, select, [data-cursor-hover]";
 
@@ -21,10 +22,13 @@ export default function CustomCursor() {
 
       gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
 
-      const setDotX = gsap.quickTo(dot, "x", { duration: 0.1, ease: "power2.out" });
-      const setDotY = gsap.quickTo(dot, "y", { duration: 0.1, ease: "power2.out" });
-      const setRingX = gsap.quickTo(ring, "x", { duration: 0.35, ease: "power2.out" });
-      const setRingY = gsap.quickTo(ring, "y", { duration: 0.35, ease: "power2.out" });
+      // PERIOD, not DURATION: these are pointer-tracking time constants — how far
+      // behind the cursor the dot and ring sit — not transition durations. Putting
+      // them on the transition ladder would detach the dot from the pointer.
+      const setDotX = gsap.quickTo(dot, "x", { duration: PERIOD.trackTight, ease: EASE.entry });
+      const setDotY = gsap.quickTo(dot, "y", { duration: PERIOD.trackTight, ease: EASE.entry });
+      const setRingX = gsap.quickTo(ring, "x", { duration: PERIOD.trackLoose, ease: EASE.entry });
+      const setRingY = gsap.quickTo(ring, "y", { duration: PERIOD.trackLoose, ease: EASE.entry });
 
       const onMove = (e: MouseEvent) => {
         setDotX(e.clientX);
@@ -36,12 +40,12 @@ export default function CustomCursor() {
 
       const onOver = (e: MouseEvent) => {
         if ((e.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) {
-          gsap.to(ring, { width: 48, height: 48, opacity: 0, duration: 0.3, ease: "power2.out" });
+          gsap.to(ring, { width: 48, height: 48, opacity: 0, duration: DURATION.short, ease: EASE.entry });
         }
       };
       const onOut = (e: MouseEvent) => {
         if ((e.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) {
-          gsap.to(ring, { width: 32, height: 32, opacity: 1, duration: 0.3, ease: "power2.out" });
+          gsap.to(ring, { width: 32, height: 32, opacity: 1, duration: DURATION.short, ease: EASE.entry });
         }
       };
       document.addEventListener("mouseover", onOver);

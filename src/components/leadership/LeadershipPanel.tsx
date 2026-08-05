@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE } from "@/lib/motion";
 import { revealBody } from "@/hooks/useScrollAnimations";
 import { Eyebrow } from "@/components/trivoxa/ui";
 
@@ -40,9 +41,13 @@ export default function LeadershipPanel({ eyebrow, name, role, email, photoSrc, 
           { clipPath: "inset(100% 0 0 0)" },
           {
             clipPath: "inset(0% 0 0 0)",
-            duration: 1.2,
-            ease: "expo.out",
-            scrollTrigger: { trigger: portraitRef.current, start: "top 85%" },
+            duration: DURATION.long,
+            ease: EASE.entry,
+            scrollTrigger: {
+              trigger: portraitRef.current,
+              start: "top 85%",
+              invalidateOnRefresh: true,
+            },
           }
         );
       }

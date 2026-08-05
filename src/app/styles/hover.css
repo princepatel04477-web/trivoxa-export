@@ -1,0 +1,253 @@
+/* ============================================================
+   THE HOVER VOCABULARY — four primitives, built once.
+
+   Every interactive element on the site resolves through one of
+   these. There are no per-element hover implementations here and
+   none should be added: a hover written at a call site is a
+   defect, because it is the thing that drifts.
+
+   Applied by src/lib/hover.ts, which tags elements with
+   `data-hv="<primitive>"` and, on pointer enter and leave,
+   writes `--hv-ox` — the edge the pointer crossed, as a
+   percentage. Nothing here is authored per page.
+
+   TIMING IS ASYMMETRIC AND THAT IS THE POINT.
+     enter  var(--dur-base)  0.30s
+     exit   var(--dur-fast)  0.20s
+   A hover that leaves exactly as fast as it arrives reads as a
+   browser default. One that snaps back faster than it appeared
+   reads as deliberate. Both values are the site's existing two
+   durations and the shared entry curve — no local literals.
+
+   TRANSFORM AND OPACITY ONLY. The rule wipe and the surface
+   sweep are scaleX, not width; the media zoom is scale, not
+   dimensions. Nothing here can trigger layout, so nothing here
+   can cost a frame on a scrubbed page.
+   ============================================================ */
+
+/* `will-change` is applied on enter and released on completion, never left
+   standing. A permanently promoted layer per interactive element exhausts GPU
+   memory; the grain field is the one persistent promoted layer on the site. */
+[data-hv][data-hv-live]::before,
+[data-hv][data-hv-live]::after,
+[data-hv][data-hv-live] > :is(img, video, picture) {
+  will-change: transform;
+}
+
+/* Touch resolves instantly to the end state — no travel, no direction. */
+[data-hv][data-hv-instant]::before,
+[data-hv][data-hv-instant]::after,
+[data-hv][data-hv-instant] > :is(img, video, picture) {
+  transition-duration: 0s;
+}
+
+/* ---- 1. DIRECTIONAL RULE ---------------------------------------------------
+   A hairline wipes in from the edge the pointer entered and collapses out
+   through the edge it leaves. Continuity of direction is the whole effect —
+   it is what separates this from a fade, and it is why the origin is written
+   from the bounding rectangle rather than fixed.
+
+   Changing transform-origin is safe at both ends of the transition: at
+   scaleX(1) the origin is irrelevant, and at scaleX(0) there is nothing to
+   move. So neither the enter nor the leave can jump. */
+[data-hv~="rule"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.12em;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.85;
+  transform: scaleX(0);
+  transform-origin: var(--hv-ox, 0%) 50%;
+  transition: transform var(--dur-fast) var(--ease-entry);
+  pointer-events: none;
+}
+
+[data-hv~="rule"][data-hv-on]::after {
+  transform: scaleX(1);
+  transition-duration: var(--dur-base);
+}
+
+/* ---- 2. MASKED LABEL SWAP --------------------------------------------------
+   The label travels up under a mask while its duplicate rises into place from
+   exactly one line height below. For navigation and primary links.
+
+   The mask is `clip-path`, not `overflow: hidden`, and the duplicate is a
+   pseudo-element carrying `attr()`. Both choices exist for the same reason:
+   neither touches the layout box. `overflow` would establish a new formatting
+   context and a duplicate <span> would be a DOM change, and layout is locked.
+   The horizontal slack keeps italics and letter-spacing from being shaved. */
+[data-hv~="label"] {
+  /* The mask. It must NOT move — an element that carries the clip and also
+     carries the travel takes its own mask with it and nothing is ever hidden.
+     So the element stays put and both labels are pseudo-elements inside it.
+
+     The slack is not padding for its own sake. A clip cuts the focus outline
+     too, and an outline shaved flat on two sides is a worse regression than no
+     hover at all; 0.3em vertical and 0.6em horizontal clears a tokenized ring
+     while still hiding the labels, which travel one box height PLUS 0.4em so
+     they stay outside it. */
+  clip-path: inset(-0.3em -0.6em);
+  /* The real text becomes a pure layout spacer: `visibility: hidden` reserves
+     the exact box it always reserved (unlike `display` or a transform, it
+     changes no geometry at all) while the two visible labels below opt back in.
+     Colour, weight and letter-spacing still inherit normally, so every existing
+     per-page `:hover` colour rule keeps working on the pseudo-elements. The
+     accessible name is restored as an `aria-label` by src/lib/hover.ts, and the
+     primitive is only ever applied to links whose content is plain text. */
+  visibility: hidden;
+}
+
+[data-hv~="label"]::before,
+[data-hv~="label"]::after {
+  content: attr(data-hv-label);
+  visibility: visible;
+  position: absolute;
+  /* Resolves against the padding box, so the label sits exactly where the real
+     text sat and the travel distance is exactly the mask's own height. */
+  inset: 0;
+  display: flex;
+  align-items: center;
+  /* The element's own text-align, read once at tag time and written as a
+     custom property (src/lib/hover.ts). A flex container does not inherit
+     text-align, and a centred nav link whose duplicate sits left-aligned
+     jumps sideways the instant it is hovered. */
+  justify-content: var(--hv-justify, flex-start);
+  white-space: nowrap;
+  transition: transform var(--dur-fast) var(--ease-entry);
+  pointer-events: none;
+}
+
+[data-hv~="label"]::before {
+  transform: translateY(0);
+}
+
+[data-hv~="label"]::after {
+  transform: translateY(calc(100% + 0.4em));
+}
+
+[data-hv~="label"][data-hv-on]::before {
+  transform: translateY(calc(-100% - 0.4em));
+  transition-duration: var(--dur-base);
+}
+
+[data-hv~="label"][data-hv-on]::after {
+  transform: translateY(0);
+  transition-duration: var(--dur-base);
+}
+
+/* ---- 3. SURFACE SWEEP ------------------------------------------------------
+   A tokenized fill sweeps across the element from the pointer's entry edge.
+   For buttons. No scale, no shadow, no lift — the element does not move, it
+   fills.
+
+   `isolation: isolate` plus a negative z-index puts the sweep behind the
+   label but in front of the button's own background, without a wrapper and
+   without disturbing the page's stacking order. Neither property affects
+   layout. The fill is an existing token; this primitive introduces no colour. */
+[data-hv~="sweep"] {
+  isolation: isolate;
+}
+
+[data-hv~="sweep"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-accent);
+  opacity: 0.14;
+  /* Vertical, from the bottom edge — matching the reference, whose button fill
+     is a ::before travelling up to top:0 rather than across. Built on scaleY
+     rather than `top` so it stays compositor-only; theirs animates position and
+     also shifts margin/padding on hover, which moves the layout box and is the
+     one part of their treatment not worth reproducing. */
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: transform var(--dur-fast) var(--ease-entry);
+  pointer-events: none;
+}
+
+[data-hv~="sweep"][data-hv-on]::after {
+  transform: scaleY(1);
+  transition-duration: var(--dur-base);
+}
+
+/* ---- 4. MEDIA SCALE IN A FIXED FRAME ---------------------------------------
+   The media scales inside its mask. THE FRAME DOES NOT MOVE — no lift, no
+   shadow, no growth of the card. Only the picture breathes, which is the
+   difference between a card that feels photographic and one that feels like a
+   div that learned a transition.
+
+   Applied only to frames that already clip their own media, so this rule adds
+   no `overflow` and therefore cannot change how anything is laid out. */
+[data-hv~="media"] > :is(img, video, picture) {
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform var(--dur-fast) var(--ease-entry);
+}
+
+[data-hv~="media"][data-hv-on] > :is(img, video, picture) {
+  transform: scale(1.045);
+  transition-duration: var(--dur-base);
+}
+
+/* ---- Focus parity ----------------------------------------------------------
+   Keyboard focus reaches the SAME resolved appearance as hover, through the
+   non-directional variant of each primitive: there is no pointer, so there is
+   no entry edge, and a wipe from an arbitrary side would be a lie about where
+   the user came from. Focus resolves from the centre instead.
+
+   `:focus-visible` rather than `:focus`, so a mouse click on a button does not
+   leave it looking permanently focused. Existing tokenized focus rings are
+   untouched and still carry the actual focus indication — this only adds the
+   same surface treatment hover gets, so keyboard traversal reads identically. */
+[data-hv]:focus-visible {
+  --hv-ox: 50%;
+}
+
+[data-hv~="rule"]:focus-visible::after {
+  transform: scaleX(1);
+  transition-duration: var(--dur-base);
+}
+
+[data-hv~="sweep"]:focus-visible::after {
+  transform: scaleY(1);
+  transition-duration: var(--dur-base);
+}
+
+[data-hv~="label"]:focus-visible::before {
+  transform: translateY(calc(-100% - 0.4em));
+  transition-duration: var(--dur-base);
+}
+
+[data-hv~="label"]:focus-visible::after {
+  transform: translateY(0);
+  transition-duration: var(--dur-base);
+}
+
+[data-hv~="media"]:focus-visible > :is(img, video, picture) {
+  transform: scale(1.045);
+  transition-duration: var(--dur-base);
+}
+
+/* ---- Reduced motion --------------------------------------------------------
+   Hovers resolve instantly to their end state. The page must read as a
+   deliberately still design — every state still reachable, nothing travelling. */
+@media (prefers-reduced-motion: reduce) {
+  [data-hv]::before,
+  [data-hv]::after,
+  [data-hv] > :is(img, video, picture) {
+    transition-duration: 0s !important;
+  }
+}
+
+/* Decorative surfaces only — never let them interfere with a high-contrast
+   mode, where the tokenized fill and the hairline carry no meaning. */
+@media (forced-colors: active) {
+  [data-hv~="rule"]::after,
+  [data-hv~="sweep"]::after {
+    display: none;
+  }
+}

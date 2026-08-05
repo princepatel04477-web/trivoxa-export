@@ -14,7 +14,12 @@
   position: relative;
   display: flex;
   align-items: flex-end;
+  /* svh, matching every other full-bleed block on the site (see .hp-sec-1 in
+     hero.css). This panel carries a scrubbed background parallax, and a height
+     unit that moves with the address bar would re-measure that trigger on every
+     URL-bar transition. It was the last 100vh left without the svh companion. */
   min-height: 100vh;
+  min-height: 100svh;
   width: 100%;
   padding: 0 32px;
   overflow: hidden;
@@ -112,7 +117,7 @@
   color: var(--color-ink);
   text-decoration: none;
   border-bottom: 1px solid var(--color-rule);
-  transition: color 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+  transition: color var(--dur-base) var(--ease-entry), border-color var(--dur-base) var(--ease-entry);
 }
 
 .arm-panel__link:hover {
@@ -172,7 +177,7 @@
   flex: 0 0 clamp(300px, 32vw, 440px);
   padding: 0 var(--space-lg) 0 0;
   opacity: 0.4;
-  transition: opacity 0.35s ease;
+  transition: opacity var(--dur-base) var(--ease-entry);
 }
 
 /* hairline connector between nodes */
@@ -198,7 +203,7 @@
   height: 11px;
   border-radius: 50%;
   background: var(--color-accent);
-  transition: transform 0.35s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 .h-timeline__num {
@@ -215,7 +220,7 @@
   font-family: var(--font-display);
   font-size: 2rem;
   letter-spacing: -0.01em;
-  transition: color 0.35s ease;
+  transition: color var(--dur-base) var(--ease-entry);
 }
 
 .h-timeline__desc {

@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { openings, type JobOpening } from "@/lib/data/openings";
 import { CONTACT, mailto } from "@/data/contact";
 import EmptyState from "@/components/EmptyState";
+import { BEZIER, DURATION } from "@/lib/motion";
 
 function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void }) {
   const t = useTranslations("careers.jobBoard");
@@ -18,7 +19,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: DURATION.short, ease: BEZIER.entry }}
             onClick={onClose}
           />
           <motion.div
@@ -26,7 +27,7 @@ function Drawer({ job, onClose }: { job: JobOpening | null; onClose: () => void 
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: DURATION.short, ease: BEZIER.entry }}
             role="dialog"
             aria-modal="true"
             aria-label={`${job.title} — full role description`}

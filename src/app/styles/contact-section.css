@@ -107,8 +107,8 @@
   font-weight: 300;
   margin-bottom: 14px;
   outline: none;
-  transition: border-color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
-              background 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: border-color var(--dur-base) var(--ease-entry),
+              background var(--dur-base) var(--ease-entry);
 }
 
 .contact-form .form-field input::placeholder,
@@ -139,9 +139,9 @@
   font-weight: 400;
   cursor: pointer;
   letter-spacing: 0.02em;
-  transition: border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: border-color var(--dur-base) var(--ease-entry),
+              background var(--dur-base) var(--ease-entry),
+              color var(--dur-base) var(--ease-entry);
 }
 
 .contact-form .form-submit:hover {

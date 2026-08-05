@@ -19,7 +19,7 @@
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
+  transition: background-color var(--dur-base) var(--ease-entry), border-color var(--dur-base) var(--ease-entry);
 }
 
 .capability-row::before {
@@ -33,7 +33,7 @@
   opacity: 0;
   transform: scaleY(0.4);
   transform-origin: center;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .capability-row:hover {
@@ -52,7 +52,7 @@
   color: var(--color-accent);
   opacity: 0.55;
   padding-top: 0.2rem;
-  transition: opacity 0.35s ease;
+  transition: opacity var(--dur-base) var(--ease-entry);
 }
 
 .capability-row:hover .capability-row__index {
@@ -72,7 +72,7 @@
 .capability-row__reveal {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s ease;
+  transition: grid-template-rows var(--dur-base) var(--ease-entry);
 }
 
 .capability-row:hover .capability-row__reveal,
@@ -170,7 +170,7 @@
    rail fades out rather than cutting, so the handover is not a flash. */
 .delivery-model__rail {
   opacity: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity var(--dur-base) var(--ease-entry);
 }
 
 .delivery-model.is-live .delivery-model__rail {

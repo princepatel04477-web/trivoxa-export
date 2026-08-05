@@ -1,189 +1,230 @@
 /* Flagship non-card homepage sections: Industries manifest, Business Arms panels,
    Global Presence ticker+map, Values hover list, Insights magazine. */
 
-/* ---------- Industries — horizontal-scroll folio (pinned) ---------- */
-.industries-folio {
-  /* Flex column: head sits in normal flow, track fills what's left. This is
-     what guarantees the head can never overlap the panels below it, at any
-     viewport height or font-size — no absolute-position offset to tune. */
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  /* svh: this section PINS. A pin measures its height once and holds the
-     document open by that amount, so a unit that changes when the address bar
-     moves would desynchronise the pin from the scroll it is driven by. svh is
-     the one full-viewport unit that never changes. */
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-  background: var(--color-paper);
+/* ---------- Industries — sticky index, scroll-driven ---------- */
+/* Replaced a pinned horizontal carousel. Nothing here pins or hijacks scroll:
+   the rail is position:sticky, the panels are ordinary flow content, and the
+   active row is set by whichever panel is crossing the reading line. */
+.industries-index {
+  padding: clamp(72px, 9vw, 132px) 0;
 }
-.industries-folio__head {
-  /* Was position:absolute over the track — that's the overlap bug. Normal
-     flow + flex-shrink:0 reserves real space for it instead. */
-  flex-shrink: 0;
-  /* Clear the fixed navbar (~127px incl. its scrim): the section pins at
-     top:top, so the head sits at viewport top and would otherwise collide with
-     the logo/nav. Trimmed from 160-200px so the panel below gets more of the
-     viewport (the head was eating ~280px of a 900px screen). */
-  padding-top: clamp(120px, 15vh, 152px);
-  padding-bottom: var(--space-sm);
+.industries-index__head {
+  margin-bottom: clamp(40px, 5vw, 72px);
 }
-.industries-folio__eyebrow,
-.industries-folio__title {
-  display: block;
+.industries-index__eyebrow,
+.industries-index__title {
   opacity: 0;
   transform: translateY(24px);
 }
-.industries-folio__eyebrow {
-  font-family: var(--font-mono);
-  font-size: clamp(0.7rem, 0.6vw + 0.55rem, 0.85rem);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-}
-.industries-folio__title {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 1.5vw + 1.15rem, 2.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-top: var(--space-xs);
-  max-width: 40ch;
-}
-.industries-folio__track {
-  display: flex;
-  /* flex:1 (not height:100%) — the track only ever claims the space left
-     over after the head, so panel content can't reach into head territory. */
-  flex: 1 1 auto;
-  min-height: 0;
-  width: max-content;
-  will-change: transform;
-}
-.industries-folio__panel {
-  position: relative;
-  /* Flex row: text block and image are two items centered on the SAME vertical
-     line, so they always share alignment regardless of how tall either is.
-     (Was a grid whose auto rows let the image drift out of line with the text.) */
-  display: flex;
-  align-items: center;
-  /* Keep the text + image as a centered pair with a bounded gap. Earlier
-     `space-between` flung them to opposite edges of the 100vw panel, which on
-     wide screens (>1600px) opened a 600px+ dead zone in the middle and pushed
-     the photo off toward the panel boundary. */
-  justify-content: center;
-  column-gap: clamp(var(--space-lg), 4vw, 5.5rem);
-  width: 100vw;
-  height: 100%;
-  flex-shrink: 0;
-  padding: 0 clamp(var(--space-lg), 5vw, var(--space-3xl));
-}
-.industries-folio__text {
-  flex: 0 1 auto;
-  min-width: 0;
-  max-width: 46ch;
-}
-.industries-folio__index {
+.industries-index__eyebrow {
   display: block;
-  font-family: var(--font-mono);
-  font-size: clamp(1rem, 0.3vw + 0.95rem, 1.25rem);
-  color: var(--color-accent);
-  opacity: 0.6;
-}
-.industries-folio__name {
-  min-width: 0;
-  overflow-wrap: break-word;
-  font-family: var(--font-display);
-  /* Lowered ceiling from 8rem: at 8rem the longest names ("Healthcare &
-     Pharmaceuticals") wrapped to 4 lines and blew past the panel height.
-     Capped so even that name stays to 2 lines within the text column. */
-  font-size: clamp(1.9rem, 3.6vw + 0.9rem, 4rem);
-  line-height: 1.04;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
-  margin-top: var(--space-sm);
+  color: var(--gold, #c9a227);
+  margin-bottom: var(--space-sm, 12px);
 }
-.industries-folio__desc {
-  min-width: 0;
-  margin-top: var(--space-sm);
-  max-width: 40ch;
-  font-size: clamp(0.85rem, 0.2vw + 0.8rem, 1rem);
-  line-height: 1.6;
-  color: var(--color-ink-2);
+.industries-index__title {
+  font-size: clamp(2rem, 4.4vw + 0.5rem, 3.75rem);
+  line-height: 1.05;
+  margin: 0;
 }
-.industries-folio__image {
-  /* Scaled down and locked to a fixed aspect box so it reads as a framed
-     photo beside the text, not a full-height panel. flex:0 0 auto keeps it
-     from stretching; align-items:center on the panel keeps it in line. */
+
+/* Two columns: sticky rail, then the scrolling panels. */
+.industries-index__body {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: clamp(32px, 5vw, 88px);
+  align-items: start;
+}
+
+/* ---- Sticky rail ---- */
+.industries-index__rail {
+  position: sticky;
+  /* Clears the fixed header; the rail parks just under it. */
+  top: clamp(96px, 14vh, 160px);
+}
+.industries-index__list {
+  list-style: none;
+  margin: 0 0 var(--space-lg, 24px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.industries-index__item button {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: color-mix(in oklab, currentColor 42%, transparent);
+  /* Travels right as it becomes active — continuity of direction, same rule the
+     rest of the site's hover states follow. */
+  transform: translateX(0);
+  transition:
+    color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.industries-index__item.is-active button {
+  color: currentColor;
+  transform: translateX(6px);
+}
+.industries-index__num {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  opacity: 0.7;
   flex: 0 0 auto;
-  width: min(50%, 40rem);
-  aspect-ratio: 4 / 3;
-  height: auto;
-  max-height: 72vh;
-  border-radius: 6px;
+}
+.industries-index__label {
+  font-size: 0.95rem;
+  line-height: 1.3;
+  position: relative;
+}
+/* Underline grows from the left only on the active row. */
+.industries-index__label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: var(--gold, #c9a227);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.industries-index__item.is-active .industries-index__label::after {
+  transform: scaleX(1);
+}
+.industries-index__count {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  opacity: 0.5;
+}
+
+/* ---- Panels ---- */
+.industries-index__panels {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(56px, 8vw, 120px);
+}
+.industries-index__panel {
+  display: grid;
+  grid-template-columns: 1fr minmax(220px, 42%);
+  gap: clamp(24px, 3.5vw, 56px);
+  align-items: center;
+  padding-top: clamp(20px, 3vw, 36px);
+  position: relative;
+  opacity: 0.55;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.industries-index__panel.is-active {
+  opacity: 1;
+}
+.industries-index__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: color-mix(in oklab, currentColor 22%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.industries-index__index {
+  display: block;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--gold, #c9a227);
+  margin-bottom: var(--space-sm, 12px);
+}
+.industries-index__name {
+  font-size: clamp(1.5rem, 2.4vw + 0.5rem, 2.5rem);
+  line-height: 1.1;
+  margin: 0 0 var(--space-sm, 12px);
+}
+.industries-index__desc {
+  max-width: 52ch;
+  margin: 0;
+  opacity: 0.78;
+}
+.industries-index__reveal {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.industries-index__image {
   background-size: cover;
   background-position: center;
+  aspect-ratio: 4 / 3;
+  border-radius: 2px;
+  /* Desaturated until the panel is the active one, so the eye is pulled to
+     whatever the reader is actually on. */
+  filter: grayscale(1) contrast(1.05);
+  transform: scale(1.02);
+  transition:
+    filter 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.industries-folio__progress {
-  /* Anchored bottom-right of the carousel section. Given as a pill with a
-     subtle backdrop so it reads as an intentional progress marker instead of
-     text floating over the panel image. */
-  position: absolute;
-  bottom: var(--space-xl);
-  right: var(--space-2xl);
-  z-index: 3;
-  padding: 6px 13px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg) 62%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  font-family: var(--font-mono);
-  font-size: clamp(0.75rem, 0.2vw + 0.7rem, 0.85rem);
-  letter-spacing: 0.05em;
-  color: var(--color-ink-2);
+.industries-index__panel.is-active .industries-index__image {
+  filter: grayscale(0) contrast(1);
+  transform: scale(1);
 }
-/* Two routes to the same stacked layout: the mobile breakpoint, and any width
-   under reduced motion — where the pinned horizontal scrub is not created at
-   all (see IndustriesManifest.tsx), so the track must lay itself out. */
-@media (max-width: 767px), (prefers-reduced-motion: reduce) {
-  .industries-folio {
-    height: auto;
-    overflow: visible;
-    padding: var(--space-3xl) 0;
+.industries-index__viewall {
+  margin-top: clamp(48px, 6vw, 88px);
+}
+
+@media (max-width: 900px) {
+  .industries-index__body {
+    grid-template-columns: 1fr;
   }
-  .industries-folio__head {
-    padding: 0 var(--space-md);
-  }
-  .industries-folio__track {
-    flex-direction: column;
-    width: 100%;
-    transform: none !important;
-  }
-  .industries-folio__panel {
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    width: 100%;
-    height: auto;
-    padding: var(--space-lg) var(--space-md);
-    row-gap: var(--space-md);
-  }
-  .industries-folio__text {
-    flex: 0 0 auto;
-    max-width: 100%;
-  }
-  .industries-folio__name {
-    font-size: clamp(1.75rem, 6vw + 0.5rem, 2.5rem);
-  }
-  .industries-folio__image {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    max-height: none;
-  }
-  .industries-folio__progress {
+  /* The rail is a redundant duplicate of headings that are now directly
+     adjacent — drop it rather than stack two lists. */
+  .industries-index__rail {
     display: none;
   }
+  .industries-index__panel {
+    grid-template-columns: 1fr;
+    gap: var(--space-md, 16px);
+  }
+  /* Nothing to de-emphasise once panels are read one at a time. */
+  .industries-index__panel {
+    opacity: 1;
+  }
+  .industries-index__image {
+    filter: none;
+    transform: none;
+    aspect-ratio: 16 / 10;
+  }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .industries-index__eyebrow,
+  .industries-index__title,
+  .industries-index__reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .industries-index__rule {
+    transform: scaleX(1);
+  }
+  .industries-index__panel {
+    opacity: 1;
+  }
+  .industries-index__image {
+    filter: none;
+    transform: none;
+  }
+}
+
 
 /* ---------- Business Arms — cinematic panels ---------- */
 /* ---------- Business Arms — matched premium cards (Product Exports + Trivoxa Digital) ---------- */
@@ -208,7 +249,7 @@
   border: 1px solid var(--line);
   border-radius: 6px;
   background: linear-gradient(160deg, color-mix(in srgb, var(--bg-card) 94%, transparent), color-mix(in srgb, var(--bg-elev) 88%, transparent));
-  transition: border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+  transition: border-color var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry), box-shadow var(--dur-base) var(--ease-entry);
 }
 .biz-arm::before {
   content: "";
@@ -221,7 +262,6 @@
   opacity: 0.8;
 }
 .biz-arm:hover {
-  transform: translateY(-4px);
   border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
   box-shadow: 0 22px 48px color-mix(in srgb, #000 26%, transparent);
 }
@@ -245,7 +285,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.7s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 .biz-arm:hover .biz-arm__media img {
   transform: scale(1.045);
@@ -312,7 +352,7 @@
   letter-spacing: 0.02em;
   color: var(--text-2);
   padding: 0;
-  transition: color 0.25s var(--ease-out);
+  transition: color var(--dur-base) var(--ease-entry);
 }
 .biz-arm__cat:not(:last-child)::after {
   content: "•";
@@ -331,10 +371,10 @@
   text-decoration: none;
   border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
   padding-bottom: 4px;
-  transition: gap 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+  transition: gap var(--dur-base) var(--ease-entry), border-color var(--dur-base) var(--ease-entry);
 }
 .biz-arm__cta span {
-  transition: transform 0.25s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 .biz-arm__cta:hover {
   gap: 16px;
@@ -420,10 +460,9 @@
   text-align: center;
   width: 128px;
   opacity: 0.92;
-  transition: transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-entry), opacity var(--dur-base) var(--ease-entry);
 }
 .cert-mark:hover {
-  transform: translateY(-3px);
   opacity: 1;
 }
 .cert-mark__badge circle {
@@ -618,7 +657,7 @@
   min-height: 120px;
   border-bottom: 1px solid var(--color-rule);
   cursor: default;
-  transition: opacity 0.3s var(--ease-out);
+  transition: opacity var(--dur-base) var(--ease-entry);
 }
 .values-hover__row.is-dimmed {
   opacity: 0.2;
@@ -635,7 +674,7 @@
   font-size: clamp(2.5rem, 6vw, 6rem);
   text-transform: uppercase;
   letter-spacing: -0.02em;
-  transition: font-style 0.2s var(--ease-out);
+  transition: font-style var(--dur-fast) var(--ease-entry);
 }
 .values-hover__row.is-active .values-hover__title {
   font-style: italic;

@@ -75,15 +75,25 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
   // Home already closes on the eagle through its beat list (.hp-cta), so it needs
   // no finale appended — but it resolves its colour from the same tokens.
   palette: PARTICLE_PALETTE,
+  // Beats are listed in DOM order, which is firing order.
+  //
+  // The first beat is load-bearing: the hero globe flies STRAIGHT into the
+  // vessel, so .hp-trust must be the section immediately after the hero. A
+  // funnel re-sequencing that moved it below Industries was tried and reverted —
+  // it put the container first and the ship never appeared where the eye
+  // expected it, which read as the field skipping a beat.
   beats: [
     // Trust ("A sourcing partner, not just a supplier directory") — a cargo
     // vessel. The hero globe flies straight into the ship. Sits to the side.
-    { trigger: ".hp-trust", shape: "cargo-ship", sweep: 1 },
+    // sweep 0.8, not 1: parking a long horizontal form hard against the edge
+    // pushes its bow off frame. Backed off just enough to keep both ends in
+    // shot while the copy column stays clear.
+    { trigger: ".hp-trust", shape: "cargo-ship", sweep: 0.8 },
     // About ("A Vision Beyond Business") — a single small container.
     { trigger: ".hp-about", shape: "container", sweep: 0.7 },
-    // Business Arms + Industries carousel — NO animation. Fade the field fully
-    // out and hold it hidden across both content-dense sections.
-    { trigger: ".hp-sec-4", opacity: 0 },
+    // Business Arms + Industries — NO animation. Fade the field back and hold it
+    // dim across both content-dense sections.
+    { trigger: ".hp-sec-4", opacity: 0.28 },
     // Global Presence ("Connecting Opportunities Across Borders") — the big
     // ports globe with named markers, parked on the RIGHT so the section's copy
     // (left-aligned in CSS) sits clear of it.
@@ -92,17 +102,17 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
       shape: "globe",
       sweep: 1,
       ports: true,
-      onLeaveBack: { opacity: 0 }, // scrolling up into the carousel
+      onLeaveBack: { opacity: 0.28 }, // scrolling up into the industries index
     },
     // Values / Insights / Careers — NO animation. Keep the field hidden.
-    { trigger: ".hp-values", opacity: 0 },
+    { trigger: ".hp-values", opacity: 0.28 },
     // Final CTA — the Trivoxa eagle, in grains, behind the copy.
     { trigger: ".hp-cta", shape: "eagle", sweep: 0 },
     // Footer — hold the eagle but drop it to a dim wash so footer copy stays
     // fully legible; scrolling back up restores full opacity.
     {
       trigger: ".footer",
-      opacity: 0.18,
+      opacity: 0.3,
       fadeDuration: 0.8,
       onLeaveBack: { opacity: 1, fadeDuration: 0.5 },
     },
@@ -147,14 +157,14 @@ export const GROUP: Omit<SceneConfig, "onDegrade"> = {
   palette: GROUP_PALETTE,
   // The lattice sits behind body copy for most of the page, so it is held well
   // below full strength — it is a watermark, not an illustration.
-  fieldOpacity: 0.5,
+  fieldOpacity: 0.78,
   // Well under the home globe's 1.6. The brief asks for generous open space
   // around each form rather than a filled frame, so the lattice is held compact
   // and the page breathes around it.
   formationScale: 0.82,
   // The page root — the orbit is scrubbed across the entire scroll, not a section.
   cameraOrbit: { trigger: ".tvx", sweepDeg: 26, dolly: 5 },
-  mobileOpacityCap: 0.3,
+  mobileOpacityCap: 0.48,
 };
 
 /**
@@ -224,10 +234,10 @@ export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
   routes: true,
   draggable: true,
   palette: GLOBAL_PRESENCE_PALETTE,
-  fieldOpacity: 0.55,
+  fieldOpacity: 0.82,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
-  mobileOpacityCap: 0.32,
+  mobileOpacityCap: 0.5,
 };
 
 /**
@@ -276,11 +286,11 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
   palette: INSIGHTS_PALETTE,
   // The lowest of the five: article cards sit directly in front of this one, and
   // the network is behind them as texture, not as competition.
-  fieldOpacity: 0.42,
+  fieldOpacity: 0.7,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 16, dolly: 3 },
-  mobileOpacityCap: 0.26,
+  mobileOpacityCap: 0.44,
 };
 
 /**
@@ -324,11 +334,11 @@ export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
   linkEnvelope: { drawFrom: 0.6, drawTo: 3.0, fadeFrom: 3.4, fadeTo: 4.0 },
   motion: "planar",
   palette: CAREERS_PALETTE,
-  fieldOpacity: 0.46,
+  fieldOpacity: 0.74,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 18, dolly: 3.5 },
-  mobileOpacityCap: 0.28,
+  mobileOpacityCap: 0.46,
 };
 
 /**
@@ -361,9 +371,9 @@ export const BUSINESSES: Omit<SceneConfig, "onDegrade"> = {
   ],
   motion: "planar",
   palette: BUSINESSES_PALETTE,
-  fieldOpacity: 0.46,
+  fieldOpacity: 0.74,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 20, dolly: 4 },
-  mobileOpacityCap: 0.28,
+  mobileOpacityCap: 0.46,
 };

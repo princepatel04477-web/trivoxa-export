@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { DURATION, EASE, SCRUB, STAGGER_CHAR } from "@/lib/motion";
 import { TitleChars, PChars } from "@/lib/split-text";
 import { emit } from "@/lib/site-events";
 import ContactForm from "@/components/ContactForm";
@@ -50,37 +51,92 @@ export default function ContactSection() {
       gsap.fromTo(
         ".hp-contact-section .brands h2",
         { scale: 0.94 },
-        { scale: 1, duration: 2.4, ease: "power3.out", scrollTrigger: { trigger: ".hp-contact-section .container .brands" } }
+        {
+          scale: 1,
+          duration: DURATION.long,
+          ease: EASE.entry,
+          scrollTrigger: {
+            trigger: ".hp-contact-section .container .brands",
+            invalidateOnRefresh: true,
+          },
+        }
       );
       gsap.fromTo(
         ".hp-contact-section .brands .word_inner",
         { opacity: 0, filter: "blur(6px)" },
-        { opacity: 1, filter: "blur(0px)", stagger: 0.04, scrollTrigger: { trigger: ".hp-contact-section .container .brands" } }
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: DURATION.standard,
+          ease: EASE.entry,
+          stagger: STAGGER_CHAR,
+          scrollTrigger: {
+            trigger: ".hp-contact-section .container .brands",
+            invalidateOnRefresh: true,
+          },
+        }
       );
 
       // Contact section entrance
       gsap.fromTo(
         ".hp-contact-section .contact h4",
         { scale: 0.94 },
-        { scale: 1, duration: 2.4, ease: "power3.out", scrollTrigger: { trigger: ".hp-contact-section .container .contact" } }
+        {
+          scale: 1,
+          duration: DURATION.long,
+          ease: EASE.entry,
+          scrollTrigger: {
+            trigger: ".hp-contact-section .container .contact",
+            invalidateOnRefresh: true,
+          },
+        }
       );
       gsap.fromTo(
         ".hp-contact-section .contact .p_inner",
         { opacity: 0 },
-        { opacity: 1, delay: 0.2, stagger: 0.02, duration: 0.5, scrollTrigger: { trigger: ".hp-contact-section .container .contact" } }
+        {
+          opacity: 1,
+          delay: 0.2,
+          stagger: STAGGER_CHAR,
+          duration: DURATION.short,
+          ease: EASE.entry,
+          scrollTrigger: {
+            trigger: ".hp-contact-section .container .contact",
+            invalidateOnRefresh: true,
+          },
+        }
       );
 
-      // Left-text parallax
+      // Left-text parallax. `ease: none` is not decoration — without it GSAP
+      // applies its default power1.out on top of the scrub and the parallax
+      // double-curves, drifting at one rate under a slow scroll and another
+      // under a fast one.
       if (window.innerWidth > 767) {
         gsap.fromTo(
           ".hp-contact-section .left-text-wrapper .left-text .top",
           { x: 80 },
-          { x: 0, scrollTrigger: { trigger: ".hp-contact-section .container .contact", scrub: true } }
+          {
+            x: 0,
+            ease: EASE.scrub,
+            scrollTrigger: {
+              trigger: ".hp-contact-section .container .contact",
+              scrub: SCRUB,
+              invalidateOnRefresh: true,
+            },
+          }
         );
         gsap.fromTo(
           ".hp-contact-section .left-text-wrapper .left-text > .left-side-title",
           { x: -80 },
-          { x: 0, scrollTrigger: { trigger: ".hp-contact-section .container .contact", scrub: true } }
+          {
+            x: 0,
+            ease: EASE.scrub,
+            scrollTrigger: {
+              trigger: ".hp-contact-section .container .contact",
+              scrub: SCRUB,
+              invalidateOnRefresh: true,
+            },
+          }
         );
       }
 

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 import { emit } from "@/lib/site-events";
 import { Link } from "@/i18n/navigation";
@@ -20,10 +21,10 @@ function useReveal<T extends HTMLElement>() {
       gsap.to(".home-reveal", {
         opacity: 1,
         y: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        stagger: 0.09,
-        scrollTrigger: { trigger: ref.current, start: "top 78%" },
+        duration: DURATION.standard,
+        ease: EASE.entry,
+        stagger: STAGGER,
+        scrollTrigger: { trigger: ref.current, start: "top 78%", invalidateOnRefresh: true },
       });
     }, ref);
     return () => ctx.revert();

@@ -8,6 +8,8 @@ import "../globals.css";
 import LenisProvider from "@/components/providers/LenisProvider";
 import CustomCursor from "@/components/CustomCursor";
 import { GrainOverlay } from "@/components/GrainOverlay";
+import SurfaceProvider from "@/components/providers/SurfaceProvider";
+import TransitionProvider from "@/components/providers/TransitionProvider";
 import { routing, isRtl } from "@/i18n/routing";
 
 // latin-ext carries the Polish/Turkish diacritics (ł, ş, ğ, ı) that plain
@@ -110,7 +112,7 @@ export const viewport: Viewport = {
   // been parsed and `var(--bg)` has no meaning. The literal is `--bg` verbatim
   // and must be changed with it. Without it iOS paints the address bar white
   // above a navy hero.
-  themeColor: "#0B1325",
+  themeColor: "#000000",
 };
 
 /** Pre-render every locale at build time. */
@@ -146,8 +148,17 @@ export default async function LocaleLayout({
           </LenisProvider>
         </NextIntlClientProvider>
         {/* Global grain: last child of <body> so it composites over the whole
-            page. Outside the providers — it needs no i18n/scroll context. */}
+            page. Outside the providers — it needs no i18n/scroll context.
+            This is the site's ONLY grain layer; the in-canvas postprocess pass
+            and the three region-scoped canvases were reconciled out so the
+            field is continuous and the canvas boundary carries no seam. */}
         <GrainOverlay />
+        {/* Grain tier + the shared hover vocabulary. Renders nothing. */}
+        <SurfaceProvider />
+        {/* Page-to-page transition panel. Sits under the grain field so the
+            photographic surface carries across a navigation rather than
+            blinking off mid-way. */}
+        <TransitionProvider />
       </body>
     </html>
   );

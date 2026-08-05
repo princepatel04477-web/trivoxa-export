@@ -119,7 +119,7 @@
   text-decoration: none;
   border-bottom: 1px solid transparent;
   padding-bottom: 2px;
-  transition: border-color 0.25s ease, opacity 0.25s ease;
+  transition: border-color var(--dur-base) var(--ease-entry), opacity var(--dur-base) var(--ease-entry);
 }
 
 .insights-magazine__all:hover {
@@ -161,11 +161,10 @@
   border-radius: 12px;
   border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   background: color-mix(in srgb, var(--bg-card, var(--bg)) 55%, transparent);
-  transition: border-color 0.3s ease, transform 0.3s ease;
+  transition: border-color var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
 .insights-teaser__card:hover {
-  transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--gold) 40%, transparent);
 }
 
@@ -274,7 +273,7 @@
   font-size: 14.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background var(--dur-base) var(--ease-entry);
 }
 
 .insights-teaser__form-row button:hover {

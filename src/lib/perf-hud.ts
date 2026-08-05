@@ -35,7 +35,7 @@ export function createPerfHud(info: { particles: number; dpr: number; tier: stri
     "padding:8px 10px",
     "font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace",
     "color:#D4AF5E",
-    "background:rgba(6,12,26,0.86)",
+    "background:rgba(0,0,0,0.86)",
     "border:1px solid rgba(212,175,94,0.35)",
     "border-radius:6px",
     "pointer-events:none",

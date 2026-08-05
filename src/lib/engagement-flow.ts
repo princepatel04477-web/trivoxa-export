@@ -16,6 +16,7 @@
 
 import * as THREE from "three";
 import { tokenColor } from "@/lib/design-tokens";
+import { assertBackingStore, pixelRatio } from "@/lib/device";
 
 /** Where the three nodes sit on the axis, in world units. */
 const NODE_X = [-1.85, 0, 1.85] as const;
@@ -59,9 +60,10 @@ export function createEngagementFlow(container: HTMLElement): EngagementFlow {
 
   // --- renderer --------------------------------------------------------------
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  // Clamped: this is a small inline panel, not a hero field. Above 2x the extra
-  // fragments buy nothing visible and cost real milliseconds on mobile.
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  // The clamped ratio comes from the single authority in lib/device.ts. This
+  // used to carry its own min(devicePixelRatio, 2), which is how a phone ended
+  // up rendering this panel at a ceiling its hero field was not allowed.
+  renderer.setPixelRatio(pixelRatio());
   renderer.setClearAlpha(0);
 
   const scene = new THREE.Scene();
@@ -163,7 +165,16 @@ export function createEngagementFlow(container: HTMLElement): EngagementFlow {
     // A zero box (display:none, or measured before layout) would make the
     // projection matrix non-finite; skip until the element actually has one.
     if (clientWidth === 0 || clientHeight === 0) return;
+    // Ratio re-applied on every size change, not only at construction.
+    renderer.setPixelRatio(pixelRatio());
     renderer.setSize(clientWidth, clientHeight, false);
+    assertBackingStore(
+      renderer.domElement,
+      clientWidth,
+      clientHeight,
+      renderer.getPixelRatio(),
+      "engagement-flow"
+    );
     camera.aspect = clientWidth / clientHeight;
     // Narrow viewports crop the axis at a fixed FOV, so pull the camera back in
     // proportion to how far below the design aspect we are. Without this the

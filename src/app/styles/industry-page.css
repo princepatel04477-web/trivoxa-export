@@ -32,7 +32,7 @@
 }
 .ind-table tbody tr {
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background var(--dur-fast) var(--ease-entry);
 }
 .ind-table tbody tr:hover {
   background: color-mix(in srgb, var(--gold) 6%, transparent);

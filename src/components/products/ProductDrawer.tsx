@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/lib/data/product-categories";
 import { displayField } from "@/lib/data/product-categories";
+import { BEZIER, DURATION } from "@/lib/motion";
 
 /** Slide-in spec drawer for a product row. Same interaction as the RFQ
  * category drawer (ind-drawer styles, patterns.css). */
@@ -16,7 +17,7 @@ export default function ProductDrawer({ product, onClose }: { product: Product |
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: DURATION.short, ease: BEZIER.entry }}
             onClick={onClose}
           />
           <motion.div
@@ -24,7 +25,7 @@ export default function ProductDrawer({ product, onClose }: { product: Product |
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: DURATION.short, ease: BEZIER.entry }}
             role="dialog"
             aria-modal="true"
             aria-label={`${product.name} specifications`}

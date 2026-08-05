@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
 
 export interface EcosystemNode {
@@ -53,11 +54,18 @@ export default function EcosystemDiagram({
       if (centerDot) gsap.set(centerDot, { scale: 0, transformOrigin: "50% 50%" });
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: svgRef.current, start: "top 75%" },
+        scrollTrigger: { trigger: svgRef.current, start: "top 75%", invalidateOnRefresh: true },
       });
-      if (centerDot) tl.to(centerDot, { scale: 1, duration: 0.5, ease: "back.out(2)" });
-      tl.to(connectors, { strokeDashoffset: 0, duration: 1, ease: "power2.out", stagger: 0.08 }, "-=0.2")
-        .to(dots, { scale: 1, duration: 0.5, ease: "back.out(2)", stagger: 0.08 }, "-=0.9");
+      if (centerDot) tl.to(centerDot, { scale: 1, duration: DURATION.short, ease: EASE.entry });
+      tl.to(
+        connectors,
+        { strokeDashoffset: 0, duration: DURATION.standard, ease: EASE.entry, stagger: STAGGER },
+        "-=0.2"
+      ).to(
+        dots,
+        { scale: 1, duration: DURATION.short, ease: EASE.entry, stagger: STAGGER },
+        "-=0.9"
+      );
     }, svgRef);
     return () => ctx.revert();
   }, []);

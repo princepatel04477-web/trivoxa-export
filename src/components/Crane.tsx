@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, PERIOD } from "@/lib/motion";
 import { Logo } from "@/components/brand/Logo";
 
 export type CraneVariant = "loader" | "hero" | "success" | "subtle";
@@ -61,26 +62,26 @@ export default function Crane({
     const ctx = gsap.context(() => {
       if (variant === "hero" || variant === "subtle") {
         const drift = variant === "subtle" ? 22 : 55;
-        const dur = variant === "subtle" ? 14 : 9;
+        const dur = variant === "subtle" ? PERIOD.craneSubtle : PERIOD.craneHero;
         setHoist(90);
-        const tl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: "sine.inOut" } });
+        const tl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: EASE.ambient } });
         tl.fromTo(trolley, { x: 10 }, { x: 10 + drift, duration: dur });
         // Load bobs gently against the trolley drift.
         gsap.to(load, {
           rotation: 1.6,
           transformOrigin: "50% 0%",
-          duration: 3.2,
+          duration: PERIOD.craneBob,
           repeat: -1,
           yoyo: true,
-          ease: "sine.inOut",
+          ease: EASE.ambient,
         });
         const hoist = { d: 90 };
         gsap.to(hoist, {
           d: 104,
-          duration: 6,
+          duration: PERIOD.craneHoist,
           repeat: -1,
           yoyo: true,
-          ease: "sine.inOut",
+          ease: EASE.ambient,
           onUpdate: () => setHoist(hoist.d),
         });
       }
@@ -93,22 +94,22 @@ export default function Crane({
         const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
         tl.to(hoist, {
           d: 60,
-          duration: 1.4,
-          ease: "power2.inOut",
+          duration: DURATION.standard,
+          ease: EASE.ambient,
           onUpdate: () => setHoist(hoist.d),
         })
-          .to(trolley, { x: 120, duration: 1.1, ease: "power1.inOut" }, "-=0.3")
+          .to(trolley, { x: 120, duration: DURATION.standard, ease: EASE.ambient }, "-=0.3")
           .to(hoist, {
             d: 96,
-            duration: 0.8,
-            ease: "power2.out",
+            duration: DURATION.standard,
+            ease: EASE.entry,
             onUpdate: () => setHoist(hoist.d),
           })
-          .to(trolley, { x: 40, duration: 1.1, ease: "power1.inOut", delay: 0.4 })
+          .to(trolley, { x: 40, duration: DURATION.standard, ease: EASE.ambient, delay: 0.4 })
           .to(hoist, {
             d: 170,
-            duration: 1.0,
-            ease: "power2.inOut",
+            duration: DURATION.standard,
+            ease: EASE.ambient,
             onUpdate: () => setHoist(hoist.d),
           });
       }
@@ -122,11 +123,11 @@ export default function Crane({
         const tl = gsap.timeline({
           onComplete: () => onComplete?.(),
         });
-        tl.to(trolley, { x: 120, duration: 1.3, ease: "power1.inOut" })
+        tl.to(trolley, { x: 120, duration: DURATION.standard, ease: EASE.ambient })
           .to(hoist, {
             d: 152,
-            duration: 1.1,
-            ease: "power2.inOut",
+            duration: DURATION.standard,
+            ease: EASE.ambient,
             onUpdate: () => setHoist(hoist.d),
           })
           // Release: cable retracts, container stays on the quay.
@@ -135,15 +136,15 @@ export default function Crane({
             hoist,
             {
               d: 40,
-              duration: 0.9,
-              ease: "power2.in",
+              duration: DURATION.standard,
+              ease: EASE.exit,
               onUpdate: () => {
                 cable.setAttribute("y2", String(hoist.d));
               },
             },
             "+=0.25"
           )
-          .to(trolley, { x: 30, duration: 1.0, ease: "power1.inOut" }, "-=0.4");
+          .to(trolley, { x: 30, duration: DURATION.standard, ease: EASE.ambient }, "-=0.4");
       }
     }, rootRef);
 

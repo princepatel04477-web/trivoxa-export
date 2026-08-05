@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
+import { DURATION, EASE, SCRUB, STAGGER_CHAR } from "@/lib/motion";
 import { TitleChars, PChars } from "@/lib/split-text";
 
 export interface CinematicPanelProps {
@@ -62,19 +63,36 @@ export default function CinematicPanel({
         gsap.fromTo(
           ".arm-panel__bg",
           { yPercent: -8 },
-          { yPercent: 8, ease: "none", scrollTrigger: { trigger: ref.current, scrub: true } }
+          {
+            yPercent: 8,
+            ease: EASE.scrub,
+            scrollTrigger: { trigger: ref.current, scrub: SCRUB, invalidateOnRefresh: true },
+          }
         );
       });
       // Text entrance (same treatment as the homepage arms).
       gsap.fromTo(
         ref.current!.querySelectorAll(".word_inner"),
         { opacity: 0, filter: "blur(6px)" },
-        { opacity: 1, filter: "blur(0px)", stagger: 0.03, scrollTrigger: { trigger: ref.current, start: "top 70%" } }
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: DURATION.standard,
+          ease: EASE.entry,
+          stagger: STAGGER_CHAR,
+          scrollTrigger: { trigger: ref.current, start: "top 70%", invalidateOnRefresh: true },
+        }
       );
       gsap.fromTo(
         ref.current!.querySelectorAll(".p_inner"),
         { opacity: 0 },
-        { opacity: 1, stagger: 0.015, scrollTrigger: { trigger: ref.current, start: "top 70%" } }
+        {
+          opacity: 1,
+          duration: DURATION.standard,
+          ease: EASE.entry,
+          stagger: STAGGER_CHAR,
+          scrollTrigger: { trigger: ref.current, start: "top 70%", invalidateOnRefresh: true },
+        }
       );
       // Lazy-play the video only while the panel is on screen.
       if (videoRef.current) {

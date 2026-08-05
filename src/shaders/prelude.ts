@@ -19,8 +19,13 @@ uniform float uScroll;       // 0..1 document scroll progress
 uniform vec2  uResolution;   // px
 uniform float uReducedMotion;// 1.0 when reduced motion
 
-const vec3 NAVY      = vec3(0.043, 0.075, 0.145); // #0B1325
-const vec3 NAVY_ELEV = vec3(0.070, 0.114, 0.212); // #121D36
+// GROUND. Mirrors --bg / --bg-elev in globals.css by hand: a shader const
+// cannot read a custom property, so these two are the only hand-copied
+// values left in the palette and they must be changed WITH the tokens.
+// (The names are kept so every downstream shader keeps compiling; they now
+// carry the neutral ground rather than the old Midnight Navy.)
+const vec3 NAVY      = vec3(0.000, 0.000, 0.000); // #000000  --bg
+const vec3 NAVY_ELEV = vec3(0.043, 0.043, 0.047); // #0B0B0C  --bg-elev
 const vec3 GOLD      = vec3(0.788, 0.635, 0.294); // #C9A24B
 const vec3 GOLD_SOFT = vec3(0.831, 0.686, 0.369); // #D4AF5E
 const vec3 ROUTE     = vec3(0.561, 0.706, 0.910); // #8FB4E8

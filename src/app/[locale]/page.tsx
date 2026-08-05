@@ -43,46 +43,54 @@ export default function Home() {
       <MobileNav />
       <ContactModal />
 
-      {/* 1 · Hero — particle eagle */}
+      {/* Order note — DOM order IS the particle order: each beat hangs off one of
+          these hook classes and fires when that section is reached. The field
+          reads globe → vessel → container → globe → mark, and the first beat is
+          load-bearing: the hero globe flies STRAIGHT into the ship, with nothing
+          between them. Moving .hp-trust away from directly after the hero breaks
+          that (it was tried; the page then opened globe → container and the ship
+          went missing entirely). See lib/choreography.ts HOME. */}
+
+      {/* 1 · Hero — particle globe */}
       <HeroSection />
       <div className="section-divider" />
 
-      {/* 1b · Why Buyers Trust — trust layer immediately after hero (audit fix #5) */}
+      {/* 2 · Why Buyers Trust — particle: the globe flies straight into the vessel */}
       <WhyBuyersTrust />
       <div className="section-divider" />
 
-      {/* 2 · About Preview */}
+      {/* 3 · About Preview — particle: container */}
       <AboutPreview />
       <div className="section-divider" />
 
-      {/* 3 · Businesses (Product & Service Exports) — full-bleed cinematic panels */}
+      {/* 4 · Businesses (Product & Service Exports) — full-bleed cinematic panels */}
       <BusinessArmsPanels />
       <div className="section-divider" />
 
-      {/* 4 · Industries — editorial manifest */}
+      {/* 5 · Industries — sticky scroll-driven index */}
       <IndustriesManifest />
       <div className="section-divider" />
 
-      {/* 5 · Global Presence — shipping ticker + map — particle globe */}
+      {/* 6 · Global Presence — particle: globe returns, with ports */}
       <GlobalPresenceTicker />
       <div className="section-divider" />
 
-      {/* 6 · Values — numbered hover list */}
+      {/* 7 · Values — numbered hover list */}
       <ValuesHoverList />
       <div className="section-divider" />
 
-      {/* 7 · Insights — magazine columns */}
+      {/* 8 · Insights — magazine columns */}
       <InsightsMagazine />
       <div className="section-divider" />
 
-      {/* 8 · Careers Preview */}
+      {/* 9 · Careers Preview */}
       <CareersPreview />
       <div className="section-divider" />
 
-      {/* 8 · Final CTA — particle eagle outline */}
+      {/* 10 · Final CTA — particle eagle outline */}
       <FinalCta />
 
-      {/* 9 · Footer */}
+      {/* 11 · Footer */}
       <SiteFooter />
       <MobileStickyCta />
     </>

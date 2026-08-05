@@ -100,7 +100,7 @@ body.nav-active .hamburger > div:nth-child(2) {
   font-size: 20px;
   line-height: 1;
   color: var(--gold-bright, var(--gold));
-  transition: transform 0.3s ease;
+  transition: transform var(--dur-base) var(--ease-entry);
 }
 
 li.opened .mobile-nav__caret {
@@ -112,7 +112,7 @@ li.opened .mobile-nav__caret {
   display: grid;
   grid-template-rows: 0fr;
   overflow: hidden;
-  transition: grid-template-rows 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: grid-template-rows var(--dur-base) var(--ease-entry);
 }
 
 .mobile-nav__acc.is-open {

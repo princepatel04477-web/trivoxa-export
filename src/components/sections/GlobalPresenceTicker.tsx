@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { DURATION, EASE } from "@/lib/motion";
 import { Link } from "@/i18n/navigation";
 import { revealHeadings, revealBody, prefersReducedMotion } from "@/hooks/useScrollAnimations";
 
@@ -32,9 +33,9 @@ export default function GlobalPresenceTicker() {
       }
       gsap.to(".ticker-track", {
         opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
+        duration: DURATION.standard,
+        ease: EASE.entry,
+        scrollTrigger: { trigger: sectionRef.current, start: "top 78%", invalidateOnRefresh: true },
       });
       ScrollTrigger.refresh();
     }, sectionRef);

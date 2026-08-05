@@ -49,7 +49,7 @@
 .tvx-logo--nav {
   height: var(--logo-h-nav);
   width: auto;
-  transition: height 0.3s ease;
+  transition: height var(--dur-base) var(--ease-entry);
 }
 
 .header--scrolled .tvx-logo--nav {

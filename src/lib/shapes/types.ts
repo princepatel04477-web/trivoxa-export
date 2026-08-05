@@ -47,6 +47,18 @@ export interface Shape {
    * edge-on and collapses. So the rate belongs to the stage, not the scene.
    */
   spinY?: number;
+  /**
+   * Four-stop spectrum this form is rendered in, as hex strings, cool→warm.
+   *
+   * The field's spectrum uniforms are tweened to these across the morph that
+   * creates the stage, so a form arrives in its own colour rather than
+   * switching to it. Omit to hold whatever the previous stage established (the
+   * page's token spectrum on first paint).
+   *
+   * A shape's identity is partly its colour — a globe is water and land, a hull
+   * is painted steel, a container is oxide. See PALETTE in shapes/palettes.ts.
+   */
+  spectrum?: readonly [string, string, string, string];
 }
 
 export interface ShapeContext {
@@ -58,6 +70,14 @@ export interface ShapeContext {
   S: number;
 }
 
-/* Colour deliberately lives nowhere in this module. A Shape carries geometry and
- * an accent MASK only; the hues come from the scene's palette tokens (see
- * design-tokens.ts), so a shape can never pin a colour of its own. */
+/* Colour used to live nowhere in this module — a Shape carried geometry and an
+ * accent MASK only, and every hue came from the scene's palette tokens.
+ *
+ * That held while every stage was the same field wearing one palette. It stopped
+ * holding once the stages became things: a globe, a hull, a container, the mark.
+ * A brown globe or a gold container reads as the same abstract dust in a
+ * different mood, not as the object. So a Shape may now name its own four-stop
+ * `spectrum`, and the scene tweens into it across the morph.
+ *
+ * The tokens remain the DEFAULT — a shape without a spectrum inherits whatever
+ * is current, so nothing that predates this has to opt out. */

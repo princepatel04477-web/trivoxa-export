@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { DURATION, EASE, STAGGER, STAGGER_CHAR } from "@/lib/motion";
 import { TitleChars, PChars } from "@/lib/split-text";
 import { Link } from "@/i18n/navigation";
 
@@ -57,17 +58,37 @@ export default function BusinessArmsPanels() {
         gsap.fromTo(
           panel.querySelectorAll(".word_inner"),
           { opacity: 0, filter: "blur(6px)" },
-          { opacity: 1, filter: "blur(0px)", stagger: 0.03, scrollTrigger: { trigger: panel, start: "top 80%" } }
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: DURATION.standard,
+            ease: EASE.entry,
+            stagger: STAGGER_CHAR,
+            scrollTrigger: { trigger: panel, start: "top 80%", invalidateOnRefresh: true },
+          }
         );
         gsap.fromTo(
           panel.querySelectorAll(".p_inner"),
           { opacity: 0 },
-          { opacity: 1, stagger: 0.012, scrollTrigger: { trigger: panel, start: "top 80%" } }
+          {
+            opacity: 1,
+            duration: DURATION.standard,
+            ease: EASE.entry,
+            stagger: STAGGER_CHAR,
+            scrollTrigger: { trigger: panel, start: "top 80%", invalidateOnRefresh: true },
+          }
         );
         gsap.fromTo(
           panel.querySelectorAll(".biz-arm__cat, .biz-arm__cta"),
           { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, stagger: 0.05, ease: "power2.out", scrollTrigger: { trigger: panel, start: "top 75%" } }
+          {
+            opacity: 1,
+            y: 0,
+            duration: DURATION.standard,
+            stagger: STAGGER,
+            ease: EASE.entry,
+            scrollTrigger: { trigger: panel, start: "top 75%", invalidateOnRefresh: true },
+          }
         );
       });
       ScrollTrigger.refresh();

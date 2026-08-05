@@ -1,8 +1,17 @@
 import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 import { VERTEX } from "@/shaders/prelude";
+import { tokenColor } from "@/lib/design-tokens";
 import { getFragment } from "@/shaders";
-import { isMobileDevice, pixelRatio, suspendWhenOffscreen } from "@/lib/device";
+import {
+  assertBackingStore,
+  isMobileDevice,
+  isTouchPrimary,
+  observeContainerResize,
+  pixelRatio,
+  suspendWhenOffscreen,
+} from "@/lib/device";
+import { CHROME_HEIGHT_TOLERANCE_PX } from "@/lib/motion";
 
 export interface ShaderBackground {
   dispose(): void;
@@ -36,7 +45,9 @@ export function createShaderBackground(
     alpha: false,
     powerPreference: "high-performance",
   });
-  renderer.setClearColor(0x0b1325, 1);
+  // Reads the ground token rather than duplicating it. This was a hard-coded
+  // navy literal and would have left a navy page behind a black site.
+  renderer.setClearColor(tokenColor("--bg"), 1);
 
   // Context loss must not permanently strand this in a dead state — see the
   // matching handler in particle-scene.ts.
@@ -71,33 +82,36 @@ export function createShaderBackground(
 
   const renderScale = isMobileDevice() ? RENDER_SCALE_MOBILE : RENDER_SCALE_DESKTOP;
 
-  // iOS Safari fires `resize` every time the address bar collapses or expands,
-  // which on a long page is continuously during a scroll. Reallocating the
-  // renderer's backing store on each of those is pure thrash for a height
-  // change the shader does not read. Only a real width change (rotation, a
-  // desktop window drag) rebuilds the target; height alone updates the
-  // resolution uniform, which is free.
-  // The 200px height tolerance is comfortably above any address-bar delta
-  // (~60-120px) and comfortably below a rotation, so a genuine viewport change
-  // still rebuilds the target.
-  const HEIGHT_TOLERANCE = 200;
+  // The address bar on a handset moves the viewport height continuously during
+  // a scroll, and rebuilding the backing store for each of those is pure thrash
+  // for a change the shader does not read. Suppressed — but ONLY on a coarse
+  // pointer. The previous guard ran on every device, so a desktop window drag
+  // shorter than 200px was silently ignored and the shader kept rendering at
+  // the old height.
+  const coarsePointer = isTouchPrimary();
   let lastWidth = 0;
   let lastHeight = 0;
 
+  /** Re-fit order: ratio → setSize → resolution uniform. */
   const resize = () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const dpr = pixelRatio(renderScale);
-    if (w !== lastWidth || Math.abs(h - lastHeight) > HEIGHT_TOLERANCE) {
-      lastWidth = w;
-      lastHeight = h;
-      renderer.setPixelRatio(dpr);
-      renderer.setSize(w, h, false);
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.round(rect.width) || window.innerWidth;
+    const h = Math.round(rect.height) || window.innerHeight;
+    const heightOnly = w === lastWidth && h !== lastHeight;
+    if (heightOnly && coarsePointer && Math.abs(h - lastHeight) < CHROME_HEIGHT_TOLERANCE_PX) {
+      return;
     }
-    uniforms.uResolution.value.set(w * dpr, h * dpr);
+    lastWidth = w;
+    lastHeight = h;
+    const dpr = pixelRatio(renderScale);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(w, h, false);
+    uniforms.uResolution.value.set(Math.round(w * dpr), Math.round(h * dpr));
+    assertBackingStore(canvas, w, h, dpr, "shader-background");
   };
   resize();
-  window.addEventListener("resize", resize);
+  // ResizeObserver on the canvas box, not window.resize — see lib/device.ts.
+  const releaseResize = observeContainerResize(canvas, resize);
 
   const render = () => renderer.render(scene, camera);
 
@@ -154,7 +168,7 @@ export function createShaderBackground(
       degraded = true;
       mm.revert();
       gsap.ticker.remove(update);
-      window.removeEventListener("resize", resize);
+      releaseResize();
       canvas.removeEventListener("webglcontextlost", onContextLost, false);
       canvas.removeEventListener("webglcontextrestored", onContextRestored, false);
       geometry.dispose();

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { EASE, SCRUB } from "@/lib/motion";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 
 export interface TimelineStep {
@@ -29,12 +30,17 @@ export default function HorizontalTimeline({ steps }: { steps: TimelineStep[] })
         const distance = () => Math.max(0, rail.scrollWidth - ref.current!.clientWidth);
         gsap.to(rail, {
           x: () => -distance(),
-          ease: "none",
+          ease: EASE.scrub,
           scrollTrigger: {
             trigger: ref.current,
             pin: true,
-            scrub: 0.5,
+            scrub: SCRUB,
+            anticipatePin: 1,
             start: "top top",
+            // The one legitimate pixel `end` on the site: it is the TRACK's own
+            // length, not viewport geometry, and it is recomputed on every
+            // refresh. Expressing it as a viewport percentage would change what
+            // the horizontal track does, which is out of scope.
             end: () => `+=${distance()}`,
             invalidateOnRefresh: true,
             onUpdate: (self) => {

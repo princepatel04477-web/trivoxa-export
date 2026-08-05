@@ -35,7 +35,7 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text);
-  transition: color 0.25s ease;
+  transition: color var(--dur-base) var(--ease-entry);
 }
 
 a.pxp-manifest__entry:hover .pxp-manifest__title {
@@ -53,7 +53,7 @@ a.pxp-manifest__entry:hover .pxp-manifest__arrow {
   opacity: 0;
   transform: translateX(0);
   color: var(--gold-bright);
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: transform var(--dur-base) var(--ease-entry), opacity var(--dur-base) var(--ease-entry);
 }
 
 .pxp-manifest__desc {

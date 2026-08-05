@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { DURATION, EASE, SCRUB, STAGGER_CHAR } from "@/lib/motion";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import { Link } from "@/i18n/navigation";
 import { onPreloaderDone, emit } from "@/lib/site-events";
@@ -17,18 +18,45 @@ export default function HeroSection() {
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const tl = gsap.timeline({ paused: true });
 
-      tl.fromTo(".header", {}, { y: 0, duration: 2.4, ease: "power2.out" });
-      tl.fromTo(".hp-sec-1 .scroll-to .line > div", {}, { width: "100%", duration: 2.4 }, "<");
-      tl.fromTo(".hp-sec-1 .scroll-to .text", {}, { opacity: 1, duration: 2.4 }, "<");
-      tl.fromTo(".scroll-wrapper", {}, { opacity: 1, y: 0, duration: 2.4 }, "<");
-      tl.fromTo(".hp-sec-1 h1", {}, { scale: 1, duration: 3.2, ease: "power2.out" }, "<");
+      tl.fromTo(".header", {}, { y: 0, duration: DURATION.long, ease: EASE.entry });
+      tl.fromTo(
+        ".hp-sec-1 .scroll-to .line > div",
+        {},
+        { width: "100%", duration: DURATION.long, ease: EASE.entry },
+        "<"
+      );
+      tl.fromTo(
+        ".hp-sec-1 .scroll-to .text",
+        {},
+        { opacity: 1, duration: DURATION.long, ease: EASE.entry },
+        "<"
+      );
+      tl.fromTo(
+        ".scroll-wrapper",
+        {},
+        { opacity: 1, y: 0, duration: DURATION.long, ease: EASE.entry },
+        "<"
+      );
+      tl.fromTo(".hp-sec-1 h1", {}, { scale: 1, duration: DURATION.long, ease: EASE.entry }, "<");
       tl.fromTo(
         ".hp-sec-1 .word_inner",
         {},
-        { opacity: 1, stagger: 0.05, filter: "blur(0px)", delay: 0.4, ease: "power1.in" },
+        {
+          opacity: 1,
+          stagger: STAGGER_CHAR,
+          filter: "blur(0px)",
+          delay: 0.4,
+          duration: DURATION.standard,
+          ease: EASE.exit,
+        },
         "<"
       );
-      tl.fromTo(".hp-sec-1 .p_inner", {}, { opacity: 1, stagger: 0.025, ease: "power1.in" }, "<");
+      tl.fromTo(
+        ".hp-sec-1 .p_inner",
+        {},
+        { opacity: 1, stagger: STAGGER_CHAR, duration: DURATION.standard, ease: EASE.exit },
+        "<"
+      );
 
       const unsub = onPreloaderDone(() => {
         // The hero's resting state lives at the END of this timeline (headline
@@ -48,10 +76,12 @@ export default function HeroSection() {
           {},
           {
             opacity: 0,
+            ease: EASE.scrub,
             scrollTrigger: {
               trigger: ".hp-about",
-              scrub: true,
+              scrub: SCRUB,
               end: "top center",
+              invalidateOnRefresh: true,
             },
           }
         );
@@ -63,14 +93,24 @@ export default function HeroSection() {
             scrollTrigger: {
               trigger: ".hp-sec-1",
               start: "top top",
+              // +=120% is a percentage of the TRIGGER's own height, not a pixel
+              // offset — it scales with the viewport by construction.
               end: "+=120%",
               pin: true,
-              scrub: 1,
+              scrub: SCRUB,
+              // Pins are laid out one frame ahead, so a fast scroll cannot catch
+              // the pin mid-application and show a one-frame jump.
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
             },
           })
-          .to(".hp-sec-1 .hero-tagline", { opacity: 0, y: -80, ease: "none" }, 0)
-          .to(".hp-sec-1 .grain-globe", { scale: 1.15, ease: "none" }, 0)
-          .to(".hp-sec-1 .title-anim, .hp-sec-1 .subtitle, .hp-sec-1 .hero-cta", { opacity: 0, ease: "none" }, 0.7);
+          .to(".hp-sec-1 .hero-tagline", { opacity: 0, y: -80, ease: EASE.scrub }, 0)
+          .to(".hp-sec-1 .grain-globe", { scale: 1.15, ease: EASE.scrub }, 0)
+          .to(
+            ".hp-sec-1 .title-anim, .hp-sec-1 .subtitle, .hp-sec-1 .hero-cta",
+            { opacity: 0, ease: EASE.scrub },
+            0.7
+          );
       }
 
       ScrollTrigger.refresh();

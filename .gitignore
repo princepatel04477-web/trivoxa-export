@@ -70,3 +70,6 @@ next-env.d.ts
 .env*
 
 cloudflare-env.d.ts
+
+# Playwright MCP scratch output (console logs, page snapshots)
+.playwright-mcp/
