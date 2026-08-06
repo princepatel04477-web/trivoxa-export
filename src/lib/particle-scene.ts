@@ -368,6 +368,10 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const scene = new THREE.Scene();
+  // The ambient backdrop's own scene. Separate so it can be rendered by its own
+  // pass AFTER post-processing — see the composer block below for why it must
+  // never share a scene with the bloomed field.
+  const ambientScene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(35, width / height, 1, 10000);
   camera.position.z = 36;
 
@@ -469,6 +473,11 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     // pays for the blended document layer. Ladder rungs 3 and 4 (below) now step
     // the document field down instead of this pass.
     composer.addPass(new EffectPass(camera, ...effects));
+    // NOTE: the ambient backdrop is deliberately NOT a pass on this composer.
+    // It is drawn straight to the canvas after composer.render() — see the
+    // render loop. Appending a RenderPass here would take over `renderToScreen`
+    // from the EffectPass and put the bloomed frame in an offscreen buffer that
+    // never reaches the canvas.
   }
 
   const textureLoader = new THREE.TextureLoader();
@@ -1014,9 +1023,10 @@ ${
         );
     };
     const p = new THREE.Points(g, m);
-    // Added to the SCENE, not the holder — it must not inherit the form's tilt,
-    // parallax or idle spin, or it would ride along and stop reading as backdrop.
-    scene.add(p);
+    // Its OWN scene, not `scene` and not `holder`: out of `holder` so it does not
+    // inherit the form's tilt, parallax or idle spin and stops reading as
+    // backdrop; out of `scene` so it is never fed to the bloom pass.
+    ambientScene.add(p);
     return { points: p, geometry: g, material: m };
   })();
 
@@ -1594,6 +1604,18 @@ ${
         composer.render();
       } else {
         renderer.render(scene, camera);
+      }
+      // The ambient backdrop is composited LAST, straight onto the canvas the
+      // composer just wrote, with clearing suppressed. Drawing it here rather
+      // than as a composer pass is what keeps it out of the bloom path — which
+      // is the entire reason the earlier version washed the page white — while
+      // avoiding the pass-ordering trap where a trailing RenderPass steals
+      // renderToScreen and strands the bloomed frame in an offscreen buffer.
+      if (ambient) {
+        const prevAutoClear = renderer.autoClear;
+        renderer.autoClear = false;
+        renderer.render(ambientScene, camera);
+        renderer.autoClear = prevAutoClear;
       }
     }
     // Once degraded, stop self-scheduling — the caller's onDegrade handler
@@ -2649,7 +2671,7 @@ ${
       material.dispose();
       if (ambient) {
         gsap.killTweensOf(ambient.material);
-        scene.remove(ambient.points);
+        ambientScene.remove(ambient.points);
         ambient.geometry.dispose();
         ambient.material.dispose();
       }

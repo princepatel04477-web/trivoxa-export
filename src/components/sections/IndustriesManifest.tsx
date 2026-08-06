@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { DURATION, EASE, STAGGER } from "@/lib/motion";
-import { prefersReducedMotion } from "@/hooks/useScrollAnimations";
+import { prefersReducedMotion, revealChars } from "@/hooks/useScrollAnimations";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import { taxonomy, featuredTaxonomy } from "@/lib/data/taxonomy";
 
@@ -47,12 +47,17 @@ export default function IndustriesManifest() {
     const reduced = prefersReducedMotion();
 
     const ctx = gsap.context(() => {
-      const head = ".industries-index__eyebrow, .industries-index__title";
+      // The title is handled by revealChars (per-glyph) and the eyebrow by the
+      // standard rise. They must not both drive the title or the two tweens
+      // fight over opacity and it flickers.
+      const head = ".industries-index__eyebrow";
       if (reduced) {
-        gsap.set(head, { opacity: 1, y: 0 });
+        gsap.set(".industries-index__eyebrow, .industries-index__title", { opacity: 1, y: 0 });
         gsap.set(".industries-index__panel", { opacity: 1, y: 0 });
         return;
       }
+
+      revealChars(sectionRef.current!);
 
       gsap.to(head, {
         opacity: 1,
@@ -118,7 +123,9 @@ export default function IndustriesManifest() {
     <section className="hp-sec-2 industries-index" ref={sectionRef}>
       <div className="industries-index__head container">
         <span className="industries-index__eyebrow">{t("eyebrow")}</span>
-        <h2 className="industries-index__title">{t("heading")}</h2>
+        <h2 className="industries-index__title" data-reveal-chars>
+          {t("heading")}
+        </h2>
       </div>
 
       <div className="industries-index__body container">

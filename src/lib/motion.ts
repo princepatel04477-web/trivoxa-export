@@ -341,33 +341,38 @@ export const BURST = {
  */
 export const AMBIENT = {
   /**
-   * OFF — this blew the page out to white and must not be re-enabled as-is.
+   * Back ON, but only because the cause was removed rather than dialled down.
    *
-   * The field is added to the same scene the EffectComposer renders, so its
-   * grains go through BloomEffect along with everything else. Individually they
-   * are dim (0.26 alpha), but the shell overflows the frustum — outer radius
-   * ~25.8 world units against a ~22.7-unit visible height — so dozens of grains
-   * stack along every view ray. Additive blending sums them, the total clears
-   * bloom's 0.75 luminance threshold across most of the frame, and bloom smears
-   * that into a full-screen white wash that buries the copy.
+   * It first shipped inside the main scene, so its grains went through
+   * BloomEffect: individually dim, but the shell overflowed the frustum, dozens
+   * stacked along every view ray, additive blending summed them, the total
+   * cleared bloom's 0.75 luminance threshold across most of the frame, and
+   * bloom smeared it into a full-screen white wash. Lowering opacity would not
+   * have fixed that — the ACCUMULATION crossed the threshold, not any single
+   * grain.
    *
-   * Re-enabling needs the field kept OUT of the bloom pass (its own render layer
-   * with a selective bloom, or a second composer pass), not just a lower opacity
-   * — dimming only moves the blowout, because the accumulation is what crosses
-   * the threshold, not any single grain.
+   * It now lives in its own scene with its own RenderPass appended after the
+   * effect pass, so it is out of the bloom path by construction, not by tuning.
+   * The figures below are also pulled well in from the first attempt, so even a
+   * future refactor that re-bloomed it could not blow out the frame the same way.
    */
-  enabled: false,
-  /** Grains as a fraction of the main pool. 0.09 × 18000 ≈ 1600 desktop. */
-  countRatio: 0.09,
-  /** Shell bounds as multiples of the globe radius. Well outside the form. */
-  innerR: 1.9,
-  outerR: 4.6,
+  enabled: true,
+  /** Grains as a fraction of the main pool. 0.05 × 18000 ≈ 900 desktop. */
+  countRatio: 0.05,
+  /**
+   * Shell bounds as multiples of the globe radius. Outer pulled 4.6 → 2.9 so the
+   * shell sits INSIDE the visible frustum instead of overflowing it: an
+   * overflowing shell puts many more grains along each view ray, which is what
+   * made the accumulation dangerous in the first place.
+   */
+  innerR: 1.7,
+  outerR: 2.9,
   /** Vertical squash — a wide, shallow field frames better than a ball. */
   flatten: 0.62,
   /** Grain size relative to the main field's. Smaller = further away. */
-  sizeRatio: 0.62,
+  sizeRatio: 0.55,
   /** Settled opacity. Low enough to never compete with the form or the copy. */
-  opacity: 0.26,
+  opacity: 0.18,
   /** Y-rotation rate, rad/s. One revolution ≈ 7 minutes — felt, not watched. */
   spinY: 0.015,
 } as const;
