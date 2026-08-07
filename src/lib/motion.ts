@@ -358,7 +358,7 @@ export const AMBIENT = {
    */
   enabled: true,
   /** Grains as a fraction of the main pool. 0.05 × 18000 ≈ 900 desktop. */
-  countRatio: 0.05,
+  countRatio: 0.16,
   /**
    * Shell bounds as multiples of the globe radius. Outer pulled 4.6 → 2.9 so the
    * shell sits INSIDE the visible frustum instead of overflowing it: an
@@ -366,13 +366,13 @@ export const AMBIENT = {
    * made the accumulation dangerous in the first place.
    */
   innerR: 1.7,
-  outerR: 2.9,
+  outerR: 3.4,
   /** Vertical squash — a wide, shallow field frames better than a ball. */
   flatten: 0.62,
   /** Grain size relative to the main field's. Smaller = further away. */
-  sizeRatio: 0.55,
+  sizeRatio: 0.95,
   /** Settled opacity. Low enough to never compete with the form or the copy. */
-  opacity: 0.18,
+  opacity: 0.7,
   /** Y-rotation rate, rad/s. One revolution ≈ 7 minutes — felt, not watched. */
   spinY: 0.015,
 } as const;
