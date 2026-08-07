@@ -332,13 +332,24 @@ export const BURST = {
   /**
    * Amplitude multiplier for SCRUBBED legs (Group, Presence, Insights, Careers).
    *
+   * ZERO — the scrubbed pages get no swell at all.
+   *
    * A timed morph passes through the peak in a fraction of a second, so a large
-   * swell is a gesture. A scrubbed one is parked wherever the reader stopped
-   * scrolling — and a form held frozen at 3.4× reads as broken, not as motion.
-   * Same envelope, scaled back, so the scroll-driven pages get the character
-   * without the hazard.
+   * swell is a gesture you glimpse. A scrubbed one is parked wherever the reader
+   * stopped scrolling, so every intermediate value is a state someone can sit
+   * and look at.
+   *
+   * 0.4 was already an attempt to allow for that, and it was still far too much:
+   * at the envelope peak it scaled the form by 1 + (0.97 x 0.4) x 2.4 = 1.93x,
+   * so on Group / Global Presence / Insights / Careers the lattice inflated to
+   * nearly double size and simply stayed there, overlapping the headline copy.
+   * A reader cannot tell an inflated form from a badly sized one when it is not
+   * moving.
+   *
+   * The burst is a property of TRAVEL. Where the reader owns the playhead there
+   * is no travel to punctuate, so it belongs only on the timed morphs.
    */
-  scrubScale: 0.4,
+  scrubScale: 0,
 } as const;
 
 /**
