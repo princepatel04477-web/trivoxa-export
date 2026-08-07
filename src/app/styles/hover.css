@@ -117,7 +117,21 @@
   justify-content: var(--hv-justify, flex-start);
   white-space: nowrap;
   transition: transform var(--dur-fast) var(--ease-entry);
-  pointer-events: none;
+  /* MUST be auto, not none.
+   *
+   * The host element is `visibility: hidden` (above) so its real text acts as a
+   * pure layout spacer — but a visibility:hidden element is also removed from
+   * hit testing. These pseudo-elements opt back into visibility and are the only
+   * thing actually painted, so if they also decline pointer events the link ends
+   * up with NO clickable area anywhere: the label is visible, and nothing on the
+   * page can be clicked to follow it. That is what broke navigation site-wide —
+   * every tagged nav link rendered correctly and did nothing.
+   *
+   * A hit on a pseudo-element is attributed to its originating element, so
+   * `auto` restores the anchor's own click, focus and cursor behaviour without
+   * any extra markup. The pair stays inside the clip-path, so this adds no hit
+   * area beyond the box the link always occupied. */
+  pointer-events: auto;
 }
 
 [data-hv~="label"]::before {
