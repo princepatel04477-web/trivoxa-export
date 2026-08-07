@@ -8,8 +8,11 @@
      max() instead: in landscape the cutout lands in the left or right inset,
      and 40px already clears it on every device that has one, so this only
      grows where it must and is a literal no-op on desktop. */
-  padding: calc(18px + var(--safe-top)) max(40px, var(--safe-right)) 0
-    max(40px, var(--safe-left));
+  /* Horizontal insets moved to .header-wrapper so the masthead shares the
+     page's content rail — see the note there. The bar itself still spans the
+     full viewport (it paints the gradient scrim), and still owns the vertical
+     and top safe-area padding. */
+  padding: calc(18px + var(--safe-top)) 0 0;
   width: 100%;
   transform: translateY(-200px);
   /* Above the global grain overlay (z-index 9999) and every canvas layer
@@ -41,12 +44,31 @@
   opacity: 1;
 }
 
-/* Three-zone masthead (ORDER 01): logo left · nav centre · lang + CTA right. */
+/* Three-zone masthead (ORDER 01): logo left · nav centre · lang + CTA right.
+ *
+ * Shares the page's content rail. It previously carried no max-width and took
+ * its inset from .header's own 40px padding, while every .container below it
+ * uses max-width 1684px and a 32px inset — so the logo sat 8px outboard of every
+ * headline on a 1440 screen, and the gap widened without limit past 1684px
+ * (at 1920 the masthead spanned 1840 against content capped at 1684). The
+ * masthead is the first thing that establishes the page's left edge; if it does
+ * not agree with the copy beneath it, nothing else can look aligned.
+ *
+ * Values are the .container rule, not new numbers — max() keeps the landscape
+ * safe-area clearance the old 40px pad provided.
+ */
 .header .header-wrapper {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: 28px;
+  max-width: 1684px;
+  margin-inline: auto;
+  /* padding-left/right, not padding-inline: the site ships an Arabic locale, and
+     the logical property would swap these under RTL — mapping the LEFT safe-area
+     inset to the RIGHT edge, which is exactly backwards on a notched device. */
+  padding-left: max(32px, var(--safe-left));
+  padding-right: max(32px, var(--safe-right));
 }
 
 .header .header-wrapper .h-left {

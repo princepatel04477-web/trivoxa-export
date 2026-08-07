@@ -145,6 +145,19 @@ export function buildContainer({ count, R }: ShapeContext): Shape {
     rib.translate(-R * 0.82 + (i / (ribs - 1)) * R * 1.64, 0, 0);
     parts.push(rib);
   }
+  // ── Scale parity with the other beats ───────────────────────────────────
+  // Measured in globe radii, the sequence was globe 2.00R, vessel 2.41R,
+  // container 1.70R — a 1.4x spread end to end, so the field changed SIZE as
+  // well as shape between beats and the container read as a different, smaller
+  // object rather than the same body reforming.
+  //
+  // 1.15 brings it to ~1.96R, just under the globe. Not matched exactly to the
+  // vessel on purpose: a container SHOULD be shorter than the ship that carries
+  // it, and forcing equal widths would trade one wrong reading for another. What
+  // this removes is the size JUMP, not the proportion.
+  const PARITY = 1.15;
+  parts.forEach((g) => g.scale(PARITY, PARITY, PARITY));
+
   const shape = sampleParts(parts, "container", count);
   shape.flat = true;
   shape.spectrum = SHAPE_SPECTRUM.container;
