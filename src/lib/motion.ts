@@ -209,6 +209,41 @@ export const FRAMING_MARGIN = 1.5382;
 export const POINT_SIZE_MIN_CSS_PX = 0.5;
 export const POINT_SIZE_MAX_CSS_PX = 6;
 
+/**
+ * Apparent particle diameter as a fraction of the pre-directive size.
+ *
+ * The Chairman's first complaint: the grain reads too large. 0.45 sits in the
+ * middle of the mandated 40–50% band. It is a single authority on purpose —
+ * before this, the world-space diameter was an inline literal at two call sites
+ * in particle-scene.ts and there was no way to retune the field without finding
+ * both.
+ *
+ * This scales the WORLD-space diameter only. DPR independence is already handled
+ * downstream: Three attenuates by drawingBufferHeight, and the shader clamp
+ * multiplies POINT_SIZE_MIN/MAX_CSS_PX by the renderer's own clamped ratio. So a
+ * change here moves DPR 1, 2 and 3 by the same perceptual amount rather than
+ * pulling them apart.
+ *
+ * Checked against the clamp floor before landing: at the reference viewport the
+ * scaled field renders well clear of POINT_SIZE_MIN_CSS_PX at both the near and
+ * far side of the globe, so the reduction stays uniform instead of being
+ * partially absorbed by the clamp.
+ */
+export const PARTICLE_SCALE = 0.45;
+
+/** Point diameter in WORLD units before PARTICLE_SCALE, per ground. */
+const POINT_WORLD_BASE = { dark: 0.2, light: 0.17 } as const;
+
+/**
+ * Resolved point diameter in world units — the only size a Points material may
+ * read. The light ground runs slightly finer because normal blending does not
+ * bloom the grain outward the way additive does on black.
+ */
+export const POINT_WORLD_SIZE = {
+  dark: POINT_WORLD_BASE.dark * PARTICLE_SCALE,
+  light: POINT_WORLD_BASE.light * PARTICLE_SCALE,
+} as const;
+
 /* ── Grain ──────────────────────────────────────────────────────────────────
  *
  * Grain cell size in CSS pixels. Normalising against the clamped pixel ratio is

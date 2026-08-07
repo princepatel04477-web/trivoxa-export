@@ -46,6 +46,7 @@ import {
   PERIOD,
   POINT_SIZE_MAX_CSS_PX,
   POINT_SIZE_MIN_CSS_PX,
+  POINT_WORLD_SIZE,
   RECOVER_WINDOW_FRAMES,
   SCRUB,
   VIGNETTE,
@@ -656,7 +657,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     // Identity white. Every scene supplies a `palette`, so the fragment shader
     // takes its colour from the resolved tokens (vTint) and ignores `diffuse`.
     color: 0xffffff,
-    size: lightGround ? 0.17 : 0.2,
+    size: lightGround ? POINT_WORLD_SIZE.light : POINT_WORLD_SIZE.dark,
     map: texture,
     // Additive brightens toward white and so cannot draw a dark particle on light
     // paper — a light-ground field composites normally instead. On the dark ground
@@ -974,7 +975,7 @@ ${
     g.setAttribute("aPhase", new THREE.BufferAttribute(ph, 1));
     const m = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: (lightGround ? 0.17 : 0.2) * AMBIENT.sizeRatio,
+      size: (lightGround ? POINT_WORLD_SIZE.light : POINT_WORLD_SIZE.dark) * AMBIENT.sizeRatio,
       map: texture,
       blending: lightGround ? THREE.NormalBlending : THREE.AdditiveBlending,
       transparent: true,
