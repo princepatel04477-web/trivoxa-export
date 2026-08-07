@@ -316,6 +316,20 @@ export const BURST = {
   from: 0.1,
   to: 0.95,
   /**
+   * The swell's own duration, in seconds — NOT PERIOD.morph.
+   *
+   * Running it over the full 4s morph put the peak 2s after the trigger fired,
+   * by which point a reader scrolling down has already left the section: the
+   * transform is seen, the burst is not. Scrolling up they land on the hero and
+   * linger, so they DO see it — which is why the effect read as firing only on
+   * the way back up.
+   *
+   * 1.3s puts the peak at ~0.65s, which is where `elastic.out(1, 0.75)` lands
+   * the shape. Swell and arrival now happen together instead of the swell
+   * trailing a form that already finished moving.
+   */
+  duration: 1.3,
+  /**
    * Amplitude multiplier for SCRUBBED legs (Group, Presence, Insights, Careers).
    *
    * A timed morph passes through the peak in a fraction of a second, so a large

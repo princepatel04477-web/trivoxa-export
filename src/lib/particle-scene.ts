@@ -1956,7 +1956,7 @@ ${
     gsap.killTweensOf(uBurstT);
     uBurstT.value = 0;
     if (burstAmp > 0) {
-      gsap.to(uBurstT, { value: 1, duration: PERIOD.morph, ease: "none" });
+      gsap.to(uBurstT, { value: 1, duration: BURST.duration, ease: "none" });
     }
     gsap.to(morphProgress, {
       value: 1,
