@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import type { DeliveryModel } from "@/lib/data/services";
+import CanvasErrorBoundary from "@/components/CanvasErrorBoundary";
 
 // ssr:false keeps three.js and the WebGL scene out of the server render — there
 // is nothing to hydrate, so no mismatch and no mount-gate state. Same pattern as
@@ -51,6 +52,10 @@ export default function DeliveryModelDiagram({ model }: { model: DeliveryModel }
   // Stable identity: EngagementFlowCanvas holds this in an effect dependency, and
   // a fresh closure each render would tear the scene down and rebuild it.
   const handleActive = useCallback((active: boolean) => setLive(active), []);
+  // A throw after the schematic had already reported itself active would leave
+  // `is-live` set and the static rail hidden behind a canvas that no longer
+  // exists. Standing the rail back up is the whole recovery.
+  const handleFail = useCallback(() => setLive(false), []);
 
   return (
     <div className={`delivery-model${live ? " is-live" : ""}`}>
@@ -61,7 +66,9 @@ export default function DeliveryModelDiagram({ model }: { model: DeliveryModel }
         </header>
 
         <div className="delivery-model__stage">
-          <EngagementFlowCanvas onActive={handleActive} />
+          <CanvasErrorBoundary system="EngagementFlowCanvas" fallback={null} onFail={handleFail}>
+            <EngagementFlowCanvas onActive={handleActive} />
+          </CanvasErrorBoundary>
 
           {/* Static rail — the only thing on screen until (and unless) the
               schematic takes over. Decorative: the stage names underneath are

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import CanvasErrorBoundary from "@/components/CanvasErrorBoundary";
 
 // TrivoxaShell is a server component, so it cannot pass `ssr: false` itself —
 // hence this client wrapper, the same shape ParticleCanvasWrapper already uses
@@ -12,5 +13,13 @@ import dynamic from "next/dynamic";
 const ShaderBackground = dynamic(() => import("@/components/ShaderBackground"), { ssr: false });
 
 export default function ShaderBackgroundWrapper({ variant }: { variant: string }) {
-  return <ShaderBackground variant={variant} />;
+  // `fallback={null}` deliberately: this layer is an ambient film behind the
+  // page, and its healthy absent-state is already nothing at all (ShaderBackground
+  // returns null until it is ready). Substituting the particle globe here would
+  // paint a shape the route never asked for.
+  return (
+    <CanvasErrorBoundary system={`ShaderBackground:${variant}`} fallback={null}>
+      <ShaderBackground variant={variant} />
+    </CanvasErrorBoundary>
+  );
 }
