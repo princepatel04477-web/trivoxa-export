@@ -1,11 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { CAREERS } from "@/lib/choreography";
+import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
 
-// ssr:false keeps the WebGL scene out of the server render entirely — nothing to
-// hydrate, so no mismatch and no mount-gate state.
-const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ssr: false });
+// Mounted via ParticleCanvasWrapper: that wrapper owns both `ssr: false` and
+// the canvas error boundary, so no route can mount the field unguarded.
 
 /**
  * The Careers signature animation: abstract silhouettes assembling into a team.
@@ -15,5 +14,5 @@ const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ss
  * boundary.
  */
 export default function CareersTeam() {
-  return <ParticleCanvas config={CAREERS} />;
+  return <ParticleCanvasWrapper config={CAREERS} />;
 }

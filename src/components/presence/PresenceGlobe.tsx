@@ -1,11 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { GLOBAL_PRESENCE } from "@/lib/choreography";
+import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
 
-// ssr:false keeps the WebGL scene out of the server render entirely — nothing to
-// hydrate, so no mismatch and no mount-gate state.
-const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ssr: false });
+// Mounted via ParticleCanvasWrapper: that wrapper owns both `ssr: false` and
+// the canvas error boundary, so no route can mount the field unguarded.
 
 /**
  * The Global Presence signature animation: the particle globe, held spherical
@@ -15,5 +14,5 @@ const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ss
  * carries `buildGeoField`, and functions can't cross the server→client boundary.
  */
 export default function PresenceGlobe() {
-  return <ParticleCanvas config={GLOBAL_PRESENCE} />;
+  return <ParticleCanvasWrapper config={GLOBAL_PRESENCE} />;
 }

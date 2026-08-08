@@ -1,11 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { GROUP } from "@/lib/choreography";
+import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
 
-// ssr:false keeps the WebGL scene out of the server render entirely — there is no
-// canvas to hydrate, so no mismatch and no mount-gate state to manage.
-const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ssr: false });
+// Mounted via ParticleCanvasWrapper: that wrapper owns both `ssr: false` and
+// the canvas error boundary, so no route can mount the field unguarded.
 
 /**
  * The Group page's signature lattice.
@@ -17,5 +16,5 @@ const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ss
  * because its config is plain data.)
  */
 export default function GroupLattice() {
-  return <ParticleCanvas config={GROUP} />;
+  return <ParticleCanvasWrapper config={GROUP} />;
 }
