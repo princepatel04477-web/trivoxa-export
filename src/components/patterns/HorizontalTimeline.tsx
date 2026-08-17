@@ -55,7 +55,9 @@ export default function HorizontalTimeline({ steps }: { steps: TimelineStep[] })
   }, [steps.length]);
 
   return (
-    <div className="h-timeline" ref={ref}>
+    // data-no-reveal: the rail is pinned and translated on x, so a transform on
+    // anything inside it fights the pin.
+    <div className="h-timeline" ref={ref} data-no-reveal>
       <ol className="h-timeline__rail" ref={railRef}>
         {steps.map((step, i) => (
           <li

@@ -38,23 +38,55 @@ export default function HeroSection() {
         "<"
       );
       tl.fromTo(".hp-sec-1 h1", {}, { scale: 1, duration: DURATION.long, ease: EASE.entry }, "<");
+      // THE headline reveal.
+      //
+      // Was: opacity 0→1 plus a 6px blur dissolve, on the exit curve, staggered
+      // per glyph. That is a fade wearing a stagger — the glyphs never travel,
+      // so the cascade reads as a flicker across the line rather than as the
+      // headline assembling. Now each glyph rises out from behind its own
+      // word's mask (see .word_mask in globals.css) on the emphatic curve,
+      // which covers most of its distance immediately and then settles.
+      //
+      // `stagger: { amount }` rather than a per-glyph delay: a fixed total
+      // window means a nine-word headline and a four-word one resolve in the
+      // same time and read as one system. STAGGER_CHAR still sets the ceiling,
+      // so a very short headline keeps its per-glyph rhythm rather than
+      // collapsing to a near-simultaneous pop.
+      //
+      // `fromTo`, not `to`. The rest state is authored here rather than in CSS
+      // because GSAP resolves a CSS percentage translate into its pixel `y`
+      // channel — so a `to({ yPercent: 0 })` against a CSS `translateY(120%)`
+      // zeroes a channel that was never carrying the offset, and the glyphs
+      // fade in still displaced. The travel has one owner.
+      const chars = gsap.utils.toArray<HTMLElement>(".hp-sec-1 .word_inner");
       tl.fromTo(
-        ".hp-sec-1 .word_inner",
-        {},
+        chars,
+        { yPercent: 120, opacity: 0 },
         {
+          yPercent: 0,
           opacity: 1,
-          stagger: STAGGER_CHAR,
-          filter: "blur(0px)",
           delay: 0.4,
           duration: DURATION.standard,
-          ease: EASE.exit,
+          ease: EASE.emphatic,
+          stagger: { amount: Math.min(0.5, chars.length * STAGGER_CHAR) },
+          // Several hundred permanently promoted layers is real memory for a
+          // 0.8s effect; the hint has done its job once the glyphs are at rest.
+          onComplete: () => chars.forEach((c) => (c.style.willChange = "auto")),
         },
         "<"
       );
+      const lead = gsap.utils.toArray<HTMLElement>(".hp-sec-1 .p_inner");
       tl.fromTo(
-        ".hp-sec-1 .p_inner",
-        {},
-        { opacity: 1, stagger: STAGGER_CHAR, duration: DURATION.standard, ease: EASE.exit },
+        lead,
+        { yPercent: 110, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: DURATION.standard,
+          ease: EASE.emphatic,
+          stagger: { amount: Math.min(0.5, lead.length * STAGGER_CHAR) },
+          onComplete: () => lead.forEach((c) => (c.style.willChange = "auto")),
+        },
         "<"
       );
 
@@ -121,7 +153,9 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="hp-sec-1">
+    // data-no-reveal: this section pins and scrubs its own copy out (see the
+    // timeline above), and its headline is already a per-glyph split.
+    <section className="hp-sec-1" data-no-reveal>
       <GrainGlobe />
       <div className="container">
         <div className="hero-tagline p-anim">

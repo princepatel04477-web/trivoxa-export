@@ -12,8 +12,9 @@ import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
  * This component exists to OWN the GROUP config rather than receive it: the
  * config carries `buildStages`, a function, and functions cannot be passed as
  * props from a server component to a client one. Importing it inside the client
- * boundary keeps it off the serialization path. (HOME can be passed as a prop
- * because its config is plain data.)
+ * boundary keeps it off the serialization path. (HOME was the one exception
+ * while its config was plain data; it now follows the same pattern — see
+ * HomeField.)
  */
 export default function GroupLattice() {
   return <ParticleCanvasWrapper config={GROUP} />;

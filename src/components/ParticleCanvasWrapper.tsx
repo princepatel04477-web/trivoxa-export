@@ -12,7 +12,16 @@ import CanvasErrorBoundary from "@/components/CanvasErrorBoundary";
 const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ssr: false });
 
 interface ParticleCanvasWrapperProps {
-  /** This page's choreography — see src/lib/choreography.ts. */
+  /**
+   * This page's choreography — see src/lib/choreography.ts.
+   *
+   * Every config now carries at least one function (`buildStages`), so this
+   * prop can only be supplied from inside a client boundary. Each route has a
+   * small "use client" component that imports its own config and renders this
+   * (HomeField, GroupLattice, BusinessesCube, CareersTeam, InsightsNetwork) —
+   * passing a config down from a server component is a build error, not a
+   * runtime one, so the pattern cannot be broken silently.
+   */
   config: Omit<SceneConfig, "onDegrade">;
 }
 

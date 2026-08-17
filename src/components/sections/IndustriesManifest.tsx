@@ -5,7 +5,13 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { DURATION, EASE, STAGGER } from "@/lib/motion";
-import { prefersReducedMotion, revealChars } from "@/hooks/useScrollAnimations";
+import {
+  prefersReducedMotion,
+  revealChars,
+  revealHeadings,
+  revealLines,
+  revertSplits,
+} from "@/hooks/useScrollAnimations";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import { taxonomy, featuredTaxonomy } from "@/lib/data/taxonomy";
 
@@ -51,6 +57,13 @@ export default function IndustriesManifest() {
       // standard rise. They must not both drive the title or the two tweens
       // fight over opacity and it flickers.
       const head = ".industries-index__eyebrow";
+      // Each industry's NAME reveals line by line out of a mask and its
+      // description line by line as a fade-rise (see useScrollAnimations). Run
+      // in both branches: under reduced motion these release the elements from
+      // their hidden CSS state rather than animating them, and skipping the
+      // call would leave every industry name at opacity 0 forever.
+      revealHeadings(sectionRef.current!);
+      revealLines(sectionRef.current!);
       if (reduced) {
         gsap.set(".industries-index__eyebrow, .industries-index__title", { opacity: 1, y: 0 });
         gsap.set(".industries-index__panel", { opacity: 1, y: 0 });
@@ -107,7 +120,11 @@ export default function IndustriesManifest() {
       ScrollTrigger.refresh();
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // SplitText rewrites the DOM; gsap.context() only reverts tweens.
+      revertSplits();
+    };
   }, []);
 
   const goTo = (i: number) => {
@@ -170,8 +187,12 @@ export default function IndustriesManifest() {
                 <span className="industries-index__index industries-index__reveal">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="industries-index__name industries-index__reveal">{ind.name}</h3>
-                <p className="industries-index__desc industries-index__reveal">{ind.desc}</p>
+                {/* Off the block `__reveal` group deliberately: these two now own
+                    their own per-line reveals, and two tweens on one element's
+                    opacity is a fight whose winner is whichever the reader
+                    happens to see. */}
+                <h3 className="industries-index__name" data-reveal-heading>{ind.name}</h3>
+                <p className="industries-index__desc" data-reveal-lines>{ind.desc}</p>
               </div>
               <div
                 className="industries-index__image industries-index__reveal"

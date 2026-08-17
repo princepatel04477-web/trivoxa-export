@@ -119,10 +119,16 @@ export default function BusinessArmsPanels() {
                 {arm.index}
               </span>
             </div>
-            <h2 className="biz-arm__title title-anim">
+            {/* copy-scrim: local legibility. This section used to hold the
+                whole particle field at 28% so its copy would read, which cost
+                every other pixel on the screen its backdrop and made two
+                viewports render as solid black. The field now recedes only to
+                the floor (0.62) and the paragraphs that need more contrast
+                than that carry their own radial scrim. */}
+            <h2 className="biz-arm__title title-anim copy-scrim">
               <TitleChars text={arm.title} />
             </h2>
-            <div className="biz-arm__thesis p-anim">
+            <div className="biz-arm__thesis p-anim copy-scrim">
               <PChars text={arm.thesis} />
             </div>
             <ul className="biz-arm__cats" aria-label={`${arm.title} capabilities`}>

@@ -29,7 +29,11 @@ export default function ValuesHoverList() {
   return (
     <section className="hp-values values-hover" ref={ref}>
       <div className="container">
-        <div className="values-hover__list" onMouseLeave={() => setHovered(null)}>
+        {/* copy-scrim: see BusinessArmsPanels for the reasoning. The list is
+            one dense block of large type over the field, so the scrim goes on
+            the block rather than on each row — a per-row scrim would draw
+            eleven overlapping ellipses. */}
+        <div className="values-hover__list copy-scrim" onMouseLeave={() => setHovered(null)}>
           {VALUES.map((v, i) => (
             <div
               key={v.t}

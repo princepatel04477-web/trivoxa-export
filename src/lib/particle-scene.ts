@@ -30,27 +30,42 @@ import {
 import {
   AMBIENT,
   BLOOM,
+  BUDGET_MEDIAN_WINDOW,
+  BUDGET_SUSTAINED_BREACH_FRAMES,
+  BUDGET_WARMUP_FRAMES,
+  BUDGET_WARMUP_MS,
   BURST,
+  CAMERA_FOV,
   CHROME_HEIGHT_TOLERANCE_PX,
+  COMPILE_GATE_MAX_MS,
   COUNT_STEP,
   CURSOR,
-  DEGRADE_WINDOW_FRAMES,
+  DEEP_FIELD,
   DPR_STEP,
   DURATION,
   EASE,
   EASE_MORPH_ARRIVAL,
+  FIELD_PATH,
   FRAGMENT_BUDGET,
   FRAME_BUDGET_MS,
+  FIELD_GAIN,
   FRAMING_MARGIN,
+  INTRO,
+  MEAN_SIZE_JITTER,
+  INTRO_MAX_FRAME_DELTA,
+  INTRO_STATE_INITIAL,
+  isMotionDebugEnabled,
+  PARTICLE_SCALE,
   PARTICLES,
   PERIOD,
-  POINT_SIZE_MAX_CSS_PX,
-  POINT_SIZE_MIN_CSS_PX,
+  POINT_SIZE,
   POINT_WORLD_SIZE,
   RECOVER_WINDOW_FRAMES,
   SCRUB,
+  SIZE_ALPHA_COMPENSATION,
+  SIZE_JITTER,
+  SIZE_SHIMMER,
   VIGNETTE,
-  WARMUP_SECONDS,
 } from "./motion";
 import {
   EffectComposer,
@@ -77,7 +92,12 @@ import {
 function deriveCount(cssWidth: number, cssHeight: number, tier: ReturnType<typeof deviceClass>) {
   const area = cssWidth * cssHeight;
   const raw = PARTICLES.BASE * (area / PARTICLES.REFERENCE_AREA) * PARTICLES.tierFactor[tier];
-  return Math.round(THREE.MathUtils.clamp(raw, PARTICLES.MIN, PARTICLES.MAX));
+  // §10.3 count multiplier, applied on top of the area/tier derivation above.
+  // Clamped BEFORE the multiplier so PARTICLES.MIN stays a floor on the derived
+  // density rather than on the tier-reduced result — a handset that lands on
+  // MIN should still receive its 0.45× reduction, not be floored back up to it.
+  const clamped = THREE.MathUtils.clamp(raw, PARTICLES.MIN, PARTICLES.MAX);
+  return Math.round(clamped * POINT_SIZE[tier].count);
 }
 
 // Globe motion (Phase 3.2)
@@ -186,6 +206,12 @@ export interface RegionCue {
   start?: string;
 }
 
+/** Shapes the scene built up front, handed to a page's own stage builder. */
+export interface ShapeRegistry {
+  /** Every shape named in `SceneConfig.shapes` (plus the hero, plus any beat's). */
+  get(key: ShapeKey): Shape;
+}
+
 export interface SceneConfig {
   /** Shape assembled on load, behind the hero. Omit when using `stages`. */
   hero?: ShapeKey;
@@ -201,7 +227,20 @@ export interface SceneConfig {
    * are the scene's to decide (they depend on the device tier detected on mount),
    * and every stage must be built at exactly that count to be morphable.
    */
-  buildStages?: (ctx: ShapeContext) => Shape[] | Promise<Shape[]>;
+  buildStages?: (ctx: ShapeContext, registry: ShapeRegistry) => Shape[] | Promise<Shape[]>;
+  /**
+   * Registry shapes this page needs, built once by the scene and handed to
+   * `buildStages` as its second argument.
+   *
+   * Exists so a page whose stage sequence is drawn from the shared vocabulary
+   * (the home globe → vessel → container → globe → mark run) does not have to
+   * rebuild the globe a second time inside its own builder. The globe is by far
+   * the most expensive shape here — tens of thousands of Fibonacci points
+   * tested against the continent rings — and it is also the only one that
+   * produces the per-particle layer attribute the shader's depth cueing reads,
+   * so it has to be built by the scene regardless.
+   */
+  shapes?: ShapeKey[];
   stageBindings?: StageBinding[];
   /**
    * When the connection lines draw in and fade out, in timeline units (a value of
@@ -272,6 +311,36 @@ export interface SceneConfig {
    * (normally the page wrapper).
    */
   cameraOrbit?: { trigger: string; sweepDeg?: number; dolly?: number };
+  /**
+   * Scroll-linked spatial path amplitude, 0..1 — the field travelling laterally
+   * and in depth across the page instead of swapping shapes on the spot. See
+   * FIELD_PATH in lib/motion for the waypoints, which are fractions of the
+   * visible frame rather than world units.
+   *
+   * Omit (or 0) to keep the field where the rest of the choreography puts it. A
+   * page whose composition depends on the field parking beside a specific copy
+   * column wants a small value or none — the path is a journey, and a journey
+   * across a two-column layout will cross the column.
+   */
+  fieldPath?: number;
+  /** Element the field path is scrubbed across. Defaults to the whole document. */
+  fieldPathTrigger?: string;
+  /**
+   * Continuous scroll-linked field motion for BEAT pages.
+   *
+   * A beat page only moves the field at the handful of scroll positions its
+   * beats hang off; between them the field has nothing but its own idle spin, so
+   * scrolling a whole section produces no visible response from the backdrop.
+   * Stage pages never had this problem — `cameraOrbit` scrubs across their entire
+   * scroll range — and this is the beat-page equivalent.
+   *
+   * `spinDeg` is extra Y rotation across the page, applied only while the field
+   * is a GLOBE: turning a flat mark (the vessel, the container, the eagle) about
+   * Y would swing it edge-on. `driftY` is a small vertical parallax in world
+   * units, applied to every formation, which is what keeps the field responding
+   * to scroll while a flat shape is up.
+   */
+  scrollMotion?: { trigger?: string; spinDeg?: number; driftY?: number };
   /** Build the named-port overlay + trade arcs. Home / global-presence only. */
   ports?: boolean;
   /**
@@ -287,6 +356,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     hero,
     beats = [],
     buildStages,
+    shapes: extraShapes,
     stageBindings = [],
     linkEnvelope,
     buildPhase,
@@ -300,6 +370,9 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     fieldOpacity = 1,
     palette,
     cameraOrbit,
+    fieldPath = 0,
+    fieldPathTrigger,
+    scrollMotion,
     ports: wantsPorts = false,
     mobileOpacityCap = 1,
     onDegrade,
@@ -332,6 +405,37 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   let disposed = false;
 
   const count = deriveCount(width, height, renderClass);
+
+  /**
+   * Load-path instrumentation.
+   *
+   * Every expensive step between mount and first paint is bracketed, so "the
+   * page feels slow to arrive" can be answered with a measurement instead of a
+   * guess. `performance.mark`/`measure` cost a few microseconds each and land
+   * in the browser's own performance timeline, so a real session can be
+   * inspected in DevTools without a debug build; only the console summary is
+   * behind ?motionDebug.
+   *
+   * This exists because the amplitude directive roughly doubled the pool and
+   * every synchronous builder on this path scales with it — a regression here
+   * reaches the reader as a longer wait behind the preloader, which is the one
+   * cost the whole arrival sequence is trying to buy back.
+   */
+  const phase = <T,>(name: string, run: () => T): T => {
+    const start = `tvx:${name}:start`;
+    performance.mark(start);
+    const out = run();
+    const finish = () => {
+      try {
+        performance.measure(`tvx:${name}`, start);
+      } catch {
+        /* a cleared timeline is not worth an exception on the load path */
+      }
+    };
+    if (out instanceof Promise) return out.finally(finish) as T;
+    finish();
+    return out;
+  };
 
   // The canvas's own CSS box. Every sizing decision below reads THESE, not
   // window.innerWidth/innerHeight — the ResizeObserver on the canvas is what
@@ -373,7 +477,10 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   // pass AFTER post-processing — see the composer block below for why it must
   // never share a scene with the bloomed field.
   const ambientScene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(35, width / height, 1, 10000);
+  // The deep field's own scene — like the ambient shell, kept out of the bloom
+  // path by construction rather than by tuning. See the composer block.
+  const deepScene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(CAMERA_FOV, width / height, 1, 10000);
   camera.position.z = 36;
 
   const renderer = new THREE.WebGLRenderer({
@@ -495,13 +602,21 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const shapeKeys = new Set<ShapeKey>();
   if (hero) shapeKeys.add(hero);
   for (const b of beats) if (b.shape) shapeKeys.add(b.shape);
+  for (const k of extraShapes ?? []) shapeKeys.add(k);
 
   // The globe is built here rather than through the registry because it also
   // produces the per-particle layer attribute the shader's Layer-B dimming and
   // depth cueing read. Pages that never show it skip the work entirely — it is
   // the most expensive shape by far (tens of thousands of Fibonacci points
   // tested against the continent rings).
-  const globeBuilt = shapeKeys.has("globe") ? buildGlobeShape(shapeCtx) : null;
+  //
+  // Measured separately from the rest of the registry: it is the single most
+  // expensive builder on the load path (tens of thousands of Fibonacci points
+  // each tested against the continent rings) and it scales linearly with the
+  // pool, so it is the first thing to look at when the arrival gets slower.
+  const globeBuilt = shapeKeys.has("globe")
+    ? phase("globe", () => buildGlobeShape(shapeCtx))
+    : null;
 
   const geometry = new THREE.BufferGeometry();
 
@@ -538,6 +653,16 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   if (!buildPhase) for (let i = 0; i < count; i++) phases[i] = Math.random() * Math.PI * 2;
   geometry.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
 
+  // Per-particle size variance, 0..1 uniform. Deliberately its OWN attribute
+  // rather than derived from aPhase: a page that supplies buildPhase makes the
+  // phase a cluster id (so nodes pulse as units), and deriving size from it
+  // would then make every grain in a node the same size — which is the exact
+  // uniformity this exists to break. Four bytes a grain buys the field its
+  // depth read, the size shimmer's amplitude, and the burst's per-grain reach.
+  const sizeJitter = new Float32Array(count);
+  for (let i = 0; i < count; i++) sizeJitter[i] = Math.random();
+  geometry.setAttribute("aSizeJitter", new THREE.BufferAttribute(sizeJitter, 1));
+
   // Layer flag per particle (0 = landmass, 1 = shell). Fixed for the pool; the
   // shader only acts on it while the field is the globe (uGlobe), so flat shapes
   // are unaffected — which is also why pages without a globe bind zeros rather
@@ -553,14 +678,19 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   // GSAP tweens it for a discrete morph, ScrollTrigger scrubs it for a staged
   // sequence. uStagger blends between a uniform lerp (0) and the per-particle
   // delayed arrival used by the hero assemble (1).
-  const uProgress = { value: 1 };
-  const uStagger = { value: 0 };
+  // §7.1 — every value below comes from INTRO_STATE_INITIAL, never from a
+  // literal. This was `{ value: 1 }` — the TERMINAL morph state — so any frame
+  // that painted before the choreography authored a pose showed the fully
+  // morphed TO buffer. Construction was authoring state while the timeline was
+  // assumed to be its only author.
+  const uProgress = { value: INTRO_STATE_INITIAL.progress };
+  const uStagger = { value: INTRO_STATE_INITIAL.stagger };
   // Morph burst amplitude, 0..1. Scales the whole BURST envelope, so a single
   // float turns the swell on for travelling morphs and off for the states where
   // it would be wrong: the hero assemble (grains are arriving from scatter — a
   // burst on top of that is just more scatter), reduced motion, and geo pages
   // (the unwrap is a rigid projection; blowing it apart destroys the read).
-  const uBurst = { value: 0 };
+  const uBurst = { value: INTRO_STATE_INITIAL.burst };
   // The envelope's OWN clock, 0→1, always linear.
   //
   // It cannot ride uProgress: the discrete beat morph eases position with
@@ -572,7 +702,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   //
   // On the scrubbed stage timeline uProgress IS the linear segment fraction, so
   // there the two are simply kept in sync.
-  const uBurstT = { value: 0 };
+  const uBurstT = { value: INTRO_STATE_INITIAL.burstT };
   // One gate for the whole effect. Reduced motion gets no swell at all (it is
   // pure decorative travel); geo pages get none because the unwrap is a rigid
   // projection — a sphere coming apart mid-unwrap stops reading as a map.
@@ -603,14 +733,14 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     geometry.setAttribute("aEagle", new THREE.BufferAttribute(eagleData, 3));
   }
   /** 1 = sphere, 0 = flat map. THE unwrap driver — the only thing the CPU writes. */
-  const uBend = { value: 1 };
+  const uBend = { value: INTRO_STATE_INITIAL.bend };
   /** 0 = the page's own form, 1 = fully converged into the shared eagle mark. */
-  const uEagleBlend = { value: 0 };
+  const uEagleBlend = { value: INTRO_STATE_INITIAL.eagleBlend };
   /** Sphere radius / plane scale in world units per radian (isometric unwrap). */
   const uGeoR = { value: globeRadius };
-  const uActiveRegion = { value: 0 };
+  const uActiveRegion = { value: INTRO_STATE_INITIAL.activeRegion };
   /** 0 = no highlight (everything at full), 1 = highlight in force. Eased. */
-  const uRegionActive = { value: 0 };
+  const uRegionActive = { value: INTRO_STATE_INITIAL.regionActive };
 
   // Resolved from the live tokens, never from a literal in this file.
   const uColorPrimary = { value: palette ? tokenColor(palette.primary) : new THREE.Color(1, 1, 1) };
@@ -630,26 +760,67 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const uCursor = { value: new THREE.Vector2(0, 0) };
   const uCursorRadius: { value: number } = { value: CURSOR.radius };
   const uCursorPush: { value: number } = { value: CURSOR.push };
+  const uCursorSize: { value: number } = { value: CURSOR.sizeGain };
   const uAspect = { value: 1 };
+  /**
+   * Opening materialise, 0 → 1. Multiplies final alpha in the fragment shader
+   * and lifts point size off INTRO.sizeFloor in the vertex shader, so the field
+   * RESOLVES out of nothing rather than cross-fading in at its final size.
+   *
+   * Separate from the material's own opacity because that is the choreography's
+   * channel — beats tween it all page long — and the arrival must not be a
+   * value a later beat can overwrite.
+   */
+  const uIntro = { value: 0 };
   // Ambient idle drift amplitude in world units, eased toward the active stage's
   // own value so a deliberately loose stage disperses without a jump.
-  const uDrift = { value: 0 };
+  const uDrift = { value: INTRO_STATE_INITIAL.drift };
 
-  // Point-size floor and ceiling, in DEVICE pixels — the CSS-pixel figures from
-  // the motion config times the clamped ratio, so apparent grain size is the
-  // same on a DPR-1 monitor and a DPR-3 phone.
+  // §10.2 — the point-size formula's inputs, all in DEVICE pixels.
   //
-  // Three already attenuates by (scale / -mvPosition.z) with scale =
-  // drawingBufferHeight * 0.5, which is the resolution-independent term the
-  // directive specifies. What was missing is the CEILING: uncapped, a near
-  // particle on a high-DPR handset draws an enormous sprite, costing a great
-  // deal of fill for no visual gain.
-  const uPointMin = { value: 1 };
-  const uPointMax = { value: 1 };
+  // uDprClamped is the ratio the renderer is ACTUALLY using, read back after
+  // setPixelRatio. That read-back is the §10.1 correction: the clamp (both the
+  // tier ceiling in device.ts and the fragment-budget trim above it) is applied
+  // BEFORE it reaches the size calculation, never after. Sizing in raw pixels
+  // and clamping the ratio downstream is what made the grain read as coarse
+  // noise on Retina.
+  //
+  // uRenderHeight normalises against the drawing buffer, so a 4K panel and a
+  // 720p laptop resolve the same apparent grain instead of the same pixel count.
+  const pointTier = POINT_SIZE[renderClass];
+  // PARTICLE_SCALE applies HERE, not on the material's `size`.
+  //
+  // The vertex shader below replaces `gl_PointSize = size;` outright, so
+  // `material.size` — the only place PARTICLE_SCALE used to be consumed for the
+  // main field — was discarded before it reached a pixel. That is why cutting
+  // the constant to 45% changed nothing on screen: it was only ever reaching the
+  // ambient backdrop, which keeps Three's own sizing path.
+  //
+  // Folding it into the base size is the whole reduction, and it is larger than
+  // 45% in practice: at the previous base the formula saturated `uPointMax` on
+  // any Retina-class panel, so the grain was pinned at the tier ceiling and the
+  // clamp — not the base — was setting the size.
+  const uBaseSize = { value: pointTier.base * PARTICLE_SCALE };
+  const uDprClamped = { value: 1 };
+  const uRenderHeight = { value: 1080 };
+  // Normalises the perspective term to 1.0 at the formation plane, so uBaseSize
+  // is the grain's size AT the form rather than an arbitrary scalar that has to
+  // be retuned whenever the camera moves.
+  //
+  // Pinned to the SETTLED camera distance, never re-read from camera.position.
+  // The camera moves now — the orbital dolly creeps in across a page and the
+  // opening intro starts it five times further out — and re-reading it would
+  // renormalise the grain to whatever distance the camera happened to be at
+  // when the last resize fired, which is a size jump on a window drag. Holding
+  // it constant is also what makes the intro's push-in visibly resolve the
+  // field instead of holding it at a fixed apparent size the whole way.
+  const CAMERA_SETTLED_Z = camera.position.z;
+  const uPerspectiveScale = { value: CAMERA_SETTLED_Z };
+  const uPointMin = { value: pointTier.minPx };
+  const uPointMax = { value: pointTier.maxPx };
   const syncPointSize = () => {
-    const ratio = renderer.getPixelRatio();
-    uPointMin.value = POINT_SIZE_MIN_CSS_PX * ratio;
-    uPointMax.value = POINT_SIZE_MAX_CSS_PX * ratio;
+    uDprClamped.value = renderer.getPixelRatio();
+    uRenderHeight.value = Math.max(1, renderer.domElement.height);
   };
   syncPointSize();
 
@@ -658,6 +829,11 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     // takes its colour from the resolved tokens (vTint) and ignores `diffuse`.
     color: 0xffffff,
     size: lightGround ? POINT_WORLD_SIZE.light : POINT_WORLD_SIZE.dark,
+    // §10.2 owns the whole size computation, including the perspective term.
+    // Leaving Three's own attenuation on would multiply it in a second time
+    // against `scale = drawingBufferHeight * 0.5` and the tier clamp would then
+    // be binding on a number that had already been scaled twice.
+    sizeAttenuation: false,
     map: texture,
     // Additive brightens toward white and so cannot draw a dark particle on light
     // paper — a light-ground field composites normally instead. On the dark ground
@@ -683,7 +859,13 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     shader.uniforms.uCursor = uCursor;
     shader.uniforms.uCursorRadius = uCursorRadius;
     shader.uniforms.uCursorPush = uCursorPush;
+    shader.uniforms.uCursorSize = uCursorSize;
+    shader.uniforms.uIntro = uIntro;
     shader.uniforms.uAspect = uAspect;
+    shader.uniforms.uBaseSize = uBaseSize;
+    shader.uniforms.uDprClamped = uDprClamped;
+    shader.uniforms.uRenderHeight = uRenderHeight;
+    shader.uniforms.uPerspectiveScale = uPerspectiveScale;
     shader.uniforms.uPointMin = uPointMin;
     shader.uniforms.uPointMax = uPointMax;
     if (geoMode) {
@@ -703,6 +885,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
         attribute float aDelay;
         attribute float aAccentA;
         attribute float aAccentB;
+        attribute float aSizeJitter;
         uniform float uTime;
         uniform float uGlobe;
         uniform float uProgress;
@@ -749,7 +932,13 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
         uniform vec2 uCursor;
         uniform float uCursorRadius;
         uniform float uCursorPush;
+        uniform float uCursorSize;
+        uniform float uIntro;
         uniform float uAspect;
+        uniform float uBaseSize;
+        uniform float uDprClamped;
+        uniform float uRenderHeight;
+        uniform float uPerspectiveScale;
         uniform float uPointMin;
         uniform float uPointMax;
         varying float vAlpha;
@@ -838,9 +1027,30 @@ ${
         // Driven by uBurstT, NOT by t — see the uBurstT declaration. Uniform
         // across the field, so the whole form swells as one body rather than
         // each grain swelling on its own staggered clock.
+        // Per-particle size variance. THE depth cue on a point cloud: the eye
+        // reads size spread as distance spread even where there is no parallax
+        // to confirm it, which is why a field of identically-sized grains looks
+        // like a screen door however many of them there are.
+        //
+        // Computed HERE rather than beside gl_PointSize because three separate
+        // things consume it — the point size, the alpha payback below, and the
+        // burst's per-grain reach — and Three's own point-size assignment comes
+        // after both of the others in the generated main().
+        float tvxJitter = clamp(
+          ${SIZE_JITTER.min.toFixed(3)} + aSizeJitter * ${SIZE_JITTER.span.toFixed(3)},
+          ${SIZE_JITTER.min.toFixed(3)}, ${SIZE_JITTER.max.toFixed(3)});
+
         float burst = tvxBurst(uBurstT) * uBurst;
+        // Radial term as a MULTIPLIER on the position vector, not an additive
+        // offset: this is what produces a true scale swing (1× → 6× and back)
+        // rather than a uniform outward nudge that leaves the silhouette the
+        // same size.
         transformed *= 1.0 + burst * ${BURST.radial.toFixed(3)};
-        transformed += tvxScatterDir(aPhase) * burst * ${BURST.scatter.toFixed(3)};
+        // Scatter scaled by the grain's own size, so BIG GRAINS FLY FURTHER.
+        // Without that term every grain travels the same distance and the form
+        // stays perfectly legible all the way out — which reads as inflation,
+        // not as a detonation. Mirrored exactly on the CPU in setStage().
+        transformed += tvxScatterDir(aPhase) * burst * ${BURST.scatter.toFixed(3)} * aSizeJitter;
         // Ambient idle drift. Each grain wanders on its own phase across three
         // incommensurate periods, which reads as a slow curl rather than a
         // shared wobble. Costs one uniform; no extra attribute, no CPU work.
@@ -879,30 +1089,73 @@ ${
         // Dip alpha at the burst peak. Without this the swell reads as the form
         // getting BIGGER; with it, it reads as the form coming apart and
         // gathering itself back — which is the actual gesture.
-        vAlpha = shimmer * depthOpac * layerDim * regionDim * (1.0 - burst * ${BURST.fade.toFixed(3)});`
+        // Size→alpha payback. A grain at the top of the jitter range covers
+        // ~40x the pixels of one at the bottom, so at equal alpha the size
+        // spread reads as a brightness spread and the largest grains — the ones
+        // meant to be NEAREST — are the ones blowing out the frame. Normalised
+        // against the mean multiplier so an average grain is untouched, and
+        // floored so a big grain stays visible rather than being conserved into
+        // nothing.
+        float tvxSizeAlpha = clamp(
+          pow(${MEAN_SIZE_JITTER.toFixed(4)} / max(tvxJitter, 0.0001),
+              ${SIZE_ALPHA_COMPENSATION.toFixed(2)}),
+          0.45, 1.0);
+        // uIntro is the opening materialise and is applied LAST, so nothing the
+        // choreography does to opacity can bring the field up before the
+        // arrival has run.
+        //
+        // FIELD_GAIN is the headroom that makes a bright core mean "grains
+        // overlap here" rather than "this is what a grain looks like" — see the
+        // note on the constant.
+        vAlpha = shimmer * depthOpac * layerDim * regionDim * uIntro
+          * tvxSizeAlpha * ${FIELD_GAIN.toFixed(3)}
+          * (1.0 - burst * ${BURST.fade.toFixed(3)});`
       )
-      // Fold the far-hemisphere size cue into PointsMaterial's own size
-      // assignment (which runs after <project_vertex>, so an earlier
-      // gl_PointSize *= would be overwritten). depthSize is in scope here.
-      // Thin the grains at the burst peak too — a dispersing cloud loses
-      // density, it does not scale up as a unit.
+      // §10.2 — THE point-size formula. This replaces PointsMaterial's own
+      // assignment outright; `sizeAttenuation: false` on the material means
+      // Three contributes no perspective term of its own, so everything that
+      // scales the grain is visible in this one expression.
+      //
+      // Ordering is the correction. uDprClamped is already clamped when it
+      // arrives (tier ceiling, then fragment-budget trim), so the multiply
+      // happens on a bounded ratio instead of a raw one. uRenderHeight/1080
+      // makes the result resolution-relative.
+      //
+      // depthSize (far-hemisphere cue) and the burst thinning still ride on
+      // top: they are look modifiers, not scale policy, and both are unchanged.
       .replace(
         "gl_PointSize = size;",
-        `gl_PointSize = size * depthSize * (1.0 - burst * ${BURST.thin.toFixed(3)});`
+        `float tvxBasePx = uBaseSize * uDprClamped * (uRenderHeight / 1080.0);
+        gl_PointSize = tvxBasePx * (uPerspectiveScale / -mvPosition.z)
+          * depthSize * tvxJitter * (1.0 - burst * ${BURST.thin.toFixed(3)});
+        // Idle shimmer on SIZE, not just on alpha. On an additive field against
+        // black an alpha shimmer modulates a value that is already summing with
+        // its neighbours and barely registers; changing how much framebuffer a
+        // grain reaches does. Weighted by the jitter so the large grains carry
+        // the twinkle and the fine dust holds still, and applied as a FRACTION
+        // so it is the same shimmer at every depth, tier and pixel ratio.
+        gl_PointSize *= 1.0 + (sin(uTime * 5.0 + aPhase * 10.0) * 0.5 + 0.5)
+          * ${SIZE_SHIMMER.toFixed(3)} * aSizeJitter;
+        // The opening resolve: the field arrives small and grows into itself.
+        gl_PointSize *= mix(${INTRO.sizeFloor.toFixed(2)}, 1.0, uIntro);`
       )
-      // Clamped AFTER Three's own size attenuation (which lives between
-      // gl_PointSize = size and this chunk), so the ceiling actually binds.
+      // Clamped to the tier's device-pixel band. uPointMin/uPointMax are raw
+      // device pixels now, NOT CSS pixels times the ratio — the ratio is
+      // already inside the expression above, and multiplying it in twice is
+      // precisely the double-application §10.1 describes.
       .replace(
         "#include <clipping_planes_vertex>",
         `#include <clipping_planes_vertex>
-        gl_PointSize = clamp(gl_PointSize, uPointMin, uPointMax);
-
-        // Per-particle cursor displacement, in SCREEN space rather than world
+        // Per-particle cursor response, in SCREEN space rather than world
         // space. World-space repulsion would reach further on a particle that
         // happens to sit nearer the camera, so the effect would change size as
         // the form rotates; in screen space the reach is exactly what the
         // reader sees. Aspect-corrected, or the falloff is an ellipse on any
         // window that is not square.
+        //
+        // Runs BEFORE the clamp so the size gain is bounded by the same tier
+        // ceiling as everything else — a cursor that could push a grain past
+        // uPointMax would be a fill-rate hole with no upper bound.
         if (uCursorPush != 0.0 && gl_Position.w > 0.0) {
           vec2 ndc = gl_Position.xy / gl_Position.w;
           vec2 away = (ndc - uCursor) * vec2(uAspect, 1.0);
@@ -911,8 +1164,17 @@ ${
           // visible circle in the field where the effect stops.
           float fall = exp(-(dist * dist) / (uCursorRadius * uCursorRadius));
           vec2 dir = dist > 0.0001 ? away / dist : vec2(0.0);
-          gl_Position.xy += dir * uCursorPush * fall * gl_Position.w;
-        }`
+          // The push scales with the burst, so the field is most responsive to
+          // the pointer exactly when it is already coming apart.
+          gl_Position.xy += dir * (uCursorPush + burst * uCursorPush * 2.0)
+            * fall * gl_Position.w;
+          // THE part that reads as alive: grains swell toward the pointer, so
+          // the additive accumulation brightens under it and the reader appears
+          // to be carrying a light across the field. Displacement alone only
+          // ever reads as the field getting out of the way.
+          gl_PointSize += fall * uCursorSize * uDprClamped * uIntro;
+        }
+        gl_PointSize = clamp(gl_PointSize, uPointMin, uPointMax);`
       );
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", "#include <common>\nvarying float vAlpha;\nvarying vec3 vTint;")
@@ -1047,7 +1309,7 @@ ${
   // Deriving it from the frustum instead makes apparent size independent of
   // window pixels. Width still constrains it on narrow/portrait windows, where
   // the horizontal extent genuinely is the limiting dimension.
-  const CAMERA_BASE_Z = camera.position.z; // captured before any orbit dolly
+  const CAMERA_BASE_Z = CAMERA_SETTLED_Z; // captured before any orbit dolly or intro push
   /**
    * Fit the subject's bounding sphere to the frame, from the aspect ratio.
    *
@@ -1081,6 +1343,109 @@ ${
   // 1× on load (the render loop only eases toward this target).
   points.scale.setScalar(formationScale);
 
+  /** Visible half-height in world units at the form's settled depth. */
+  function visibleHalfHeight(): number {
+    return Math.tan(THREE.MathUtils.degToRad(CAMERA_FOV) / 2) * CAMERA_BASE_Z;
+  }
+  /** Visible half-width in world units at the form's settled depth. */
+  function visibleHalfWidth(): number {
+    return visibleHalfHeight() * (canvasWidth() / Math.max(1, canvasHeight()));
+  }
+
+  // ── Deep field ────────────────────────────────────────────────────────────
+  // A bed of grains behind everything, bound to the FRUSTUM rather than to the
+  // form. AMBIENT above is a shell that hugs the formation and travels with it,
+  // so wherever the form is dim the shell is dim too — which is why the
+  // sections that recede the field used to render as a black rectangle. This
+  // one is never faded by a beat, never morphs, and extends past the frustum on
+  // every axis so its edges are never in shot.
+  //
+  // Cheap by construction: one draw call, two attributes, no per-frame CPU
+  // beyond a rotation. Sits in its own scene so it can be composited after the
+  // post chain — a bloomed full-frame field of overlapping additive grains is
+  // exactly the white wash the AMBIENT shell caused on its first attempt.
+  const deepField = (() => {
+    if (reducedMotion || !DEEP_FIELD.enabled) return null;
+    const n = DEEP_FIELD.count;
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(n * 3);
+    const ph = new Float32Array(n);
+    // Sized off the widest aspect this canvas is likely to take rather than the
+    // current one, so a window drag to ultrawide never reveals an edge. The
+    // spread multiplier already carries most of that margin.
+    const halfH = visibleHalfHeight() * DEEP_FIELD.spread;
+    const halfW = Math.max(visibleHalfWidth(), visibleHalfHeight() * 2) * DEEP_FIELD.spread;
+    const near = CAMERA_BASE_Z * DEEP_FIELD.depth.near;
+    const far = CAMERA_BASE_Z * DEEP_FIELD.depth.far;
+    for (let i = 0; i < n; i++) {
+      pos[i * 3] = (Math.random() * 2 - 1) * halfW;
+      pos[i * 3 + 1] = (Math.random() * 2 - 1) * halfH;
+      pos[i * 3 + 2] = far + Math.random() * (near - far);
+      ph[i] = Math.random() * Math.PI * 2;
+    }
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aPhase", new THREE.BufferAttribute(ph, 1));
+    // Colours round-robin across the five particle tokens plus the gold, so the
+    // bed carries the same palette as the field without ever being resolved
+    // from a literal here.
+    const bedColours = [
+      tokenColor("--gold-particle"),
+      tokenColor("--particle-a"),
+      tokenColor("--particle-b"),
+      tokenColor("--particle-c"),
+      tokenColor("--particle-d"),
+    ];
+    const uBed = { value: bedColours };
+    const m = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: (lightGround ? POINT_WORLD_SIZE.light : POINT_WORLD_SIZE.dark) * DEEP_FIELD.sizeRatio,
+      map: texture,
+      blending: lightGround ? THREE.NormalBlending : THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false,
+      opacity: 0,
+    });
+    m.onBeforeCompile = (shader) => {
+      shader.uniforms.uTime = shimmerUniform;
+      shader.uniforms.uBed = uBed;
+      shader.uniforms.uIntro = uIntro;
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          "#include <common>",
+          `#include <common>
+        attribute float aPhase;
+        uniform float uTime;
+        uniform vec3 uBed[5];
+        uniform float uIntro;
+        varying float vAlpha;
+        varying vec3 vTint;`
+        )
+        .replace(
+          "#include <project_vertex>",
+          `#include <project_vertex>
+        // Round-robin, derived from the phase so it costs no extra attribute.
+        int tvxBedIdx = int(mod(floor(aPhase * 12.7), 5.0));
+        vTint = uBed[tvxBedIdx];
+        // Slower and deeper than either of the other two fields, so the three
+        // layers never pulse together and read as one object.
+        vAlpha = (0.35 + 0.65 * sin(uTime * 0.22 + aPhase * 3.0)) * uIntro;`
+        );
+      shader.fragmentShader = shader.fragmentShader
+        .replace(
+          "#include <common>",
+          "#include <common>\nvarying float vAlpha;\nvarying vec3 vTint;"
+        )
+        .replace(
+          "vec4 diffuseColor = vec4( diffuse, opacity );",
+          "vec4 diffuseColor = vec4( vTint, opacity * vAlpha );"
+        );
+    };
+    const p = new THREE.Points(g, m);
+    p.frustumCulled = false;
+    deepScene.add(p);
+    return { points: p, geometry: g, material: m };
+  })();
+
   // Horizontal offset for the globe / formations. Placed at a consistent
   // fraction of the visible half-width (so the composition reads the same on
   // every aspect ratio) AND clamped so the globe is always fully on-screen —
@@ -1089,10 +1454,12 @@ ${
   // resizing it) lands the field in the right place instead of a stale offset.
   const computeSide = (): number => {
     const w = canvasWidth();
-    const h = canvasHeight();
     if (w <= 575) return 0; // mobile: centred, no side offset
-    // Visible half-width in world units at the globe's depth.
-    const halfW = Math.tan((35 * Math.PI) / 180 / 2) * camera.position.z * (w / h);
+    // Visible half-width in world units at the globe's depth. Reads the shared
+    // lens constant and the SETTLED distance — a hardcoded 35 here was a second
+    // copy of the FOV that would silently disagree with the camera, and
+    // camera.position.z is now a moving value (orbit dolly, intro push).
+    const halfW = visibleHalfWidth();
     // Globe's on-screen radius (incl. the outer shell) at the LARGEST formation
     // size, so we can guarantee it stays inside the frustum with margin. Uses the
     // configured formation scale because that's the biggest the field ever gets —
@@ -1107,7 +1474,11 @@ ${
   // Stage and geo pages are composed on the centre: the camera orbits a stage
   // form (off-centre, it would swing rather than turn), and a world map has to be
   // centred to be a world map.
-  const centred = !!buildStages || geoMode;
+  //
+  // A page that has BOTH — home, whose shape sequence is now scrubbed through
+  // stage buffers while its beats keep parking the field beside each section's
+  // copy column — is composed on its sweeps, not on the centre.
+  const centred = (!!buildStages && beats.length === 0) || geoMode;
   scene.position.x = centred ? 0 : side;
 
   const posAttr = geometry.attributes.position as THREE.BufferAttribute;
@@ -1135,7 +1506,11 @@ ${
     // it is evaluated once rather than per particle.
     const frozenBurst = burstEnvelope(uBurstT.value) * uBurst.value;
     const frozenSwell = 1 + frozenBurst * BURST.radial;
-    const frozenScatter = frozenBurst * BURST.scatter;
+    // Per-grain, because the scatter term is scaled by aSizeJitter in the
+    // shader. Multiplied inside the loop rather than hoisted, or an interrupted
+    // burst would freeze every grain at the average reach and the field would
+    // visibly re-sort itself at the moment of the swap.
+    const frozenScatterBase = frozenBurst * BURST.scatter;
     for (let i = 0; i < count; i++) {
       // Mirror the vertex shader's blend exactly, or an interrupted morph
       // would visibly jump.
@@ -1149,6 +1524,7 @@ ${
         const a = phase * 1.7;
         const b = phase * 2.3 + 1.1;
         const sb = Math.sin(b);
+        const frozenScatter = frozenScatterBase * sizeJitter[i];
         // normalize(vec3(cos(a)*sin(b), sin(a)*sin(b), cos(b))) — already unit
         // length by construction, so no divide is needed here either.
         positions[idx] = positions[idx] * frozenSwell + Math.cos(a) * sb * frozenScatter;
@@ -1204,12 +1580,27 @@ ${
   let linkTargetAlpha = 0;
   // Orbital camera dolly progress, 0..1 across the page (scrubbed).
   const orbit = { value: 0 };
+  // Opening camera push, as a MULTIPLIER on the settled distance. 1 = settled.
+  const introCam = { value: reducedMotion ? 1 : INTRO.cameraStart };
+  // Scroll-linked spatial path progress, 0..1 across the page (scrubbed).
+  const pathProgress = { value: 0 };
   const CAMERA_Z = camera.position.z;
   const orbitSweep = (cameraOrbit?.sweepDeg ?? 26) * (Math.PI / 180);
   const orbitDolly = cameraOrbit?.dolly ?? 5;
   // A planar lattice takes its parallax on the camera (±2°), not on the holder —
   // rotating a flat form toward the cursor would shear it.
   const CAMERA_PARALLAX = 2 * (Math.PI / 180);
+
+  // Continuous scroll-linked field motion for beat pages (see SceneConfig).
+  // `scrollProgress` is 0..1 down the page, scrubbed; the render loop turns it
+  // into extra globe rotation and a vertical parallax.
+  const scrollProgress = { value: 0 };
+  const scrollSpin = (scrollMotion?.spinDeg ?? 90) * (Math.PI / 180);
+  const scrollDriftY = scrollMotion?.driftY ?? 1;
+  // Rotation already handed to the globe, so a leg spent on a flat shape (which
+  // takes no scroll rotation) absorbs its share instead of banking it up and
+  // dumping the whole lot the moment the globe comes back.
+  let appliedScrollSpin = 0;
 
   // ── Geo mode motion ───────────────────────────────────────────────────────
   // The flat map is ~2π·R wide, over six times the sphere's diameter, so the form
@@ -1239,6 +1630,9 @@ ${
   // Pointer parallax — the globe subtly leans toward the cursor.
   const pointer = { x: 0, y: 0 };
   const pointerTarget = { x: 0, y: 0 };
+  // The FIELD's own copy of the pointer, lerped harder than the formation lean.
+  // See the render loop for why the two cannot share one coefficient.
+  const cursorSmooth = { x: 0, y: 0 };
   function handlePointer(e: PointerEvent) {
     pointerTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
     pointerTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
@@ -1298,12 +1692,84 @@ ${
   // sitting on the boundary settles instead of oscillating.
   const LADDER_TOP = 5;
   let rung = 0;
-  let overBudgetFrames = 0;
   let underBudgetFrames = 0;
-  let warmupElapsed = 0;
   let degraded = false;
   /** Particles actually drawn. Rung 2 trims the draw range; the pool is untouched. */
   let drawCount = count;
+
+  // §9.1 — warmup is not evidence.
+  //
+  // The old monitor started counting from the first loop frame and excluded a
+  // flat 1.5s. Those are the slowest frames the application will ever produce —
+  // shader link, first texture upload, first buffer upload — and sampling them
+  // is how a cold start could trip the ladder before the opening form had even
+  // assembled. Sampling now begins only after the READY signal (the compile
+  // gate below), and then only once both a frame count and a wall-clock window
+  // have passed.
+  let sampling = false;
+  let warmupFrames = 0;
+  let warmupElapsedMs = 0;
+
+  // §9.2 — a rolling median over BUDGET_MEDIAN_WINDOW frames replaces the old
+  // binary "is this frame over budget" test. A median cannot be moved by the
+  // occasional GC pause that a consecutive-frame counter treated as evidence.
+  const frameSamples: number[] = [];
+  let sampleCursor = 0;
+  let breachFrames = 0;
+
+  const rollingMedianMs = () => {
+    if (frameSamples.length < BUDGET_MEDIAN_WINDOW) return 0;
+    const sorted = frameSamples.slice().sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length / 2)];
+  };
+
+  // §9.4 — a trip must be provable, not inferred. Silent in every normal
+  // session; ?motionDebug surfaces the reason and the measured value.
+  const debugMotion = isMotionDebugEnabled();
+  // Descent telemetry. The amplitude directive roughly triples fill-rate
+  // demand, so the question that decides whether the new budgets are right is
+  // not "does this machine degrade" but "how often does a NORMAL desktop
+  // degrade" — if that is more than a few percent of sessions, the budget is
+  // wrong and the answer is a lower DPR ceiling, not a smaller grain.
+  //
+  // Counted always (it is two integers), reported only under ?motionDebug, and
+  // stored on the window so a session can be inspected after the fact rather
+  // than only while the console is open.
+  let descents = 0;
+  let firstDescentMs = 0;
+  const sessionStart = performance.now();
+  /** Console summary of the `phase()` marks above. ?motionDebug only. */
+  const reportPhases = () => {
+    if (!debugMotion) return;
+    const rows = performance
+      .getEntriesByType("measure")
+      .filter((m) => m.name.startsWith("tvx:"))
+      .map((m) => `  ${m.name.slice(4).padEnd(14)} ${m.duration.toFixed(0).padStart(6)}ms`);
+    console.info(
+      `[particle-scene] load path (count=${count}, tier=${renderClass})\n${rows.join("\n")}`
+    );
+  };
+
+  const logLadder = (direction: "down" | "up", reason: string, measured: number) => {
+    if (direction === "down") {
+      descents++;
+      if (!firstDescentMs) firstDescentMs = performance.now() - sessionStart;
+      (window as unknown as { __tvxLadder?: unknown }).__tvxLadder = {
+        tier: renderClass,
+        rung,
+        descents,
+        firstDescentMs: Math.round(firstDescentMs),
+        count,
+        dpr: renderer.getPixelRatio(),
+      };
+    }
+    if (!debugMotion) return;
+    console.info(
+      `[particle-scene] ladder ${direction} → rung ${rung} | ${reason} | ` +
+        `median=${measured.toFixed(1)}ms budget=${FRAME_BUDGET_MS}ms tier=${renderClass} | ` +
+        `descents=${descents} first=${Math.round(firstDescentMs)}ms`
+    );
+  };
 
   const applyRung = () => {
     // 1 — pixel ratio.
@@ -1355,31 +1821,53 @@ ${
     // to see genuinely slow frames rather than a clamped-away view of them.
     const rawDelta = clock.getDelta();
     perfHud?.sample(rawDelta);
-    const delta = Math.min(rawDelta, 0.05);
+    // §5.2 — hard per-frame ceiling, independent of the global ticker. Lag
+    // smoothing (restored in LenisProvider) is the first line of defence; this
+    // is the second, so even a frame that arrives with seconds of accumulated
+    // time on it can only advance the field by one frame's worth.
+    const delta = Math.min(rawDelta, INTRO_MAX_FRAME_DELTA);
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
 
     // Backdrop turns on its own slow axis, independent of the form's spin — two
     // different rates at two different depths is what sells the parallax.
     if (ambient) ambient.points.rotation.y += AMBIENT.spinY * delta;
+    // Third layer, slower again — three rates at three depths.
+    if (deepField) deepField.points.rotation.z += DEEP_FIELD.spinY * delta;
 
-    if (onDegrade && !degraded) {
-      warmupElapsed += rawDelta;
-      if (warmupElapsed > WARMUP_SECONDS) {
-        if (rawDelta * 1000 > FRAME_BUDGET_MS) {
-          overBudgetFrames++;
-          underBudgetFrames = 0;
-          if (overBudgetFrames >= DEGRADE_WINDOW_FRAMES && rung < LADDER_TOP) {
-            overBudgetFrames = 0;
-            rung++;
-            applyRung();
-          }
-        } else {
-          underBudgetFrames++;
-          overBudgetFrames = 0;
-          if (underBudgetFrames >= RECOVER_WINDOW_FRAMES && rung > 0) {
+    if (onDegrade && !degraded && sampling) {
+      // §9.1 — warmup window, measured from the ready signal rather than from
+      // the first frame. Both gates must clear: a device that renders 90 fast
+      // frames in under 1500ms is still inside its own upload spike.
+      if (warmupFrames < BUDGET_WARMUP_FRAMES || warmupElapsedMs < BUDGET_WARMUP_MS) {
+        warmupFrames++;
+        warmupElapsedMs += rawDelta * 1000;
+      } else {
+        // Ring buffer — fixed allocation, no per-frame array growth.
+        frameSamples[sampleCursor] = rawDelta * 1000;
+        sampleCursor = (sampleCursor + 1) % BUDGET_MEDIAN_WINDOW;
+
+        const median = rollingMedianMs();
+        if (median > 0) {
+          if (median > FRAME_BUDGET_MS) {
+            breachFrames++;
             underBudgetFrames = 0;
-            rung--;
-            applyRung();
+            // §9.2 — sustained breach, not a single sample over threshold.
+            // §9.3 — one rung at a time; the ladder can never jump to static.
+            if (breachFrames >= BUDGET_SUSTAINED_BREACH_FRAMES && rung < LADDER_TOP) {
+              breachFrames = 0;
+              rung++;
+              logLadder("down", `sustained breach ≥${BUDGET_SUSTAINED_BREACH_FRAMES} frames`, median);
+              applyRung();
+            }
+          } else {
+            underBudgetFrames++;
+            breachFrames = 0;
+            if (underBudgetFrames >= RECOVER_WINDOW_FRAMES && rung > 0) {
+              underBudgetFrames = 0;
+              rung--;
+              logLadder("up", `clean window ≥${RECOVER_WINDOW_FRAMES} frames`, median);
+              applyRung();
+            }
           }
         }
       }
@@ -1391,15 +1879,29 @@ ${
     const kParallax = 1 - Math.pow(0.95, dt60); // ~0.05 per 60fps frame
     pointer.x += (pointerTarget.x - pointer.x) * kParallax;
     pointer.y += (pointerTarget.y - pointer.y) * kParallax;
+    // The FIELD's cursor is tracked on its own, faster coefficient (0.12 per
+    // 60fps frame) than the formation's parallax lean (0.05). They are two
+    // different gestures: the lean is the whole body noticing you and should be
+    // slow, the displacement is grains reacting under the pointer and has to
+    // keep up or it reads as lag rather than as weight. Still lerped, never
+    // snapped — a hard-tracked field looks nervous.
+    const kCursor = 1 - Math.pow(1 - CURSOR.lerp, dt60);
+    cursorSmooth.x += (pointerTarget.x - cursorSmooth.x) * kCursor;
+    cursorSmooth.y += (pointerTarget.y - cursorSmooth.y) * kCursor;
     // NDC has +Y up; the pointer is tracked in CSS coordinates, where +Y is
     // down. Without the flip the field pushes away from the reflection of the
     // cursor across the horizon, which reads as the effect being broken rather
     // than inverted.
-    uCursor.value.set(pointer.x, -pointer.y);
+    uCursor.value.set(cursorSmooth.x, -cursorSmooth.y);
     uAspect.value = canvasWidth() / Math.max(1, canvasHeight());
     // Reduced motion keeps the field still: a form that lunges at the pointer is
     // exactly the kind of unrequested movement the preference exists to stop.
-    uCursorPush.value = reducedMotion ? 0 : CURSOR.push;
+    // A coarse pointer gets none of it either — there is no hover on a
+    // touchscreen, so the only thing a tap-driven bulge can do is fire once,
+    // somewhere the reader is not looking, mid-scroll.
+    const cursorLive = !reducedMotion && !coarsePointer;
+    uCursorPush.value = cursorLive ? CURSOR.push : 0;
+    uCursorSize.value = cursorLive ? CURSOR.sizeGain : 0;
 
     // uGlobe eases 0..1 so depth cueing / Layer-B dimming fade in and out with
     // the formation rather than popping on a morph.
@@ -1417,6 +1919,21 @@ ${
     if (reducedMotion) {
       uDrift.value = 0;
       uLinkAlpha.value = linkTargetAlpha;
+    }
+
+    // Scroll-linked field motion (beat pages — see SceneConfig.scrollMotion).
+    //
+    // Two terms, and they are split by what each formation can survive. The
+    // rotation is claimed by the globe branch below and only there, because a
+    // flat mark turned about Y goes edge-on. The vertical parallax is a
+    // translation of the whole field, so it is safe on every formation and is
+    // what keeps the backdrop answering the scroll while a flat shape is up.
+    const wantScrollSpin = scrollMotion && !reducedMotion ? scrollSpin * scrollProgress.value : 0;
+    if (scrollMotion && !reducedMotion) {
+      // Not the globe? Absorb this frame's share so it is never applied twice.
+      if (!currentIsGlobe) appliedScrollSpin = wantScrollSpin;
+      const wantY = -scrollDriftY * scrollProgress.value;
+      holder.position.y += (wantY - holder.position.y) * kSettle;
     }
 
     if (geoMode) {
@@ -1495,7 +2012,14 @@ ${
         // Tilt lives on the holder (23.4°); no secondary-axis wobble on points.
         // Keeps rotating while ports are up so every city cycles into view; only
         // gently eased below full speed so labels stay readable as they pass.
-        points.rotation.y += IDLE_OMEGA * (portsMode ? 0.75 : 1) * delta;
+        // Scroll adds to the idle rate rather than replacing it, and it is added
+        // as a DELTA against what has already been applied — so scrolling turns
+        // the globe under the reader's hand while the constant idle rotation
+        // carries on underneath, and reversing the scroll unwinds exactly what
+        // it wound on.
+        points.rotation.y +=
+          IDLE_OMEGA * (portsMode ? 0.75 : 1) * delta + (wantScrollSpin - appliedScrollSpin);
+        appliedScrollSpin = wantScrollSpin;
         points.rotation.x += (0 - points.rotation.x) * kSettle;
         holder.rotation.z += (AXIAL_TILT - holder.rotation.z) * kSettle;
         holder.rotation.x += (pointer.y * PARALLAX_MAX - holder.rotation.x) * kParallax;
@@ -1536,13 +2060,43 @@ ${
     // (±2°) rides on the same angle.
     if (cameraOrbit && !reducedMotion) {
       const angle = (orbit.value - 0.5) * orbitSweep + pointer.x * CAMERA_PARALLAX;
-      const radius = CAMERA_Z - orbitDolly * orbit.value;
+      // introCam is a MULTIPLIER on the orbit radius, not a write to
+      // camera.position.z, so the opening push-in and the scrubbed dolly
+      // compose instead of overwriting each other's frame.
+      const radius = (CAMERA_Z - orbitDolly * orbit.value) * introCam.value;
       camera.position.x = Math.sin(angle) * radius;
       camera.position.z = Math.cos(angle) * radius;
       // radius × the angle is the small-angle arc length, so this is a true ±2°
       // vertical offset rather than an arbitrary world-unit nudge.
       camera.position.y = -pointer.y * CAMERA_PARALLAX * radius;
       camera.lookAt(0, 0, 0);
+    } else if (introCam.value !== 1) {
+      // No orbit on this page: the intro is the only thing moving the camera.
+      camera.position.z = CAMERA_Z * introCam.value;
+    }
+
+    // Scroll-linked spatial path — the field travelling laterally and in depth
+    // across the page rather than swapping shapes on the spot. On `spin`, which
+    // no other system writes to, so it layers over the beat sweeps
+    // (scene.position), the scroll parallax (holder.position) and the orbital
+    // dolly (camera.position) without contending for any of them.
+    if (fieldPath && !reducedMotion) {
+      const p = pathProgress.value * (FIELD_PATH.x.length - 1);
+      const i = Math.min(Math.floor(p), FIELD_PATH.x.length - 2);
+      // power3.inOut between waypoints, evaluated inline: the path is one
+      // scrubbed scalar, so easing it here costs nothing and avoids four
+      // chained tweens all writing the same object.
+      const f = p - i;
+      const e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
+      const amp = fieldPath * (isMobile ? FIELD_PATH.mobileScale : 1);
+      const halfW = visibleHalfWidth();
+      const halfH = visibleHalfHeight();
+      const lerp = (a: number[], k: number) => a[i] + (a[i + 1] - a[i]) * k;
+      spin.position.set(
+        lerp(FIELD_PATH.x as unknown as number[], e) * halfW * amp,
+        lerp(FIELD_PATH.y as unknown as number[], e) * halfH * amp,
+        lerp(FIELD_PATH.z as unknown as number[], e) * CAMERA_BASE_Z * amp
+      );
     }
 
     // No per-frame position write: the morph is a vertex-shader mix of the two
@@ -1595,7 +2149,19 @@ ${
     // stale one) and then stop issuing draw calls. The loop itself keeps
     // running — it is also the state machine — so the field is already correct
     // the instant a beat asks it back.
-    if (material.opacity <= BLANK_ALPHA && !portGroup?.visible && !tradeArcs?.group.visible) {
+    // The deep field is deliberately never faded by a beat, so once it is up the
+    // canvas is never blank and this gate can never close. That is correct and
+    // it is the point of the layer: the saving the gate used to make was made
+    // across viewports that rendered as solid black, which is the defect it is
+    // now paying to remove. It still closes before the intro has run and under
+    // any future config that turns the deep field off.
+    const deepAlpha = deepField ? deepField.material.opacity : 0;
+    if (
+      material.opacity <= BLANK_ALPHA &&
+      deepAlpha <= BLANK_ALPHA &&
+      !portGroup?.visible &&
+      !tradeArcs?.group.visible
+    ) {
       blankFrames++;
     } else {
       blankFrames = 0;
@@ -1612,10 +2178,11 @@ ${
       // is the entire reason the earlier version washed the page white — while
       // avoiding the pass-ordering trap where a trailing RenderPass steals
       // renderToScreen and strands the bloomed frame in an offscreen buffer.
-      if (ambient) {
+      if (ambient || deepField) {
         const prevAutoClear = renderer.autoClear;
         renderer.autoClear = false;
-        renderer.render(ambientScene, camera);
+        if (ambient) renderer.render(ambientScene, camera);
+        if (deepField) renderer.render(deepScene, camera);
         renderer.autoClear = prevAutoClear;
       }
     }
@@ -1628,7 +2195,13 @@ ${
     // reader did actually changes it (a re-fit, or the one geo eagle latch).
     if (!degraded && !reducedMotion) animId = requestAnimationFrame(renderLoop);
   }
-  renderLoop();
+  // §7.2 / §6.5 — the loop is NOT started here.
+  //
+  // It used to be, and that single line was the whole of the initial-state
+  // defect: the first frames painted several hundred lines before the block
+  // that authors stage zero had run, so whatever the material was constructed
+  // with went to screen. The loop now starts from the compile gate below, after
+  // the pose is authored and after the pipeline is warm.
 
   /** One frame, on demand. The whole animation contract under reduced motion. */
   function requestRender() {
@@ -1648,8 +2221,13 @@ ${
       // carries a 60-second delta into every rate below — a visible burst of
       // catch-up motion — and its raw value trips the budget monitor as well.
       clock.getDelta();
-      overBudgetFrames = 0;
+      // The frames either side of a tab switch are not evidence of anything.
+      // Discard the whole sample window rather than just the counters, or the
+      // median carries the hidden interval's outlier for 45 frames.
+      breachFrames = 0;
       underBudgetFrames = 0;
+      frameSamples.length = 0;
+      sampleCursor = 0;
       renderLoop();
     }
   }
@@ -1725,14 +2303,25 @@ ${
   // and hero assembly below already use.
   const R = globeRadius; // nominal shape radius in world units
 
+
   // Build this page's shapes. Async only because the eagle decodes its PNG
   // alpha channel; every other builder resolves immediately.
-  const shapes = await buildShapes(shapeKeys, shapeCtx);
+  const shapes = await phase("shapes", () => buildShapes(shapeKeys, shapeCtx));
   if (globeBuilt) shapes.set("globe", globeBuilt.shape);
+
+  const registry: ShapeRegistry = {
+    get(key) {
+      const s = shapes.get(key);
+      if (!s) throw new Error(`particle-scene: stage builder wants unlisted shape "${key}" — add it to SceneConfig.shapes`);
+      return s;
+    },
+  };
 
   // Built at the scene's own pool size, so every stage is morph-compatible with
   // the shared buffers regardless of which device tier we landed on.
-  const stages = buildStages ? await buildStages(shapeCtx) : undefined;
+  const stages = buildStages
+    ? await phase("stages", () => buildStages(shapeCtx, registry))
+    : undefined;
 
   // Geo field. Fills the attributes allocated above, plus the ocean-shell layer
   // flag and the static HQ accent mask — in geo mode the accented node never moves,
@@ -2131,8 +2720,12 @@ ${
     // Scrubbed legs carry colour too. Given a short window rather than 0 so a
     // fast flick through several segments still reads as a blend.
     applySpectrum(b, DURATION.standard);
-    currentFlat = !!b.flat;
-    currentIsGlobe = false;
+    // NOTE: currentFlat / currentIsGlobe are NOT set here. They are derived per
+    // frame in setTimelinePos from whichever stage the reader is nearer, which
+    // matters now that a sequence can contain a globe: switching to the globe's
+    // idle spin and axial tilt at segment LOAD would turn the outgoing form —
+    // a flat container, in home's case — about Y for the length of a whole
+    // section, and a flat mark turned about Y collapses edge-on.
   }
 
   /** Show or hide the route overlay. Both calls are idempotent inside TradeArcs. */
@@ -2197,7 +2790,18 @@ ${
     // Scrubbed segments are already linear in the scroll fraction, so the
     // envelope shares the position driver directly — one swell per leg, tied to
     // the reader's own scrolling rather than to a clock.
+    //
+    // This is also what makes BURST.scrubScale: 1 safe. The envelope is a cubed
+    // sine over a smoothstep window, so it is exactly 0 at fraction 0 and 1 —
+    // which are precisely the values a settled stage holds. A page can never
+    // come to rest inflated, however large the amplitude.
     uBurstT.value = uProgress.value;
+
+    // Idle character follows whichever stage the reader is NEARER, not the one
+    // the segment is travelling toward. See the note in loadSegment.
+    const near = uProgress.value > 0.5 ? stages[i + 1] : stages[i];
+    currentFlat = !!near.flat;
+    currentIsGlobe = near.name === "globe";
 
     // Drift is interpolated between the two stages being blended, so the closing
     // stage's loose wander arrives gradually rather than switching on.
@@ -2231,6 +2835,17 @@ ${
   // settling dust rather than snapping in on one synchronized keyframe (§2).
   // On Careers this convergence *is* the beat — the motion carries the idea, so
   // it survives the mobile particle budget better than any silhouette.
+  /**
+   * §5.3 / §6.5 — set by assembleInto, invoked ONLY by the compile gate.
+   *
+   * The assemble authors its stage-zero pose synchronously (scatter shell,
+   * progress 0, opacity 0) and then stops. Nothing moves until the gate calls
+   * this. That separation is what makes "constructed paused at progress zero"
+   * true of a system whose opening beat is a tween rather than a timeline
+   * object: the pose exists, the motion does not.
+   */
+  let startIntro: (() => void) | null = null;
+
   function assembleInto(shape: Shape) {
     currentShapeName = shape.name;
     currentFlat = !!shape.flat;
@@ -2264,27 +2879,44 @@ ${
     toAttr.needsUpdate = true;
     delayAttr.needsUpdate = true;
     uStagger.value = 1;
-    uProgress.value = 0;
+    // §7.2 — the opening `.set()` of every animated property to stage zero.
+    // Explicit, and sourced from the same object material construction used, so
+    // the two cannot drift apart. Construction defaults are never relied upon.
+    uProgress.value = INTRO_STATE_INITIAL.progress;
+    morphProgress.value = INTRO_STATE_INITIAL.progress;
+    uBurstT.value = INTRO_STATE_INITIAL.burstT;
+    uDrift.value = INTRO_STATE_INITIAL.drift;
     // No burst on the assemble. The grains are already arriving from a random
     // shell — swelling them outward mid-flight just reads as more scatter, and
     // it fights the settling the stagger window exists to create.
-    uBurst.value = 0;
+    uBurst.value = INTRO_STATE_INITIAL.burst;
 
-    material.opacity = 0;
-    gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
-    // Backdrop fades up behind the assemble, a beat later and slower, so the
-    // depth is established after the form rather than competing with its arrival.
-    if (ambient) {
-      gsap.to(ambient.material, {
-        opacity: capOpacity(AMBIENT.opacity),
-        duration: DURATION.long * 1.5,
-        delay: DURATION.standard,
-        ease: EASE.entry,
-      });
-    }
-    gsap.killTweensOf(morphProgress);
-    // PERIOD.assemble — the per-particle settling window, not a transition.
-    gsap.to(morphProgress, { value: 1, duration: PERIOD.assemble, ease: EASE.scrub });
+    material.opacity = INTRO_STATE_INITIAL.opacity;
+    if (ambient) ambient.material.opacity = INTRO_STATE_INITIAL.opacity;
+
+    // The pose is authored. NOTHING above started a tween — every line of it is
+    // a synchronous write, so the scene can be rendered, compiled and measured
+    // in this state for as long as the gate needs without the sequence having
+    // begun. The motion is handed to the gate instead.
+    startIntro = () => {
+      startIntro = null;
+      gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
+      // Backdrop fades up behind the assemble, a beat later and slower, so the
+      // depth is established after the form rather than competing with its arrival.
+      if (ambient) {
+        gsap.to(ambient.material, {
+          opacity: capOpacity(AMBIENT.opacity),
+          duration: DURATION.long * 1.5,
+          delay: DURATION.standard,
+          ease: EASE.entry,
+        });
+      }
+      gsap.killTweensOf(morphProgress);
+      // PERIOD.assemble — the per-particle settling window, not a transition.
+      // Unchanged: §1.3 locks the choreography, and this is the same tween with
+      // the same duration and the same ease. Only its start is now gated.
+      gsap.to(morphProgress, { value: 1, duration: PERIOD.assemble, ease: EASE.scrub });
+    };
   }
 
   let revealDelayMs = 0;
@@ -2292,7 +2924,11 @@ ${
   // Initial state. (Caller signals preloader-done once this instance's promise
   // resolves — see ParticleCanvas.tsx.)
   if (geoStages?.length) {
-    material.opacity = heroOpacity;
+    // §7.2 — authored, not inherited. Geo routes have no assemble to hide
+    // behind, so stage zero is written explicitly here and the field is held at
+    // zero opacity until the gate opens. This is the branch that put a fully
+    // resolved globe on screen at construction time.
+    material.opacity = INTRO_STATE_INITIAL.opacity;
     if (reducedMotion) {
       // Reduced motion resting state: the FLAT map, already unwrapped, with Surat,
       // every route drawn and every label visible. No unwrap, no spin, no drift —
@@ -2306,20 +2942,48 @@ ${
       uEagleBlend.value = 0;
       driftTarget = 0;
       setRoutes(true);
+      // §7.3 — the reduced-motion path is an EXPLICIT branch and it renders a
+      // finished state immediately. It is never reached as a side effect of a
+      // stalled or skipped timeline, and it does not wait on the gate.
+      material.opacity = heroOpacity;
     } else {
-      // Settle on stage 0 — the globe.
+      // Settle on stage 0 — the globe. Spherical, no routes, no eagle blend:
+      // whatever geoStages[0] declares and nothing beyond it.
       uBend.value = geoStages[0].bend;
+      uEagleBlend.value = INTRO_STATE_INITIAL.eagleBlend;
       driftTarget = geoStages[0].drift ?? 0;
       setRoutes(!!geoStages[0].routes);
+      // Held at stage zero, invisible, until the gate opens — §6.5. The pose is
+      // correct the whole time, so the reveal is a fade onto an already-formed
+      // stage zero rather than a pop.
+      revealDelayMs = 900;
+      startIntro = () => {
+        startIntro = null;
+        gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
+      };
     }
     currentIsGlobe = false; // geo mode drives uGlobe from bend directly
     currentFlat = false;
   } else if (stages?.length) {
     if (reducedMotion) {
-      // Reduced motion settles on the LAST stage, which is the shared eagle
-      // finale on every page — the closing signature, static. No assemble, no
-      // scroll morph, no drift; the trigger branch below is skipped entirely.
-      const settled = stages[stages.length - 1];
+      // Reduced motion settles on ONE stage and holds it for the whole page.
+      //
+      // Which one depends on what the page is anchored to. A stage page's
+      // identity is its FINALE — the shared eagle, the closing signature — so
+      // it settles on the last stage. A page that also carries beats (home) is
+      // anchored to its HERO: settling it on the eagle would mean a
+      // reduced-motion reader opens the site on the CTA's mark instead of the
+      // globe the headline is written against, which is not a smaller version
+      // of the experience, it is a different page.
+      const settled = beats.length ? stages[0] : stages[stages.length - 1];
+      // Instantly, and before the snap. A stage carries its own four-stop
+      // spectrum (the globe's ocean-and-land, the hull's painted steel) and
+      // nothing else on this branch applies it, so without this a
+      // reduced-motion reader gets the settled FORM wearing the page's generic
+      // token palette — a globe in violet and rose rather than in water and
+      // land. It never showed while every scrubbed page opened on an abstract
+      // lattice; it shows the moment one of them opens on a globe.
+      applySpectrum(settled, 0);
       snapTo(settled.data, settled.accent);
       currentFlat = !!settled.flat;
       currentIsGlobe = false;
@@ -2347,14 +3011,242 @@ ${
     revealDelayMs = reducedMotion ? 0 : 900;
   }
 
+  // ── §6 — warm start and compile gate ───────────────────────────────────────
+  //
+  // The stall Antigonus defends against is not removed by defending against it.
+  // Shader program linking and the first attribute upload happen inside the
+  // first rendered frame; if the sequence is already running in that frame, it
+  // runs under a freeze. So the sequence does not start until the pipeline is
+  // warm and the device has demonstrated it can hold two frames.
+  //
+  // §6.2 note: every stage's position buffer is already materialised before
+  // this point — `buildStages` is awaited during construction — so there is no
+  // lazy morph-target creation at stage boundaries to eliminate. What remains
+  // is the per-boundary re-upload in loadSegment(), addressed by marking the
+  // morph attributes dynamic and forcing their first upload here, off-timeline.
   let readyTimer = 0;
+  let gateFrame = 0;
+  let gateOpened = false;
+
+  /**
+   * THE arrival.
+   *
+   * Two tweens on one timeline, and they are deliberately offset rather than
+   * simultaneous: the field materialises from t=0 and the camera starts moving
+   * half a second later, so the reader sees something resolve out of nothing
+   * and THEN feels themselves travel toward it. Started together, the push
+   * reads as a zoom on a thing that was already there.
+   *
+   * `uIntro` is not the material's opacity — that channel belongs to the
+   * choreography, which tweens it all page long — so no later beat can
+   * accidentally undo or pre-empt the arrival.
+   *
+   * Under reduced motion neither tween is built: both uniforms are constructed
+   * at their settled values, so the field is simply present.
+   */
+  function runIntro() {
+    if (reducedMotion) {
+      uIntro.value = 1;
+      introCam.value = 1;
+      return;
+    }
+    uIntro.value = 0;
+    introCam.value = INTRO.cameraStart;
+    const tl = gsap.timeline();
+    tl.to(uIntro, { value: 1, duration: INTRO.duration, ease: INTRO.ease }, 0);
+    tl.to(
+      introCam,
+      { value: 1, duration: INTRO.duration, ease: INTRO.ease },
+      INTRO.cameraDelay
+    );
+    // The deep field comes up with the arrival and then stays up for the life
+    // of the page. It is the only layer no beat may touch.
+    if (deepField) {
+      tl.to(
+        deepField.material,
+        { opacity: DEEP_FIELD.opacity, duration: INTRO.duration, ease: EASE.entry },
+        0
+      );
+    }
+    introTimeline = tl;
+  }
+  let introTimeline: gsap.core.Timeline | null = null;
+
+  const openGate = () => {
+    if (gateOpened || disposed) return;
+    gateOpened = true;
+    if (readyTimer) {
+      clearTimeout(readyTimer);
+      readyTimer = 0;
+    }
+    // Budget sampling begins HERE, not at first frame — §9.1. Everything before
+    // this point is warmup by definition.
+    sampling = true;
+    clock.getDelta(); // discard the whole gate interval
+    if (!reducedMotion) renderLoop();
+    // The arrival runs from the gate, not from construction: it is the one
+    // sequence that must never play under a compile stall, because the whole
+    // point of it is that the reader watches it.
+    runIntro();
+    startIntro?.();
+    reportPhases();
+  };
+
   const ready: Promise<void> = new Promise((resolve) => {
-    if (revealDelayMs === 0) {
+    const settle = () => {
+      openGate();
+      // The reveal delay is unchanged choreography — it is the beat the hero
+      // copy waits on, and §1.3 forbids re-timing it. It now runs from the gate
+      // rather than from construction, so on a cold start the copy and the
+      // field still arrive together instead of the copy waiting out a freeze.
+      if (revealDelayMs === 0) resolve();
+      else readyTimer = window.setTimeout(resolve, revealDelayMs);
+    };
+
+    if (reducedMotion) {
+      // §7.3 — explicit branch. The static composition is already authored
+      // above; render it once and resolve. No gate, no loop, no sequence.
+      requestRender();
+      openGate();
       resolve();
       return;
     }
-    readyTimer = window.setTimeout(resolve, revealDelayMs);
+
+    // Morph attributes are rewritten at every stage boundary. Telling the
+    // driver so lets it pick a streaming allocation instead of treating each
+    // rewrite as a fresh static upload.
+    posAttr.setUsage(THREE.DynamicDrawUsage);
+    toAttr.setUsage(THREE.DynamicDrawUsage);
+    accentAAttr.setUsage(THREE.DynamicDrawUsage);
+    accentBAttr.setUsage(THREE.DynamicDrawUsage);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    accentAAttr.needsUpdate = true;
+    accentBAttr.needsUpdate = true;
+
+    // §6.4 — hard cap. A gate that never opens is a worse failure than a late
+    // start, so this fires regardless of what is still outstanding.
+    const capTimer = window.setTimeout(() => {
+      if (debugMotion && !gateOpened) {
+        console.info(`[particle-scene] compile gate hit the ${COMPILE_GATE_MAX_MS}ms cap — starting anyway`);
+      }
+      settle();
+    }, COMPILE_GATE_MAX_MS);
+
+    const gateStart = performance.now();
+
+    // §6.1 — pre-warm. The directive specifies compileAsync where available and
+    // compile() as the fallback; this build takes the fallback deliberately.
+    //
+    // compileAsync is present in this Three version but is DEFECTIVE against
+    // this scene graph: it polls `checkMaterialsReady`, which walks a material
+    // Set and dereferences `.isReady` on an entry that is undefined here,
+    // throwing `TypeError: Cannot read properties of undefined (reading
+    // 'isReady')`. The throw happens inside Three's own polling callback, so it
+    // is reachable by neither a try/catch around the call nor a .catch() on the
+    // returned promise — it surfaces as an uncaught error and the promise never
+    // settles. Verified in-browser across all three routes before switching.
+    //
+    // compile() links the same programs synchronously and has none of that. It
+    // costs one blocking call, which is exactly what the gate exists to absorb:
+    // this runs while the field is at zero opacity and nothing is animating.
+    const warm: Promise<unknown> = Promise.resolve().then(() => phase("compile", () => {
+      try {
+        renderer.compile(scene, camera);
+        // Both backdrops link their own programs and they are drawn straight to
+        // the canvas after the composer, outside the pass chain — so if they
+        // are not warmed here their first draw is a link stall in the middle of
+        // the arrival, which is the one frame the gate exists to protect.
+        renderer.compile(ambientScene, camera);
+        renderer.compile(deepScene, camera);
+      } catch {
+        // A compile failure is not fatal — the frame probe still runs and the
+        // cap still fires. Nothing here may prevent the sequence starting.
+      }
+    }));
+
+    // §6.3 — all three conditions. Fonts are included because a webfont landing
+    // mid-sequence reflows the sections the ScrollTriggers are measured against.
+    const fonts: Promise<unknown> = document.fonts?.ready ?? Promise.resolve();
+
+    // Neither condition may hang the gate. §6.4's cap is the outer guarantee;
+    // this is the inner one, so a compile that never settles still reaches the
+    // frame probe instead of burning the full cap on a device that was ready.
+    const bounded = <T,>(p: Promise<T>) =>
+      Promise.race([p, new Promise((r) => setTimeout(r, COMPILE_GATE_MAX_MS * 0.6))]);
+
+    Promise.all([bounded(warm), bounded(fonts)]).then(() => {
+      if (disposed || gateOpened) return;
+      // One frame off-timeline: forces the first real draw — texture binds,
+      // attribute uploads, the post chain's own targets — while nothing is
+      // animating and the field is still at zero opacity.
+      requestRender();
+
+      // Two CONSECUTIVE frames within budget before the sequence may start.
+      // A device still uploading will miss this and fall through to the cap.
+      let clean = 0;
+      let last = performance.now();
+      const probe = () => {
+        if (disposed || gateOpened) return;
+        const now = performance.now();
+        const frameMs = now - last;
+        last = now;
+        requestRender();
+        clean = frameMs <= FRAME_BUDGET_MS ? clean + 1 : 0;
+        if (clean >= 2) {
+          if (debugMotion) {
+            console.info(`[particle-scene] compile gate cleared in ${Math.round(now - gateStart)}ms`);
+          }
+          clearTimeout(capTimer);
+          settle();
+          return;
+        }
+        gateFrame = requestAnimationFrame(probe);
+      };
+      gateFrame = requestAnimationFrame(probe);
+    });
   });
+
+  // §8.5 — bfcache restore. The page comes back fully built with its uniforms
+  // wherever the last session left them, so without this a back-navigation
+  // lands on a formed mid-sequence state and nothing re-runs. Reset to stage
+  // zero and re-run the gate.
+  function handlePageShow(event: PageTransitionEvent) {
+    if (!event.persisted || disposed || reducedMotion) return;
+    gateOpened = false;
+    sampling = false;
+    // The arrival has to be re-armed too, or a back-navigation lands on a page
+    // whose field is already fully materialised and whose camera is already in.
+    introTimeline?.kill();
+    gsap.killTweensOf([uIntro, introCam]);
+    uIntro.value = 0;
+    introCam.value = INTRO.cameraStart;
+    if (deepField) {
+      gsap.killTweensOf(deepField.material);
+      deepField.material.opacity = 0;
+    }
+    warmupFrames = 0;
+    warmupElapsedMs = 0;
+    frameSamples.length = 0;
+    sampleCursor = 0;
+    breachFrames = 0;
+    underBudgetFrames = 0;
+    if (stages?.length) assembleInto(stages[0]);
+    else if (heroShape) assembleInto(heroShape);
+    else if (geoStages?.length) {
+      uBend.value = geoStages[0].bend;
+      uEagleBlend.value = INTRO_STATE_INITIAL.eagleBlend;
+      setRoutes(!!geoStages[0].routes);
+      material.opacity = INTRO_STATE_INITIAL.opacity;
+      startIntro = () => {
+        startIntro = null;
+        gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
+      };
+    }
+    requestRender();
+    requestAnimationFrame(() => openGate());
+  }
+  window.addEventListener("pageshow", handlePageShow);
 
   // Scroll choreography — a deliberate, sparse sequence, supplied per page as
   // a beat list (see SceneConfig). The field only forms a shape at a handful of
@@ -2381,6 +3273,49 @@ ${
   // double-mount, or a fast route change) never binds triggers at all.
   const bindFrame = requestAnimationFrame(() => {
     if (disposed) return;
+
+    // Scroll-linked field motion. Bound FIRST, ahead of the mode branches below
+    // (each of which returns), so it is available to beat pages and stage pages
+    // alike rather than being trapped inside one of them the way `cameraOrbit`
+    // is. Defaults to the whole document, which is what a beat page wants: the
+    // field should answer the scroll everywhere, not only where a beat sits.
+    if (scrollMotion && !reducedMotion) {
+      const el = scrollMotion.trigger ? document.querySelector(scrollMotion.trigger) : null;
+      const tween = gsap.to(scrollProgress, {
+        value: 1,
+        ease: EASE.scrub,
+        scrollTrigger: {
+          trigger: el ?? document.body,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: SCRUB,
+          invalidateOnRefresh: true,
+        },
+      });
+      instanceTweens.push(tween);
+      if (tween.scrollTrigger) instanceScrollTriggers.push(tween.scrollTrigger);
+    }
+
+    // Scroll-linked spatial path. Bound alongside scrollMotion, ahead of the
+    // mode branches, for the same reason: it is a property of the page's whole
+    // scroll range, not of any one section or mode.
+    if (fieldPath > 0 && !reducedMotion) {
+      const el = fieldPathTrigger ? document.querySelector(fieldPathTrigger) : null;
+      const tween = gsap.to(pathProgress, {
+        value: 1,
+        ease: EASE.scrub,
+        scrollTrigger: {
+          trigger: el ?? document.body,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: SCRUB,
+          invalidateOnRefresh: true,
+        },
+      });
+      instanceTweens.push(tween);
+      if (tween.scrollTrigger) instanceScrollTriggers.push(tween.scrollTrigger);
+    }
+
     // Scrubbed stage sequence. Every morph is bound to real section boundaries
     // and driven by scroll position, so the reader is scrubbing the animation
     // rather than triggering it. Under prefers-reduced-motion none of this is
@@ -2455,8 +3390,16 @@ ${
         instanceScrollTriggers.push(st);
       }
 
-      ScrollTrigger.refresh();
-      return; // stage pages don't use the beat system below
+      // A page with stages AND beats (home) falls through to the beat block
+      // below, where the beats bind their SIDE EFFECTS only — sweep, ports,
+      // opacity — while the scrubbed sequence above owns every shape change.
+      // That split is what lets the morph be scroll-driven without giving up
+      // the composition: the sweeps still park each form beside the copy column
+      // its section was laid out around.
+      if (!beats.length) {
+        ScrollTrigger.refresh();
+        return;
+      }
     }
     if (geoStages && reducedMotion) {
       // The one exception to "reduced motion binds nothing": an instant, untweened
@@ -2484,7 +3427,19 @@ ${
       }
       return;
     }
-    if (stages || geoStages) return; // reduced motion on a stage page: nothing to bind
+    // Reduced motion on a stage page: nothing to bind. A stage page WITH beats
+    // still binds nothing under reduced motion — the beats' only remaining jobs
+    // are a sweep and an opacity fade, both of which are motion.
+    if ((stages || geoStages) && reducedMotion) return;
+    if (geoStages) return;
+
+    /**
+     * True when a scrubbed stage sequence owns the field's shape. The beats then
+     * carry side effects only, and `applyState` must not morph — two systems
+     * writing the position buffers would fight, and the discrete one would win
+     * whichever frame it fired on.
+     */
+    const stagesOwnShape = !!stages?.length;
 
     const sweep = (trigger: string, to: number) => {
       const tween = gsap.to(scene.position, {
@@ -2580,7 +3535,7 @@ ${
       if (state.ports) showPorts();
       else hidePorts();
       fade(capOpacity(state.opacity), state.fadeDuration);
-      if (state.shape) morphTo(state.shape);
+      if (state.shape && !stagesOwnShape) morphTo(state.shape);
     };
 
     beats.forEach((beat, i) => {
@@ -2641,6 +3596,12 @@ ${
       if (readyTimer) clearTimeout(readyTimer);
       settleTimers.forEach((t) => clearTimeout(t));
       window.removeEventListener("load", resync);
+      window.removeEventListener("pageshow", handlePageShow);
+      // The compile gate's probe loop is its own rAF chain, separate from the
+      // render loop's — a scene torn down mid-gate (Strict Mode double-mount, a
+      // fast route change) must cancel both or the probe keeps rendering into a
+      // disposed renderer.
+      if (gateFrame) cancelAnimationFrame(gateFrame);
       cancelAnimationFrame(animId);
       releaseResize();
       window.removeEventListener("pointermove", handlePointer);
@@ -2676,6 +3637,13 @@ ${
         ambient.geometry.dispose();
         ambient.material.dispose();
       }
+      if (deepField) {
+        gsap.killTweensOf(deepField.material);
+        deepScene.remove(deepField.points);
+        deepField.geometry.dispose();
+        deepField.material.dispose();
+      }
+      introTimeline?.kill();
       linkMesh?.geometry.dispose();
       linkMaterial?.dispose();
       // Port-globe overlay: dispose each label/arc's own geometry + material
@@ -2697,7 +3665,16 @@ ${
       // tracked. Left alive, these keep writing into a disposed scene's THREE
       // objects after a route change.
       cancelAnimationFrame(bindFrame);
-      gsap.killTweensOf([morphProgress, uBurstT, material, scene.position, orbit]);
+      gsap.killTweensOf([
+        morphProgress,
+        uBurstT,
+        material,
+        scene.position,
+        orbit,
+        uIntro,
+        introCam,
+        pathProgress,
+      ]);
       instanceTweens.forEach((t) => t.kill());
       instanceScrollTriggers.forEach((st) => st.kill());
     },

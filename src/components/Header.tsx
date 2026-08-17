@@ -52,6 +52,43 @@ export default function Header() {
     setOpenMenu(menu);
   }, []);
 
+  // Dropdown items stagger in, rather than the panel simply appearing with its
+  // contents already in place.
+  //
+  // The panel's own fade-and-rise is CSS (see .nav-drop) and stays there — this
+  // adds the second layer the audit found missing: the CONTENTS arriving in
+  // sequence, which is what makes a menu read as opening rather than as being
+  // switched on.
+  //
+  // `back.out` is used here and essentially nowhere else on the site. A small
+  // overshoot on a nav item reads as spring; the same curve on a card or a
+  // panel reads as bouncy, and this brand's promise is credibility. The travel
+  // is 18px, not the reference's 50 — these panels are ~40px per row, so a 50px
+  // rise starts each item above the trigger that opened it.
+  useEffect(() => {
+    if (!openMenu) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const panel = rootRef.current?.querySelector<HTMLElement>(".nav-drop.is-open");
+    if (!panel) return;
+    const items = panel.querySelectorAll("li");
+    if (!items.length) return;
+    const tween = gsap.from(items, {
+      autoAlpha: 0,
+      y: -18,
+      duration: DURATION.short,
+      ease: "back.out(1.7)",
+      stagger: { amount: 0.2 },
+      overwrite: "auto",
+      // Inline opacity/visibility left behind would outrank the panel's own
+      // `pointer-events: none` closed state and the link hover colours.
+      clearProps: "opacity,visibility,transform",
+    });
+    return () => {
+      tween.kill();
+      gsap.set(items, { clearProps: "opacity,visibility,transform" });
+    };
+  }, [openMenu]);
+
   // Escape closes any open panel; clicking a panel link also closes it.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

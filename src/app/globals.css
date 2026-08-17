@@ -184,11 +184,31 @@ html[lang="ru"] {
   --ease-entry: cubic-bezier(0.5, 1, 0.89, 1);
   --ease-exit: cubic-bezier(0.11, 0, 0.5, 0);
   --ease-ambient: cubic-bezier(0.45, 0, 0.55, 1);
-  /* Retained as an alias so no rule has to change to keep working;
-     it now resolves to the shared entry curve. */
-  --ease-out: var(--ease-entry);
-  --dur-fast: 0.2s;
-  --dur-base: 0.3s;
+  /* INTERACTION vocabulary — hover, press, nav, marquee, and the headline
+     reveals. `--ease-entry` is ~easeOutCirc: it leaves the origin at a moderate
+     rate and decelerates gently, which is why a 0.3s hover on it reads as a
+     colour change that happened to take a moment rather than as a movement. A
+     high-exponent curve covers most of its distance in the first third and then
+     settles, and that is what makes a transform read as decisive.
+
+     Scope is deliberately narrow. Scroll-linked motion and the page transition
+     keep `--ease-entry`/`--ease-exit`, so the site still has ONE settle curve
+     rather than two competing ones — these are registered with GSAP CustomEase
+     under the same names (lib/motion.ts EASE.emphatic / EASE.travel), so a CSS
+     hover and a GSAP tween are literally the same curve.
+
+     `--ease-out` was an alias for `--ease-entry`; it is now the emphatic curve,
+     which is what changes the feel of every rule already written against it. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Overshoot. Nav items and small chrome ONLY — a card or a panel that
+     overshoots reads as bouncy, and this brand's promise is credibility. */
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Sub-300ms reads as instant, not as motion: the eye registers that the end
+     state differs but never sees the travel, which is why colour-only hovers at
+     0.2s felt like a state toggle rather than a response. */
+  --dur-fast: 0.28s;
+  --dur-base: 0.45s;
 
   /* ============================================================
      GRAIN — the single tokenized intensity and the tile geometry.
@@ -491,15 +511,38 @@ html {
   background: var(--gold);
 }
 
-/* GSAP text-split reveal targets — refined timing */
-.word_inner {
-  opacity: 0;
-  filter: blur(6px);
-  will-change: opacity, filter;
+/* ---------- GSAP text-split reveal targets ----------
+   The MASK is the mechanism. Each word is an overflow:hidden inline-block, so a
+   glyph tweened from yPercent:120 rises out from behind the word's own bottom
+   edge instead of simply appearing in place. `vertical-align: top` keeps the
+   masked words on the same baseline as unmasked inline content around them —
+   an inline-block defaults to baseline alignment, which drops it by the
+   descender depth and visibly misaligns a mixed line.
+
+   The masks carry no opacity of their own: hiding the mask would hide the
+   glyphs' travel along with them, which is the one thing that must stay
+   visible. */
+.word_mask,
+.p_mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
 }
+.word_inner,
+.p_inner {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+/* Opacity ONLY. The travel belongs entirely to GSAP.
+   A `transform: translateY(120%)` here looks like a helpful pre-hydration state
+   and is a trap: GSAP resolves a percentage translate into its `y` (pixels)
+   channel, not its `yPercent` channel, so a subsequent `yPercent: 0` tween sets
+   yPercent to zero while leaving y at the resolved pixel offset — the glyphs
+   fade in and never come back up. Opacity 0 hides them just as well before
+   hydration and has no such channel to collide with. */
+.word_inner,
 .p_inner {
   opacity: 0;
-  will-change: opacity;
 }
 .testimonial_inner {
   opacity: 0;
@@ -519,22 +562,71 @@ html {
   overflow-x: hidden;
 }
 
-/* Global transition for interactive elements */
+/* Global transition for interactive elements.
+   `transform` joins the list because an audit of the live DOM found exactly
+   three transitioned properties on the entire page — colour, background-colour
+   and border-colour — and precisely one element anywhere transitioning
+   transform. Nothing on the site moved between scroll events, which is most of
+   why it read as static. The transform here is the CHANNEL, not the motion:
+   individual components declare what actually moves. */
 a, button {
-  transition: color var(--dur-base) var(--ease-entry),
-              border-color var(--dur-base) var(--ease-entry),
-              background-color var(--dur-base) var(--ease-entry);
+  transition: color var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              background-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
 }
 
-/* preloader spinner */
-@keyframes spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
+/* ---------- Card interaction primitive ----------
+   One rule, applied by class, so a card's hover is authored once instead of
+   being re-invented per section with a slightly different lift each time.
+   translateY carries the lift and the 1.2% scale carries the "toward you" —
+   scale alone reads as a zoom, translate alone as a slide. */
+.tvx-lift {
+  transition: transform var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              background-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+  will-change: transform;
+}
+.tvx-lift:hover {
+  transform: translateY(-6px) scale(1.012);
+  border-color: var(--hairline-gold);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tvx-lift:hover {
+    transform: none;
   }
 }
+
+/* ---------- Copy scrim ----------
+   Local legibility, so the field never has to be dimmed globally to rescue one
+   paragraph. An ellipse rather than a rectangle: a hard-edged plate behind copy
+   reads as a panel the designer forgot to style, where a radial falloff reads
+   as the field simply being quieter here. Sits behind its own content and never
+   intercepts a pointer. */
+.copy-scrim {
+  position: relative;
+  isolation: isolate;
+}
+.copy-scrim::before {
+  content: "";
+  position: absolute;
+  /* Overspills the block so the falloff completes off the text rather than
+     ending at its edge, which would draw a visible oval. */
+  inset: -12% -8%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--bg) 82%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 55%, transparent) 45%,
+    transparent 78%
+  );
+}
+
+/* The preloader spinner's `spin` keyframes are gone with the spinner itself —
+   the preloader is a counter now (see Preloader.tsx / scroll-infra.css) and
+   nothing else on the site referenced them. */
 
 /* odometer-style digit roll */
 .odometer {
@@ -574,8 +666,22 @@ a, button {
 
 /* Standardized section-reveal pattern (see hooks/useScrollAnimations.ts):
    hidden by default so there's no flash before the ScrollTrigger fires. */
+/* Headings hide by OPACITY now, not by clip-path.
+   The reveal is a masked per-line rise (SplitText), and the mask elements do
+   not exist until the split runs on the client — so the pre-split state has to
+   hide the whole block, and it has to hide it in a way the split can undo. A
+   clip-path inset would still be in force on the container after the split and
+   would clip the very lines that are meant to rise through it.
+
+   `revealHeadings` removes the attribute the instant it takes ownership, which
+   is what un-hides the element; the per-line tween then supplies the travel. An
+   element that never reaches the hook (JS failed, reduced motion) is released
+   by `releaseReveal` on the same attribute, so nothing can be left invisible. */
 [data-reveal-heading] {
-  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+}
+[data-reveal-lines] {
+  opacity: 0;
 }
 [data-reveal-body] {
   opacity: 0;
@@ -600,7 +706,9 @@ a, button {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  [data-reveal-heading] {
+  [data-reveal-heading],
+  [data-reveal-lines] {
+    opacity: 1 !important;
     clip-path: none !important;
   }
   [data-reveal-body],
@@ -614,6 +722,16 @@ a, button {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
+  }
+  /* The masks would clip nothing once the glyphs are at rest, but a reader on
+     reduced motion may also be zoomed, and a clipped inline-block at 200% text
+     size can crop a descender. Nothing here needs to clip, so nothing does. */
+  .word_mask,
+  .p_mask {
+    overflow: visible;
+  }
+  [data-reveal-lines] .tvx-line-mask {
+    overflow: visible;
   }
 }
 
@@ -635,6 +753,17 @@ a, button {
   /* Topmost — above the global grain overlay (9999) and raised chrome (10000). */
   z-index: 10001;
   will-change: transform;
+  /* INVERSION.
+     `difference` makes the cursor a function of what it is crossing rather than
+     a fixed dot floating over the page — the single change that stops a custom
+     cursor reading as a decoration bolted on top of the design.
+
+     Gold is kept rather than swapped for the reference's white. Against this
+     site's black ground `difference(gold, black)` is gold, so the brand colour
+     is preserved everywhere it currently matters; the inversion only takes
+     effect where the cursor crosses light imagery or an inverted panel, which
+     is exactly where a fixed gold dot was hardest to see. */
+  mix-blend-mode: difference;
   /* Hidden by default. Only revealed for non-touch pointers once JS adds
      .has-custom-cursor to <html> — prevents a frozen dot/ring in the
      top-left corner on touch devices (mobile). */
@@ -659,9 +788,19 @@ a, button {
   background: var(--gold);
 }
 .custom-cursor-ring {
+  /* Fixed box; the hover state SCALES it rather than animating width/height.
+     The two look identical and only one of them is composited — width and
+     height are layout properties, so animating them forces a layout pass on
+     every frame of a hover that is happening while the page is also scrubbing
+     a WebGL morph. */
   width: 32px;
   height: 32px;
   border: 1px solid var(--gold);
+  /* No CSS transition on transform here, deliberately: GSAP writes x/y to this
+     element on every pointer move, and a CSS transition on `transform` would
+     smear each of those writes over --dur-base and detach the ring from the
+     pointer entirely. The hover scale is tweened by GSAP on the same property
+     for exactly that reason. See CustomCursor.tsx. */
 }
 
 /* ---------- WebGL particle field: static fallback ---------- */

@@ -99,7 +99,13 @@ export default function SiteFooter() {
   return (
     <section className="footer">
       <div className="container">
-        <div className="footer-content d-flex">
+        {/* copy-scrim: the closing eagle sits directly behind this grid, and
+            at 34,000 grains it is a dense near-white mass rather than the
+            sparse mark it used to be. The field is held back by the `.footer`
+            beat as well, but the two are doing different jobs — the beat sets
+            how present the mark is across the whole viewport, the scrim buys
+            contrast for the five link columns specifically. */}
+        <div className="footer-content d-flex copy-scrim">
           {/* Brand column */}
           <div className="col footer-brand">
             <div className="logo">

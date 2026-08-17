@@ -122,7 +122,7 @@ section {
   left: 0;
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform var(--dur-fast) var(--ease-entry);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .primary-button:hover::before {
@@ -379,10 +379,21 @@ ul {
 /* Primary button used across the site */
 .primary-button {
   position: relative;
-  transition: transform var(--dur-base) var(--ease-entry);
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
+/* The rule that used to be empty. `.primary-button` is a text control whose
+   sweep is its underline (::before above), so the movement here is a small
+   rise rather than a card lift — enough that the control acknowledges the
+   pointer arriving, not so much that a label appears to jump. */
 .primary-button:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-button:hover {
+    transform: none;
+  }
 }
 
 .primary-button a {

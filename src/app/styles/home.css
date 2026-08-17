@@ -99,12 +99,40 @@
   border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
   color: var(--text);
   font-weight: 300;
+  /* FILL SWEEP.
+     A colour-only hover is the tell of an unfinished site: the state changes
+     but nothing travels, so the button never acknowledges the approach — it
+     just ends up different. The sweep gives the hover a direction and a
+     duration, which is what makes a control feel like a control. */
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-ghost::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.btn-ghost:hover::before {
+  transform: scaleX(1);
 }
 
 .btn-ghost:hover {
   border-color: var(--advida-accent, var(--gold));
   color: var(--advida-accent, var(--gold));
-  background: color-mix(in srgb, var(--gold) 6%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-ghost::before {
+    transition: none;
+  }
 }
 
 /* ---------- About Preview ---------- */
@@ -447,11 +475,24 @@
   border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg) 40%, transparent);
-  transition: border-color var(--dur-base) var(--ease-entry),
-    transform var(--dur-base) var(--ease-entry);
+  /* Motion comes from the shared `.tvx-lift` primitive in globals.css — the
+     card only declares what is specific to it. The transform channel was
+     already declared here and nothing ever wrote to it, which is exactly the
+     defect the audit found: the transition existed, the movement did not. */
+  transition: transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+  will-change: transform;
 }
 .hp-trust .trust-card:hover {
+  transform: translateY(-6px) scale(1.012);
   border-color: var(--advida-accent, var(--gold));
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hp-trust .trust-card:hover {
+    transform: none;
+  }
 }
 .hp-trust .trust-card__title {
   font-family: var(--font-display);

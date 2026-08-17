@@ -542,23 +542,20 @@
   white-space: nowrap;
   padding: var(--space-md) 0;
 }
+/* The CSS keyframe marquee is gone: GSAP drives the track now, so hovering the
+   strip EASES it to 15% speed instead of hard-pausing it (see
+   GlobalPresenceTicker.tsx). A CSS animation cannot ease its own rate, and
+   `animation-play-state: paused` snapped a moving object to a standstill in one
+   frame — the interaction read as a glitch rather than as a response.
+
+   `transform` is left unset here: the keyframe used to own it and now the tween
+   does, and a translateY start value would be composited away by the tween's
+   first write anyway. */
 .ticker-track {
   display: inline-flex;
   gap: var(--space-xl);
-  animation: ticker-scroll 32s linear infinite;
   opacity: 0;
-  transform: translateY(12px);
-}
-.ticker:hover .ticker-track {
-  animation-play-state: paused;
-}
-@keyframes ticker-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  will-change: transform;
 }
 .ticker-row {
   font-family: var(--font-mono);

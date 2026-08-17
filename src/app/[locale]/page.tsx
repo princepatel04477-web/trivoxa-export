@@ -21,10 +21,10 @@ import InsightsMagazine from "@/components/sections/InsightsMagazine";
 import { AboutPreview, CareersPreview, FinalCta } from "@/components/home/previews";
 import SiteFooter from "@/components/SiteFooter";
 import ContactModal from "@/components/ContactModal";
-import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
-import { HOME } from "@/lib/choreography";
+import HomeField from "@/components/home/HomeField";
 import WhyBuyersTrust from "@/components/sections/WhyBuyersTrust";
 import MobileStickyCta from "@/components/MobileStickyCta";
+import AutoReveal from "@/components/motion/AutoReveal";
 
 export const metadata: Metadata = {
   title: "Trivoxa Group | International Trade & Business Solutions",
@@ -37,7 +37,7 @@ export default function Home() {
     <>
       <Preloader />
       <Suspense fallback={null}>
-        <ParticleCanvasWrapper config={HOME} />
+        <HomeField />
       </Suspense>
       <Header />
       <MobileNav />
@@ -89,6 +89,10 @@ export default function Home() {
 
       {/* 10 · Final CTA — particle eagle outline */}
       <FinalCta />
+
+      {/* Picks up anything the home sections' own `.home-reveal` pass doesn't
+          claim; every element that pass owns is skipped by construction. */}
+      <AutoReveal />
 
       {/* 11 · Footer */}
       <SiteFooter />

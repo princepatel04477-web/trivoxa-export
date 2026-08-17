@@ -134,15 +134,21 @@
   font-weight: 500;
   letter-spacing: 0.3px;
   cursor: pointer;
-  transition: background var(--dur-base) var(--ease-entry),
-              border-color var(--dur-base) var(--ease-entry),
-              transform var(--dur-base) var(--ease-entry),
-              color var(--dur-base) var(--ease-entry);
+  /* `transform` was already declared here and nothing ever wrote to it — the
+     channel existed, the movement did not. See globals.css for the wider note. */
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
 }
 
 .hp-sec-1 .container .hero-cta .primary-button:hover {
   background: transparent;
   color: var(--advida-accent, var(--gold));
+  /* Small, because this is a large filled control that already inverts on
+     hover — a 6px card lift on top of a full colour flip is two answers to one
+     question. */
+  transform: translateY(-2px);
 }
 
 .hp-sec-1 .container .hero-cta .ghost-button {
@@ -156,16 +162,44 @@
   font-size: 15px;
   font-weight: 300;
   letter-spacing: 0.3px;
-  transition: border-color var(--dur-base) var(--ease-entry),
-              color var(--dur-base) var(--ease-entry),
-              background var(--dur-base) var(--ease-entry),
-              transform var(--dur-base) var(--ease-entry);
+  /* Fill sweep — see .btn-ghost in home.css for the reasoning. */
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+
+.hp-sec-1 .container .hero-cta .ghost-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.hp-sec-1 .container .hero-cta .ghost-button:hover::before {
+  transform: scaleX(1);
 }
 
 .hp-sec-1 .container .hero-cta .ghost-button:hover {
   border-color: var(--advida-accent, var(--gold));
   color: var(--advida-accent, var(--gold));
-  background: color-mix(in srgb, var(--gold) 6%, transparent);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-sec-1 .container .hero-cta .primary-button:hover,
+  .hp-sec-1 .container .hero-cta .ghost-button:hover {
+    transform: none;
+  }
+  .hp-sec-1 .container .hero-cta .ghost-button::before {
+    transition: none;
+  }
 }
 
 /* Scroll-to indicator — elegant */

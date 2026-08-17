@@ -12,7 +12,12 @@ export default function CustomCursor() {
 
   useEffect(() => {
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    if (isTouch || !dotRef.current || !ringRef.current) return;
+    // A trailing, scaling cursor replacement is decorative motion the reader
+    // did not ask for, and it is attached to the one thing they cannot stop
+    // moving. Under prefers-reduced-motion the native cursor stays — nothing is
+    // hidden, nothing lags.
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isTouch || reducedMotion || !dotRef.current || !ringRef.current) return;
 
     document.documentElement.classList.add("has-custom-cursor");
 
@@ -38,14 +43,32 @@ export default function CustomCursor() {
       };
       window.addEventListener("mousemove", onMove);
 
+      // Hover: the ring GROWS and stays. It used to fade to opacity 0 while
+      // widening to 48px — so the one moment the cursor had something to say
+      // was the one moment it disappeared, and the ring's only job (telling you
+      // this thing is interactive) was never done. 32 → 72px is the reference's
+      // range, expressed as a scale so nothing lays out; the ring dims rather
+      // than vanishes, because a full-strength 72px ring over a link is a
+      // target reticle.
+      const HOVER_SCALE = 72 / 32;
       const onOver = (e: MouseEvent) => {
         if ((e.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) {
-          gsap.to(ring, { width: 48, height: 48, opacity: 0, duration: DURATION.short, ease: EASE.entry });
+          gsap.to(ring, {
+            scale: HOVER_SCALE,
+            opacity: 0.55,
+            duration: DURATION.short,
+            ease: EASE.emphatic,
+          });
         }
       };
       const onOut = (e: MouseEvent) => {
         if ((e.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) {
-          gsap.to(ring, { width: 32, height: 32, opacity: 1, duration: DURATION.short, ease: EASE.entry });
+          gsap.to(ring, {
+            scale: 1,
+            opacity: 1,
+            duration: DURATION.short,
+            ease: EASE.emphatic,
+          });
         }
       };
       document.addEventListener("mouseover", onOver);

@@ -42,15 +42,61 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
   // being "fixed" by a resize. Re-measure once the font set is settled.
   // Runs unconditionally: triggers exist under reduced motion too (pinned
   // sections, sticky rails), so this must not sit behind the Lenis guard.
+  //
+  // §8.3: fonts ready PLUS one rAF. `fonts.ready` resolves when the font set is
+  // loaded, not when the reflow it causes has been laid out — refreshing in the
+  // same frame measures the pre-reflow boxes, which is the measurement error
+  // §8 exists to close. One frame later the layout is settled. Exactly one
+  // refresh, never a loop.
   useEffect(() => {
     if (!("fonts" in document)) return;
     let cancelled = false;
+    let raf = 0;
     document.fonts.ready.then(() => {
-      if (!cancelled) ScrollTrigger.refresh();
+      if (cancelled) return;
+      raf = requestAnimationFrame(() => {
+        if (!cancelled) ScrollTrigger.refresh();
+      });
     });
     return () => {
       cancelled = true;
+      if (raf) cancelAnimationFrame(raf);
     };
+  }, []);
+
+  // §8.1 — scroll authority. The browser restores the previous scroll offset on
+  // reload BEFORE any trigger exists, so a reader who reloads midway down the
+  // page lands past the intro and the scrubbed sequence resolves to whatever
+  // stage that offset selects. Taking manual control and forcing the top is
+  // what makes "first load" and "reload" the same event.
+  //
+  // Set in its own effect, ahead of the Lenis effect below, so the offset is
+  // already zero before a single ScrollTrigger is created.
+  useEffect(() => {
+    if (!("scrollRestoration" in history)) return;
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+    return () => {
+      history.scrollRestoration = previous;
+    };
+  }, []);
+
+  // §8.5 — bfcache restore. A back-navigation out of the bfcache resumes a
+  // fully-built page with its old scroll offset and its triggers already
+  // resolved, so nothing re-runs and the reader arrives at a formed state with
+  // no sequence. Reset to the top and re-measure once; the scene's own
+  // pageshow handler resets its uniforms to stage zero and re-runs its gate.
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      const lenis = lenisInstance;
+      if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+      else window.scrollTo(0, 0);
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
 
   useEffect(() => {
@@ -64,11 +110,12 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     // rotation still refreshes, because it changes the width.
     ScrollTrigger.config({ ignoreMobileResize: true });
 
-    const lenis = new Lenis({
-      lerp: LENIS.lerp,
-      duration: LENIS.duration,
-      smoothWheel: true,
-    });
+    // ONE smoothing mode. `lerp` and `duration` are alternatives in Lenis, not
+    // complements — it takes the duration+easing path when `duration` is set
+    // and the exponential-lerp path otherwise — so passing both left the shipped
+    // feel dependent on which branch the installed version happened to take.
+    // The duration path is what reproduces ScrollSmoother's weighted glide.
+    const lenis = new Lenis({ ...LENIS });
     lenisInstance = lenis;
     emit("lenis:init");
 
@@ -78,17 +125,60 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     // ticker drives it and ScrollTrigger updates from Lenis's own scroll event.
     // Two loops contending for the same surface is the primary cause of scrub
     // jitter — verify this stays a single path before adding anything here.
-    // ScrollTrigger.normalizeScroll is deliberately NOT enabled: it and Lenis
-    // fight over the same surface.
+    // ScrollTrigger.normalizeScroll is deliberately NOT enabled, and this is a
+    // knowing departure from the amplitude directive's item 9.3.
+    //
+    // normalizeScroll takes over wheel/touch handling and drives the scroll
+    // position itself. So does Lenis. Two normalizers on one surface is the
+    // documented incompatibility, and enabling both produces exactly the
+    // symptom item 9.3 exists to remove — a scrub that fights the scroll — with
+    // touch on mobile the worst affected.
+    //
+    // The stated goal (iOS address-bar jitter must not reach the scrubbed
+    // morph) is already met by other means and both are in force here:
+    // `ignoreMobileResize` above suppresses the refresh storm the URL bar
+    // causes, and the scene's own re-fit ignores height-only deltas below
+    // CHROME_HEIGHT_TOLERANCE_PX on a coarse pointer. Revisit only if Lenis is
+    // ever removed.
     lenis.on("scroll", ScrollTrigger.update);
 
     const raf = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
+
+    // §5.1 — lag smoothing RESTORED. This is the primary cold-start defect.
+    //
+    // `lagSmoothing(0)` is the line almost every Lenis integration ships with,
+    // and it removes GSAP's only protection against a long frame. On a cold
+    // cache the main thread stalls for one to four seconds while shader
+    // programs link, attribute buffers upload and fonts decode; when the ticker
+    // resumes, the first tick hands the whole stalled interval to every running
+    // tween as a single delta. A 2.1s opening assemble consumes its entire
+    // duration in that one frame and the form is simply *there* — no assemble,
+    // no settling, the machine revealed on exactly the load where it matters
+    // most. Reload is cached, the stall does not occur, and it "works" — which
+    // is the asymmetry that makes this so easy to miss.
+    //
+    // Lenis does not require smoothing disabled. It is driven from this ticker
+    // either way; with smoothing intact a >500ms frame is clamped to 33ms
+    // instead of being passed through whole.
+    //
+    // The amplitude directive asks for lagSmoothing(500, 33) in its item 9.3
+    // and for lagSmoothing(0) in its item 9.4 — the two contradict, and 9.4's
+    // is the boilerplate every Lenis integration ships with. (500, 33) is the
+    // one kept, for the reason above: it is the whole defence against a cold
+    // start depositing the 2.1s assemble in a single frame, and the scrubbed
+    // morph the directive is trying to protect is driven by scroll position,
+    // not by ticker delta, so smoothing cannot desynchronise it.
+    gsap.ticker.lagSmoothing(500, 33);
 
     const unsubOpen = on("modal:open", () => lenis.stop());
     const unsubClose = on("modal:close", () => lenis.start());
 
+    // §8.1/§8.2 — fixed initialisation order: Lenis exists, scroll wiring is
+    // attached, the offset is forced to zero, and only then is anything
+    // measured. Triggers are created by the scenes themselves (which defer to
+    // their own rAF), so this is the one refresh that closes the sequence.
+    lenis.scrollTo(0, { immediate: true, force: true });
     ScrollTrigger.refresh();
 
     return () => {

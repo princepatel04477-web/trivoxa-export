@@ -14,6 +14,7 @@ import SiteFooter from "@/components/SiteFooter";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileStickyCta from "@/components/MobileStickyCta";
 import ShaderBackgroundWrapper from "@/components/ShaderBackgroundWrapper";
+import AutoReveal from "@/components/motion/AutoReveal";
 
 /**
  * Shell for every non-home route: fixed header, mobile nav, contact modal,
@@ -40,6 +41,9 @@ export default function TrivoxaShell({
       <MobileNav />
       <ContactModal />
       <main>{children}</main>
+      {/* Scroll reveal for every section built from the shared primitives, which
+          carry no reveal markup of their own — see AutoReveal for what it skips. */}
+      <AutoReveal />
       <SiteFooter />
       <WhatsAppButton />
       <MobileStickyCta />

@@ -1,3 +1,6 @@
+/* ---------- Preloader ----------
+   A wordmark, a rule that fills, and a percentage. See Preloader.tsx for why
+   this is a counter rather than a spinner, and why it is deliberately plain. */
 #preloader {
   position: fixed;
   top: 0;
@@ -11,17 +14,51 @@
   z-index: 1000;
 }
 
-#loader {
-  border-top: 2px solid var(--gold);
-  border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  position: absolute;
-  animation: spin 1s linear infinite;
-  top: 50%;
-  left: 50%;
-  margin-left: -20px;
-  margin-top: -20px;
+.preloader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  /* Narrow enough that the rule reads as a measure rather than as a page-wide
+     progress bar, which is a browser affordance, not a brand one. */
+  width: min(280px, 62vw);
+}
+
+.preloader-mark {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.5vw, 19px);
+  font-weight: 500;
+  /* Wide tracking is the whole treatment — no logo, no animation on the mark. */
+  letter-spacing: 0.42em;
+  /* The tracking adds a trailing gap after the last glyph; the indent pulls the
+     optical centre back onto the rule's centre. */
+  text-indent: 0.42em;
+  color: var(--text);
+}
+
+.preloader-rule {
+  width: 100%;
+  height: 1px;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  overflow: hidden;
+}
+
+.preloader-rule__fill {
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.preloader-count {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+  /* Tabular figures: without them the counter's width changes on every tick and
+     the whole block jitters horizontally for the length of the load. */
+  font-variant-numeric: tabular-nums;
 }
 
 .scroll-wrapper {

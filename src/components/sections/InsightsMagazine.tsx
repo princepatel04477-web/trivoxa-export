@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
-import { initSectionReveals } from "@/hooks/useScrollAnimations";
+import { initSectionReveals, revertSplits } from "@/hooks/useScrollAnimations";
 
 const ARTICLES = [
   {
@@ -32,7 +32,11 @@ export default function InsightsMagazine() {
     const ctx = gsap.context(() => {
       initSectionReveals(ref.current!);
     }, ref);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // SplitText rewrites the DOM; gsap.context() only reverts tweens.
+      revertSplits();
+    };
   }, []);
 
   const [featured, ...rest] = ARTICLES;
@@ -40,12 +44,17 @@ export default function InsightsMagazine() {
   return (
     <section className="hp-insights insights-magazine" ref={ref}>
       <div className="container">
-        <div className="insights-head">
+        {/* copy-scrim: the field is parked to the RIGHT through this stretch
+            of the page (the .hp-global beat's sweep, held through .hp-values)
+            and this section's copy runs full width, so the globe sits directly
+            behind the article column. The answer is a local scrim, not another
+            global dim — see the note on FIELD_OPACITY_FLOOR in lib/motion. */}
+        <div className="insights-head copy-scrim">
           <div>
             <div className="home-eyebrow" data-reveal-body>{t("eyebrow")}</div>
             <h2 className="home-heading" data-reveal-heading>{t("heading")}</h2>
           </div>
-          <p className="home-lead" data-reveal-body>
+          <p className="home-lead" data-reveal-lines>
             Markets evolve. Industries transform. Our insights explore global trade, sourcing
             strategies, emerging industries, and business innovation to help organizations make
             informed decisions.
@@ -55,7 +64,7 @@ export default function InsightsMagazine() {
         {/* Article bodies don't exist yet — each card is a non-interactive
             preview (not a link to itself) rather than a dead link to the
             listing page, and is labelled accordingly. */}
-        <div className="magazine-grid" data-reveal-body>
+        <div className="magazine-grid copy-scrim" data-reveal-body>
           <div className="magazine-feature magazine-feature--pending">
             <div className="magazine-feature__image" data-reveal-image />
             <span className="magazine-feature__tag">{featured.tag}</span>

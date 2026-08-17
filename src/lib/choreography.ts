@@ -4,10 +4,16 @@
  * The scene's beat list, kept here rather than inline in the route file so the
  * sequence is legible in one place.
  *
- * Five routes run a particle field: home (discrete beats) plus Group, Global
- * Presence, Insights and Careers (scrubbed stages). Those four no longer mount a
- * GLSL shader background — it sits on the same fixed z-index:-1 layer, and running
- * both would mean two WebGL contexts competing per page.
+ * Six routes run a particle field, and since the amplitude directive every one
+ * of them is SCRUBBED: the reader's scroll position is the playhead, not a
+ * threshold that fires a canned tween. Home is the only page that also carries a
+ * beat list, and those beats now do side effects only — where the field sits,
+ * how present it is, whether the port overlay is up — while its stage sequence
+ * owns what the field IS.
+ *
+ * None of these routes mounts a GLSL shader background: it sits on the same
+ * fixed z-index:-1 layer, and running both would mean two WebGL contexts
+ * competing per page.
  */
 
 import {
@@ -20,6 +26,7 @@ import {
   buildCareersPhase,
 } from "./shapes";
 import { buildPresenceGeo, REGION } from "./shapes/presence";
+import { FIELD_OPACITY_FLOOR } from "./motion";
 import type { SceneConfig } from "./particle-scene";
 
 /**
@@ -61,17 +68,93 @@ const INSIGHTS_PALETTE = { primary: "--success", accent: "--gold-hover", ground:
 const CAREERS_PALETTE = { primary: "--text-2", accent: "--gold-hover", ground: "dark" } as const;
 
 /**
- * Home — a deliberate, sparse sequence:
- *   globe (hero) → vessel (trust) → container (about) → [hidden: business arms
- *   + industries] → ports globe (global presence) → [hidden: values / insights
- *   / careers] → eagle (CTA) → dimmed eagle (footer).
+ * Home — one continuous scrubbed sequence:
+ *   globe (hero) → vessel (trust) → container (about, held across business arms
+ *   + industries) → ports globe (global presence) → eagle (CTA) → the mark held
+ *   back behind the footer.
  *
- * The field is faded out across the content-dense sections on purpose, so it
- * never competes with the copy.
+ * The field RECEDES across the content-dense sections rather than disappearing
+ * from them. It used to drop to 0.28 there, which with the vignette on top left
+ * two viewports rendering as solid black — a backdrop that vanishes for a fifth
+ * of the page reads as broken, not as restrained. Where a specific block needs
+ * more contrast than the floor allows it carries a local scrim (`.copy-scrim`).
  */
 export const HOME: Omit<SceneConfig, "onDegrade"> = {
-  hero: "globe",
+  /**
+   * SCRUBBED, not fired.
+   *
+   * Home used to be the site's one discrete-beat page: a section crossed a
+   * threshold, a 4s elastic tween played, and nothing happened again until the
+   * next threshold. The four inner pages were already scrubbed, and side by
+   * side the difference is not subtle — on a scrubbed page the reader's wheel
+   * IS the playhead, so scrolling faster detonates the cloud faster and
+   * stopping halfway leaves it hanging mid-explosion. On a fired one a canned
+   * animation plays at you.
+   *
+   * The shape sequence is therefore a stage list now, and the beats below keep
+   * only their side effects. Both halves are load-bearing: the stages make the
+   * morph the reader's to drive, and the beats keep each form parked beside the
+   * copy column its section was laid out around, which a single master timeline
+   * across the whole document could not do.
+   *
+   * globe → vessel → container → ports globe → mark. Same five forms, same
+   * order, same sections — only the driver changed.
+   */
+  shapes: ["globe", "cargo-ship", "container", "eagle"],
+  buildStages: (_ctx, registry) => [
+    registry.get("globe"),
+    registry.get("cargo-ship"),
+    registry.get("container"),
+    // The globe returns for Global Presence. The same buffer, deliberately: it
+    // is the same object coming back, not a second one that resembles it.
+    registry.get("globe"),
+    registry.get("eagle"),
+  ],
+  /**
+   * One binding per transition, each spanning the approach to its own section —
+   * `top bottom` to `top center` is the range across which that section rises
+   * into view, so the form has finished becoming what the copy is about by the
+   * time the copy is centred. Deliberately the SAME range the sweeps use, so
+   * the morph and the reposition resolve together instead of one trailing the
+   * other.
+   */
+  stageBindings: [
+    // globe → vessel. Load-bearing: the hero globe flies STRAIGHT into the ship.
+    { trigger: ".hp-trust", start: "top bottom", end: "top center" },
+    // vessel → container
+    { trigger: ".hp-about", start: "top bottom", end: "top center" },
+    // container → the ports globe. The longest hold on the page sits inside this
+    // segment's approach (business arms + industries), so the container is what
+    // the reader has behind them through both.
+    { trigger: ".hp-global", start: "top bottom", end: "top center" },
+    // globe → the mark
+    { trigger: ".hp-cta", start: "top bottom", end: "top center" },
+  ],
   ports: true,
+  /**
+   * Restrained (0.35 of the reference path's amplitude), and restrained for a
+   * specific reason rather than out of caution: home is the one page whose
+   * field is deliberately parked beside a copy column at four different points.
+   * A full-amplitude lateral journey crosses those columns. The four inner
+   * pages are centre-composed and take it at full strength.
+   */
+  fieldPath: 0.35,
+  /**
+   * The field answers the scroll EVERYWHERE, not only at the five beats.
+   *
+   * Home is the one page whose whole choreography is discrete: a beat fires, the
+   * field morphs, and then nothing happens until the next one — so scrolling
+   * through a section produced no response at all from the backdrop, while the
+   * four stage pages have scrubbed morphs plus `cameraOrbit` running the entire
+   * way down. This is the beat-page equivalent of that orbit.
+   *
+   * 110° across the full document is roughly a third of a turn — clearly the
+   * reader's doing when they scroll, still slow enough that it never competes
+   * with the 26s idle rotation underneath it. The 1.2-unit vertical parallax is
+   * about a tenth of the visible frame height and is the term that carries the
+   * flat formations (vessel, container, eagle), which take no rotation.
+   */
+  scrollMotion: { spinDeg: 110, driftY: 1.2 },
   // Home already closes on the eagle through its beat list (.hp-cta), so it needs
   // no finale appended — but it resolves its colour from the same tokens.
   palette: PARTICLE_PALETTE,
@@ -82,37 +165,59 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
   // funnel re-sequencing that moved it below Industries was tried and reverted —
   // it put the container first and the ship never appeared where the eye
   // expected it, which read as the field skipping a beat.
+  //
+  // SIDE EFFECTS ONLY. Every `shape` key is gone — the stage sequence above
+  // owns what the field IS; these own where it sits, how bright it is, and
+  // whether the port overlay is up.
   beats: [
-    // Trust ("A sourcing partner, not just a supplier directory") — a cargo
-    // vessel. The hero globe flies straight into the ship. Sits to the side.
-    // sweep 0.8, not 1: parking a long horizontal form hard against the edge
-    // pushes its bow off frame. Backed off just enough to keep both ends in
-    // shot while the copy column stays clear.
-    { trigger: ".hp-trust", shape: "cargo-ship", sweep: 0.8 },
-    // About ("A Vision Beyond Business") — a single small container.
-    { trigger: ".hp-about", shape: "container", sweep: 0.7 },
-    // Business Arms + Industries — NO animation. Fade the field back and hold it
-    // dim across both content-dense sections.
-    { trigger: ".hp-sec-4", opacity: 0.28 },
-    // Global Presence ("Connecting Opportunities Across Borders") — the big
-    // ports globe with named markers, parked on the RIGHT so the section's copy
+    // Trust ("A sourcing partner, not just a supplier directory"). Sits to the
+    // side. sweep 0.8, not 1: parking a long horizontal form hard against the
+    // edge pushes its bow off frame. Backed off just enough to keep both ends
+    // in shot while the copy column stays clear.
+    { trigger: ".hp-trust", sweep: 0.8 },
+    // About ("A Vision Beyond Business").
+    { trigger: ".hp-about", sweep: 0.7 },
+    // Business Arms + Industries — content-dense, so the field recedes. To the
+    // FLOOR, not to 0.28: at 0.28 these two sections rendered as a black
+    // rectangle with copy on it, and a backdrop that disappears for a fifth of
+    // the page reads as broken rather than as restrained. Where a specific
+    // paragraph needs more contrast than 0.62 allows, it gets a local scrim
+    // (`.copy-scrim`, globals.css) — dimming the whole canvas to fix one
+    // paragraph costs every other element on the screen its background.
+    { trigger: ".hp-sec-4", opacity: FIELD_OPACITY_FLOOR },
+    // Global Presence ("Connecting Opportunities Across Borders") — the ports
+    // globe with named markers, parked on the RIGHT so the section's copy
     // (left-aligned in CSS) sits clear of it.
     {
       trigger: ".hp-global",
-      shape: "globe",
       sweep: 1,
       ports: true,
-      onLeaveBack: { opacity: 0.28 }, // scrolling up into the industries index
+      onLeaveBack: { opacity: FIELD_OPACITY_FLOOR }, // scrolling up into the industries index
     },
-    // Values / Insights / Careers — NO animation. Keep the field hidden.
-    { trigger: ".hp-values", opacity: 0.28 },
+    // Values / Insights / Careers — recede, same floor.
+    { trigger: ".hp-values", opacity: FIELD_OPACITY_FLOOR },
     // Final CTA — the Trivoxa eagle, in grains, behind the copy.
-    { trigger: ".hp-cta", shape: "eagle", sweep: 0 },
-    // Footer — hold the eagle but drop it to a dim wash so footer copy stays
-    // fully legible; scrolling back up restores full opacity.
+    { trigger: ".hp-cta", sweep: 0 },
+    // Footer — hold the mark but drop it back so footer copy stays legible;
+    // scrolling back up restores full opacity.
+    //
+    // The amplitude directive asks for 0.55 here and this is the one place it
+    // is not taken at face value. The reasoning behind the raise — that no
+    // viewport should read as an empty black rectangle — is sound and is now
+    // satisfied by the deep field, which is never faded by a beat and is
+    // present in every frame of the page. What the footer additionally has is
+    // a five-column link grid, a newsletter form and an address block, and the
+    // closing eagle is a large near-white mass directly behind all of it: at
+    // 0.55 the mark reads over the column headings and the link list stops
+    // being scannable. 0.26 also looks like a CUT against the old 0.30 and is
+    // not one: the pool doubled, so the eagle — a flat silhouette with no
+    // depth cueing to thin it — carries roughly twice the grains in the same
+    // area and reads about twice as bright at any given opacity. 0.26 against
+    // 34,000 grains is brighter than 0.30 was against 18,000. The link grid
+    // additionally carries its own scrim (see SiteFooter).
     {
       trigger: ".footer",
-      opacity: 0.3,
+      opacity: 0.26,
       fadeDuration: 0.8,
       onLeaveBack: { opacity: 1, fadeDuration: 0.5 },
     },
@@ -157,13 +262,27 @@ export const GROUP: Omit<SceneConfig, "onDegrade"> = {
   palette: GROUP_PALETTE,
   // The lattice sits behind body copy for most of the page, so it is held well
   // below full strength — it is a watermark, not an illustration.
-  fieldOpacity: 0.78,
+  /**
+   * Trimmed ~20%% alongside the amplitude directive, and this is a RAISE in
+   * net terms rather than a cut. `fieldOpacity` is a ceiling on a field that
+   * now carries nearly twice the grains at a wider size spread, and these
+   * stage forms are planar — no depth cueing thins their far half the way it
+   * thins the globe's — so at the old ceiling the lattice came out heavier
+   * against its own lead copy than it was ever composed to be. The product of
+   * count x size x opacity is still well up on where it started.
+   */
+  fieldOpacity: 0.62,
   // Well under the home globe's 1.6. The brief asks for generous open space
   // around each form rather than a filled frame, so the lattice is held compact
   // and the page breathes around it.
   formationScale: 0.82,
   // The page root — the orbit is scrubbed across the entire scroll, not a section.
   cameraOrbit: { trigger: ".tvx", sweepDeg: 26, dolly: 5 },
+  // Centre-composed page with no beat sweeps to collide with, so the spatial
+  // path runs at full amplitude: the reader travels past and through the
+  // lattice rather than watching it subdivide on the spot.
+  fieldPath: 1,
+  fieldPathTrigger: ".tvx",
   mobileOpacityCap: 0.48,
 };
 
@@ -234,9 +353,23 @@ export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
   routes: true,
   draggable: true,
   palette: GLOBAL_PRESENCE_PALETTE,
-  fieldOpacity: 0.82,
+  /**
+   * Trimmed ~20%% alongside the amplitude directive, and this is a RAISE in
+   * net terms rather than a cut. `fieldOpacity` is a ceiling on a field that
+   * now carries nearly twice the grains at a wider size spread, and these
+   * stage forms are planar — no depth cueing thins their far half the way it
+   * thins the globe's — so at the old ceiling the lattice came out heavier
+   * against its own lead copy than it was ever composed to be. The product of
+   * count x size x opacity is still well up on where it started.
+   */
+  fieldOpacity: 0.68,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
+  // A world map has to stay legible as a world map, so this page takes the
+  // lateral journey at a third strength — enough that the globe is not pinned
+  // dead centre for 12,000px, short of the point where a continent leaves frame.
+  fieldPath: 0.33,
+  fieldPathTrigger: ".tvx",
   mobileOpacityCap: 0.5,
 };
 
@@ -286,10 +419,23 @@ export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
   palette: INSIGHTS_PALETTE,
   // The lowest of the five: article cards sit directly in front of this one, and
   // the network is behind them as texture, not as competition.
-  fieldOpacity: 0.7,
+  /**
+   * Trimmed ~20%% alongside the amplitude directive, and this is a RAISE in
+   * net terms rather than a cut. `fieldOpacity` is a ceiling on a field that
+   * now carries nearly twice the grains at a wider size spread, and these
+   * stage forms are planar — no depth cueing thins their far half the way it
+   * thins the globe's — so at the old ceiling the lattice came out heavier
+   * against its own lead copy than it was ever composed to be. The product of
+   * count x size x opacity is still well up on where it started.
+   */
+  fieldOpacity: 0.56,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 16, dolly: 3 },
+  // Held back against the other stage pages — an editorial network under
+  // article cards should drift past, not fly.
+  fieldPath: 0.6,
+  fieldPathTrigger: ".tvx",
   mobileOpacityCap: 0.44,
 };
 
@@ -334,10 +480,21 @@ export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
   linkEnvelope: { drawFrom: 0.6, drawTo: 3.0, fadeFrom: 3.4, fadeTo: 4.0 },
   motion: "planar",
   palette: CAREERS_PALETTE,
-  fieldOpacity: 0.74,
+  /**
+   * Trimmed ~20%% alongside the amplitude directive, and this is a RAISE in
+   * net terms rather than a cut. `fieldOpacity` is a ceiling on a field that
+   * now carries nearly twice the grains at a wider size spread, and these
+   * stage forms are planar — no depth cueing thins their far half the way it
+   * thins the globe's — so at the old ceiling the lattice came out heavier
+   * against its own lead copy than it was ever composed to be. The product of
+   * count x size x opacity is still well up on where it started.
+   */
+  fieldOpacity: 0.6,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 18, dolly: 3.5 },
+  fieldPath: 0.8,
+  fieldPathTrigger: ".tvx",
   mobileOpacityCap: 0.46,
 };
 
@@ -371,9 +528,20 @@ export const BUSINESSES: Omit<SceneConfig, "onDegrade"> = {
   ],
   motion: "planar",
   palette: BUSINESSES_PALETTE,
-  fieldOpacity: 0.74,
+  /**
+   * Trimmed ~20%% alongside the amplitude directive, and this is a RAISE in
+   * net terms rather than a cut. `fieldOpacity` is a ceiling on a field that
+   * now carries nearly twice the grains at a wider size spread, and these
+   * stage forms are planar — no depth cueing thins their far half the way it
+   * thins the globe's — so at the old ceiling the lattice came out heavier
+   * against its own lead copy than it was ever composed to be. The product of
+   * count x size x opacity is still well up on where it started.
+   */
+  fieldOpacity: 0.6,
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 20, dolly: 4 },
+  fieldPath: 0.8,
+  fieldPathTrigger: ".tvx",
   mobileOpacityCap: 0.46,
 };
