@@ -37,6 +37,10 @@ export default function Header() {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
   const closeTimer = useRef<number | null>(null);
+  // Declared here rather than beside the scroll effect that also uses it: the
+  // outside-click guard above needs it too, and a ref used by two effects
+  // belongs above both of them.
+  const rootRef = useRef<HTMLDivElement>(null);
   // Read from the same body class the overlay and stylesheet already use, so
   // the hamburger's reported state can never disagree with the visible one.
   const navOpen = useNavActive();
@@ -73,14 +77,22 @@ export default function Header() {
     const items = panel.querySelectorAll("li");
     if (!items.length) return;
     const tween = gsap.from(items, {
-      autoAlpha: 0,
+      // `opacity`, NOT `autoAlpha`. autoAlpha drives visibility alongside
+      // opacity, so for the ~0.55s the stagger runs every item was
+      // `visibility: hidden` — and a visibility:hidden element cannot take
+      // focus. A keyboard reader pressing ArrowDown on the trigger landed
+      // nowhere, because the items they were being sent to did not exist to
+      // the focus system yet. The panel's closed state is already enforced by
+      // `pointer-events: none` and `aria-hidden` on .nav-drop, so visibility
+      // was never doing work here that something else was not already doing.
+      opacity: 0,
       y: -18,
       duration: DURATION.short,
       ease: "back.out(1.7)",
       stagger: { amount: 0.2 },
       overwrite: "auto",
-      // Inline opacity/visibility left behind would outrank the panel's own
-      // `pointer-events: none` closed state and the link hover colours.
+      // Inline opacity left behind would outrank the panel's own closed state
+      // and the link hover colours.
       clearProps: "opacity,visibility,transform",
     });
     return () => {
@@ -89,14 +101,82 @@ export default function Header() {
     };
   }, [openMenu]);
 
-  // Escape closes any open panel; clicking a panel link also closes it.
+  // Escape closes any open panel and returns focus to the trigger that opened
+  // it; clicking a panel link also closes it.
+  //
+  // Focus restoration matters because the panel is opened on hover AND on
+  // focus: a keyboard reader who tabs into "The Group", opens the panel, then
+  // presses Escape was previously left with focus on a link inside a panel that
+  // had just become `aria-hidden` and untabbable, which strands the tab order.
+  const triggerRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpenMenu(null);
+      if (e.key !== "Escape") return;
+      setOpenMenu((current) => {
+        if (current) triggerRefs.current[current]?.focus();
+        return null;
+      });
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
+
+  // Outside click. The panel opens on hover, so a reader can open it with the
+  // pointer, move away without crossing the trigger's mouseleave (a fast
+  // diagonal off the top of the viewport does exactly this), and leave it
+  // hanging over the page — which is the state screenshot 1 caught, the panel
+  // sitting on top of the "01 CURIOSITY" row.
+  //
+  // `pointerdown` rather than `click`: the panel must be gone before whatever
+  // was clicked underneath begins responding, and a click that starts inside
+  // the panel and ends outside it should not count as an outside click.
+  useEffect(() => {
+    if (!openMenu) return;
+    const onDown = (e: PointerEvent) => {
+      const root = rootRef.current;
+      if (root && !root.contains(e.target as Node)) setOpenMenu(null);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [openMenu]);
+
+  // Arrow-key navigation inside an open panel, and Home/End to its ends.
+  //
+  // Without this the panel is a list a keyboard reader can only walk with Tab,
+  // which also walks straight out of it into the rest of the navbar — the
+  // panel behaves like loose links that happen to be positioned together
+  // rather than like a menu.
+  const onPanelKeyDown = (menu: OpenMenu) => (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (openMenu !== menu) return;
+    const items = Array.from(
+      e.currentTarget.querySelectorAll<HTMLAnchorElement>("a[href]")
+    );
+    if (!items.length) return;
+    const here = items.indexOf(document.activeElement as HTMLAnchorElement);
+    let next = -1;
+    if (e.key === "ArrowDown") next = here < 0 ? 0 : (here + 1) % items.length;
+    else if (e.key === "ArrowUp") next = here <= 0 ? items.length - 1 : here - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = items.length - 1;
+    else return;
+    e.preventDefault();
+    items[next].focus();
+  };
+
+  /** ArrowDown on a trigger opens its panel and moves into the first item. */
+  const onTriggerKeyDown = (menu: OpenMenu) => (e: React.KeyboardEvent<HTMLAnchorElement>) => {
+    if (e.key !== "ArrowDown") return;
+    e.preventDefault();
+    // Resolve the panel NOW. React nulls `currentTarget` once the handler
+    // returns, so reading it inside the callback below finds nothing.
+    const li = e.currentTarget.closest("li");
+    openNow(menu);
+    // The panel's items are `tabIndex={-1}` until it is open, and that state
+    // change has not committed yet — so focus on the next frame.
+    requestAnimationFrame(() => {
+      li?.querySelector<HTMLAnchorElement>(".nav-drop a[href]")?.focus();
+    });
+  };
 
   // Route change always dismisses panels — derived reset during render (the
   // React-sanctioned pattern; avoids a cascading setState-in-effect).
@@ -130,7 +210,6 @@ export default function Header() {
   // `condensed` mirrors the same threshold into React state so the logo can
   // take its tone AND size (ORDER 03) from it. It flips once per crossing,
   // not per frame.
-  const rootRef = useRef<HTMLDivElement>(null);
   const [condensed, setCondensed] = useState(false);
   useEffect(() => {
     const el = rootRef.current;
@@ -206,7 +285,14 @@ export default function Header() {
         <div className="h-left">
           <div className="logo">
             <Link href="/" aria-label="Trivoxa Group — home">
-              <Logo variant={condensed ? "mark" : "full"} slot="nav" tone={navLogoTone(condensed)} decorative />
+              {/* ONE mark, ONE height, every route and every scroll state.
+                  This used to swap to the eagle-only `mark` variant on scroll
+                  and shrink 42px → 34px with it, so the masthead carried two
+                  different logos at two different sizes depending on where the
+                  reader happened to be on the page. The eagle alone is also not
+                  identifiable at 42px — it reads as a bird, not as Trivoxa —
+                  so the full lockup is the one that stays. */}
+              <Logo variant="full" slot="nav" tone={navLogoTone(condensed)} decorative />
             </Link>
           </div>
         </div>
@@ -223,14 +309,22 @@ export default function Header() {
             >
               <Link
                 href="/group/"
+                ref={(el: HTMLAnchorElement | null) => {
+                  triggerRefs.current.group = el;
+                }}
                 aria-current={isActive("/group/") ? "page" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openMenu === "group"}
                 onFocus={() => openNow("group")}
+                onKeyDown={onTriggerKeyDown("group")}
               >
                 {t("theGroup")}
               </Link>
-              <div className={`nav-drop${openMenu === "group" ? " is-open" : ""}`} aria-hidden={openMenu !== "group"}>
+              <div
+                className={`nav-drop${openMenu === "group" ? " is-open" : ""}`}
+                aria-hidden={openMenu !== "group"}
+                onKeyDown={onPanelKeyDown("group")}
+              >
                 <ul>
                   {groupDropdown.map((item) => (
                     <li key={item.key}>
@@ -252,14 +346,22 @@ export default function Header() {
             >
               <Link
                 href="/businesses/"
+                ref={(el: HTMLAnchorElement | null) => {
+                  triggerRefs.current.biz = el;
+                }}
                 aria-current={isActive("/businesses/") ? "page" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openMenu === "biz"}
                 onFocus={() => openNow("biz")}
+                onKeyDown={onTriggerKeyDown("biz")}
               >
                 {t("businesses")}
               </Link>
-              <div className={`nav-drop${openMenu === "biz" ? " is-open" : ""}`} aria-hidden={openMenu !== "biz"}>
+              <div
+                className={`nav-drop${openMenu === "biz" ? " is-open" : ""}`}
+                aria-hidden={openMenu !== "biz"}
+                onKeyDown={onPanelKeyDown("biz")}
+              >
                 <ul>
                   {businessesDropdown.map((item) => (
                     <li key={item.key}>

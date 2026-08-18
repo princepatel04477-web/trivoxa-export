@@ -53,4 +53,5 @@ export { buildBusinessesStages } from "./businesses";
 export { buildGroupStages } from "./group";
 export { buildInsightsStages, buildInsightsPhase } from "./insights";
 export { buildCareersStages, buildCareersPhase } from "./careers";
+export { buildIndustriesStages } from "./industries";
 export { type Shape, type ShapeContext } from "./types";

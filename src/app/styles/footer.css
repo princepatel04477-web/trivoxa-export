@@ -36,31 +36,59 @@
   }
 }
 
-/* Content columns */
+/* ---------- Content columns ----------
+
+   A GRID with minimum track widths, not percentage flex widths.
+
+   The previous rule asked for 24% + 4x14% + 18% plus five 40px gaps, which is
+   112% of the row before the gaps are counted. Flex resolved the overflow by
+   shrinking every track below its content, and the link text — `inline-block`,
+   single-line — was simply cut off mid-word with no ellipsis and no wrap:
+   "Healthcare & Phar", "Shiveshwar Fou", "Request a Qu". A footer that cannot
+   spell its own section names undermines everything the page says above it.
+
+   Minimum track widths make that arithmetically impossible: the row either fits
+   or it wraps, and a track is never narrower than its floor. */
 .footer .footer-content {
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
+  display: grid;
+  /* Brand first (it carries the 98px lockup and the address block), four link
+     columns, then the newsletter. */
+  grid-template-columns: minmax(240px, 1.5fr) repeat(4, minmax(146px, 1fr)) minmax(184px, 1.1fr);
+  gap: 44px 20px;
   padding-bottom: 64px;
+  align-items: start;
 }
 
 .footer .footer-content > div.col {
   display: flex;
   flex-direction: column;
+  /* Grid items default to min-width:auto, which lets a long word push a track
+     past its declared minimum and reintroduce the overflow this rule exists to
+     remove. */
+  min-width: 0;
 }
 
 .footer .footer-brand {
-  width: 24%;
   padding-right: 36px;
   border-right: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
 }
 
-.footer .col:not(.footer-brand):not(.footer-newsletter) {
-  width: 14%;
-}
+/* Below ~1180px the six-track row can no longer hold its minimums inside the
+   container, so the columns reflow rather than shrinking into each other. */
+@media (max-width: 1180px) {
+  .footer .footer-content {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 
-.footer .footer-newsletter {
-  width: 18%;
+  .footer .footer-brand {
+    /* The brand column spans the full row once wrapped — a 98px lockup and a
+       postal address do not belong in a 180px track. */
+    grid-column: 1 / -1;
+    padding-right: 0;
+    border-right: none;
+    padding-bottom: 32px;
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+  }
 }
 
 /* Locations block (brand column) */
@@ -207,10 +235,21 @@
 
 .footer .footer-content ul li a {
   font-size: 14px;
-  line-height: 1.8;
+  /* Tightened from 1.8: a label that now wraps to two lines needs the pair to
+     read as one entry, and 1.8 between the halves of "Healthcare &
+     Pharmaceuticals" reads as two separate links. The gap BETWEEN entries is
+     restored on the li below, so the list's rhythm is unchanged. */
+  line-height: 1.45;
   letter-spacing: 0.01em;
   color: color-mix(in srgb, var(--text) 55%, transparent);
-  display: inline-block;
+  /* `block`, not `inline-block`: an inline-block shrink-to-fit box takes its
+     content's full single-line width and overflows the track rather than
+     wrapping inside it. This is the line that was actually clipping the text. */
+  display: block;
+  /* Long labels wrap at their spaces. `anywhere` is the backstop for a locale
+     whose translation has no break opportunity inside the track width — the
+     site ships in twelve languages and German compounds are not hypothetical. */
+  overflow-wrap: anywhere;
   transition: color var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
 }
 
@@ -219,7 +258,9 @@
 }
 
 .footer .footer-content ul li:not(:last-child) {
-  margin-bottom: 8px;
+  /* Carries the separation the link's own line-height used to provide, so the
+     list rhythm survives labels wrapping to two lines. */
+  margin-bottom: 13px;
 }
 
 /* Newsletter */
@@ -305,22 +346,17 @@
 
 /* --- Responsive --- */
 
+/* NOTE. These blocks used to set percentage `width` on each `.col`, which is
+   what actually produced the clipping — and it survived the grid rewrite for a
+   moment, because a percentage width on a GRID item resolves against its own
+   track rather than against the row. `width: 20%` of a 159px track is a 32px
+   column, so every label in the footer was cut to two characters regardless of
+   how generous the tracks were. Sizing is now the grid's job at every width and
+   no `.col` carries a width of its own. */
+
 @media (max-width: 1399px) {
   .footer {
     padding-top: 80px;
-  }
-  .footer .footer-brand {
-    width: 100%;
-    border-right: none;
-    padding-right: 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
-    padding-bottom: 32px;
-  }
-  .footer .col:not(.footer-brand):not(.footer-newsletter) {
-    width: 20%;
-  }
-  .footer .footer-newsletter {
-    width: 24%;
   }
   .footer-locations {
     flex-direction: row;
@@ -337,31 +373,45 @@
     padding-top: 60px;
   }
   .footer .footer-content {
-    flex-wrap: wrap;
-    gap: 36px;
-  }
-  .footer .footer-brand {
-    width: 100%;
-    border-right: none;
-    padding-right: 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
-    padding-bottom: 32px;
-  }
-  .footer .col:not(.footer-brand):not(.footer-newsletter) {
-    width: 40%;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 36px 20px;
   }
   .footer .footer-newsletter {
-    width: 100%;
+    /* The email field needs the full row once the tracks are this narrow. */
+    grid-column: 1 / -1;
+  }
+  .footer-locations {
+    flex-direction: column;
+    gap: 14px;
   }
 }
 
 @media (max-width: 575px) {
-  .footer .col:not(.footer-brand):not(.footer-newsletter) {
-    width: 100%;
+  .footer .footer-content {
+    grid-template-columns: 1fr;
   }
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
+}
+
+/* The hover roll-up primitive (src/app/styles/hover.css) paints its label in a
+   pair of `white-space: nowrap` pseudo-elements. That is right for a nav link,
+   which must never wrap — and wrong here, where a sitemap column is narrow by
+   design and "Healthcare & Pharmaceuticals" is a real entry. Without this the
+   host <a> wraps correctly while the label the reader actually SEES is still
+   clipped to one line, so the defect survives in the only state that matters.
+
+   The travel distance is `100%` of the pseudo-element's own height, and the
+   pseudo fills the box (`inset: 0`), so a two-line label rolls by two lines.
+   The primitive needs no other change. */
+.footer .footer-content [data-hv~="label"]::before,
+.footer .footer-content [data-hv~="label"]::after {
+  white-space: normal;
+  /* Both labels must agree on where the text sits vertically, or the incoming
+     one arrives a few pixels off the outgoing one's baseline. */
+  align-items: center;
+  text-align: left;
 }

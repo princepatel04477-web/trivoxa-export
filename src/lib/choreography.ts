@@ -23,6 +23,7 @@ import {
   buildInsightsStages,
   buildInsightsPhase,
   buildCareersStages,
+  buildIndustriesStages,
   buildCareersPhase,
 } from "./shapes";
 import { buildPresenceGeo, REGION } from "./shapes/presence";
@@ -66,6 +67,7 @@ const BUSINESSES_PALETTE = { primary: "--port-origin-dot", accent: "--gold-hover
 const GLOBAL_PRESENCE_PALETTE = { primary: "--port-dest-dot", accent: "--gold-hover", ground: "dark" } as const;
 const INSIGHTS_PALETTE = { primary: "--success", accent: "--gold-hover", ground: "dark" } as const;
 const CAREERS_PALETTE = { primary: "--text-2", accent: "--gold-hover", ground: "dark" } as const;
+const INDUSTRIES_PALETTE = { primary: "--text-2", accent: "--gold", ground: "dark" } as const;
 
 /**
  * Home — one continuous scrubbed sequence:
@@ -541,6 +543,59 @@ export const BUSINESSES: Omit<SceneConfig, "onDegrade"> = {
   // Compact form, generous open space around it (see the brief's density note).
   formationScale: 0.82,
   cameraOrbit: { trigger: ".tvx", sweepDeg: 20, dolly: 4 },
+  fieldPath: 0.8,
+  fieldPathTrigger: ".tvx",
+  mobileOpacityCap: 0.46,
+};
+
+/**
+ * Industries — eight sectors converging on one operator.
+ *
+ *   eight scattered, unconnected sector clusters (hero)
+ *     → they resolve into an ordered manifest (Industries We Serve)
+ *     → the sectors thread together, connections drawing (Our Industry Solutions)
+ *     → the threads pull into a single spine (Why Industries Choose Trivoxa)
+ *     → the spine converges into the shared eagle behind the CTA
+ *
+ * REGRESSION NOTE. This route shipped with no particle field at all — it ran
+ * the shared GLSL film every SECONDARY route runs (`film="footer-drift"`),
+ * which is correct for Contact or Compliance and wrong for the one primary nav
+ * destination without a signature form. Against the five neighbouring routes it
+ * read as a flat dark page. The film is now removed from the page, because the
+ * two cannot coexist: both occupy the fixed z-index:-1 layer and each wants its
+ * own WebGL context.
+ *
+ * The regression is also now covered — see the route smoke test in
+ * scripts/check-canvas-routes.mjs, which asserts a mounted <canvas> on every
+ * page rather than trusting each page to remember.
+ */
+export const INDUSTRIES: Omit<SceneConfig, "onDegrade"> = {
+  buildStages: withEagleFinale(buildIndustriesStages),
+  // Bound to the page's own section ids. `#industries` is the manifest section,
+  // which is also the DOM anchor the hero's "Explore" CTA jumps to — so the
+  // form resolves into its ordered state exactly where the reader lands.
+  stageBindings: [
+    // → the ordered manifest
+    { trigger: "#industries", start: "top bottom", end: "center center" },
+    // → threaded: the sectors connect. Bound to the solutions section, which is
+    //   the one that argues they are handled as a single capability.
+    { trigger: "#solutions", start: "top 80%", end: "center center" },
+    // → the spine, across the section that argues the eight are one operator
+    { trigger: "#why", start: "top 80%", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: ".tvx-cta", start: "top bottom", end: "center center" },
+  ],
+  // The threads arrive with the connected stage and hold through the spine, then
+  // fade as the eagle takes over — the closing mark stands alone.
+  linkEnvelope: { drawFrom: 1.5, drawTo: 2.4, fadeFrom: 3.1, fadeTo: 3.7 },
+  motion: "planar",
+  palette: INDUSTRIES_PALETTE,
+  // Matched to Group's: this page carries the same density of body copy over the
+  // field, and the two sit either side of Businesses in the nav.
+  fieldOpacity: 0.6,
+  // The one shared value. No page overrides it — see FORMATION_SCALE.
+  formationScale: 0.82,
+  cameraOrbit: { trigger: ".tvx", sweepDeg: 22, dolly: 4 },
   fieldPath: 0.8,
   fieldPathTrigger: ".tvx",
   mobileOpacityCap: 0.46,

@@ -132,21 +132,31 @@ export function Pills({ items }: { items: string[] }) {
   );
 }
 
+/**
+ * THE closing band. Every route ends on one.
+ *
+ * It used to render a flat, 10%-opacity SVG eagle watermark behind the
+ * headline. The particle field's own eagle finale converges at the same point
+ * on the same page — so every CTA carried TWO eagles at slightly different
+ * scales and orientations, one of them a static grey ghost sitting on top of
+ * the mark the whole choreography exists to arrive at. The particle formation
+ * is the only eagle.
+ *
+ * Deleted rather than hidden. `display: none` and `opacity: 0` both still ship
+ * the geometry and both invite the next person to switch it back on.
+ */
 export function CtaBand({
   title,
   description,
   actions,
-  eagle = true,
 }: {
   title: string;
   description?: string;
   actions: Action[];
-  eagle?: boolean;
 }) {
   return (
     <section className="tvx-cta">
       <div className="container">
-        {eagle && <Logo variant="mark" className="tvx-cta__eagle" decorative />}
         <h2>{title}</h2>
         {description && <p>{description}</p>}
         <ActionButtons actions={actions} />

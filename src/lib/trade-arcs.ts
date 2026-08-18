@@ -32,11 +32,20 @@ const LABEL_SIZE_ORIGIN = 21;
 const LABEL_SIZE_DEST = 14;
 
 /**
- * Screen-space padding used when decluttering labels, in normalised device units.
- * Two labels closer than this on either axis are treated as colliding.
+ * Vertical extent of a label's screen-space box, in normalised device units.
+ * The HORIZONTAL extent is measured per label from its own sprite width — a
+ * single pad cannot serve both "Tokyo" and "Los Angeles".
  */
-const DECLUTTER_PAD_X = 0.085;
 const DECLUTTER_PAD_Y = 0.038;
+
+/**
+ * Extra breathing room either side of a label's measured box, in NDC. Labels
+ * that merely touch still read as a collision.
+ */
+const DECLUTTER_GUTTER_X = 0.012;
+
+/** How far a label trails its own marker, in ms. */
+const LABEL_LAG_MS = 80;
 
 export interface ArcColors {
   /** Route lines. */
@@ -64,6 +73,28 @@ interface CityNode {
   flatPos: THREE.Vector3;
   /** 0..1 — how far this node's own route has drawn. Drives label opacity. */
   arrived: number;
+  /**
+   * Reveal ordinal. 0 is the origin; destinations follow in the same
+   * nearest-first order the arcs draw in, so "reveal order", "draw order" and
+   * "declutter priority" are one number rather than three independent notions
+   * that can disagree.
+   */
+  order: number;
+  /**
+   * Label width in world units, for the screen-space box test. A fixed pad
+   * cannot serve both "Tokyo" and "Los Angeles" — it is either too tight for
+   * the long ones (they overlap anyway) or too loose for the short ones (they
+   * get suppressed for no reason).
+   */
+  labelWorldW: number;
+  /**
+   * Set by declutter when this label has nowhere free to sit, or is on the far
+   * side of the globe. Read by the fade loop, which is the only thing that
+   * writes opacity — so suppression is a request, not a second writer.
+   */
+  suppressed: boolean;
+  /** performance.now() when this node's route completed; drives the label lag. */
+  arrivedAt: number;
 }
 
 interface Arc {
@@ -173,6 +204,9 @@ export class TradeArcs {
 
     ordered.forEach((city, i) => {
       const node = this.nodes.find((n) => n.city.name === city.name)!;
+      // The reveal ordinal. 1-based, because the origin is 0 — so `order` reads
+      // directly as "this is the Nth city to light up".
+      node.order = i + 1;
       this.arcs.push(
         this.buildArc(
           buildArcCurve(radius, origin, city),
@@ -260,6 +294,12 @@ export class TradeArcs {
       spherePos,
       flatPos,
       arrived: 0,
+      // Overwritten in the constructor once the arc order is known; the origin
+      // keeps 0, which is also its reveal ordinal.
+      order: 0,
+      labelWorldW: label.scale.x,
+      suppressed: false,
+      arrivedAt: 0,
     };
   }
 
@@ -444,6 +484,9 @@ export class TradeArcs {
     this.active = false;
     this.tweens.forEach((t) => t.kill());
     this.tweens = [];
+    // Clear the arrival clocks, so a reader who scrolls back up and returns
+    // gets the staggered reveal again rather than every label at once.
+    this.nodes.forEach((n) => (n.arrivedAt = 0));
 
     if (this.reducedMotion) {
       this.group.visible = false;
@@ -471,11 +514,19 @@ export class TradeArcs {
   /**
    * Per-frame: packet travel, origin pulse, label fades, and label decluttering.
    *
-   * Declutter runs in screen space, which needs the camera, and only while the map
-   * is substantially flat — on the sphere the labels are already separated by the
-   * globe's own curvature and half of them are facing away. It is throttled to
-   * every 6th frame because fourteen projections plus a sort is not free and the
-   * layout only changes when the camera or the draw does.
+   * Declutter runs in screen space, which needs the camera, and it runs in EVERY
+   * projection — sphere included.
+   *
+   * It used to be gated on `blend > 0.6`, on the reasoning that the globe's own
+   * curvature separates the labels. It does not: the sphere projects a whole
+   * hemisphere of cities into a disc, so the crowded regions crowd HARDER than
+   * on the flat map — Dubai over Jeddah, Los Angeles over New York, Mombasa
+   * over Durban, every load. The flat map has since been removed from the
+   * choreography entirely (every geo stage holds bend 1), so that gate meant
+   * the declutter never ran anywhere at all.
+   *
+   * Throttled to every 6th frame: fourteen projections plus a sort is not free
+   * and the layout only changes when the camera or the draw does.
    */
   update(camera?: THREE.Camera): void {
     if (!this.active) return;
@@ -501,14 +552,31 @@ export class TradeArcs {
       }
     }
 
-    // Labels fade in with their own route's arrival.
+    // Labels fade in behind their own marker, and only where declutter found
+    // them a free slot. This loop is the ONLY writer of label opacity.
+    const now = performance.now();
     for (const node of this.nodes) {
-      const want = this.labelVisible(node) ? (node.city.origin ? 1 : node.arrived) : 0;
+      let want = this.labelVisible(node) && !node.suppressed ? 1 : 0;
+      if (want && !node.city.origin && !this.reducedMotion) {
+        // The marker lands when its route arrives; the label follows LABEL_LAG
+        // later, so the eye is drawn to the point on the globe first and the
+        // name confirms it. Reading them as one simultaneous event is what made
+        // a scrubbed reveal still feel like a switch being thrown.
+        if (node.arrived < 1) {
+          node.arrivedAt = 0;
+          want = 0;
+        } else {
+          if (!node.arrivedAt) node.arrivedAt = now;
+          if (now - node.arrivedAt < LABEL_LAG_MS) want = 0;
+        }
+      }
       const k = this.reducedMotion ? 1 : 0.12;
       node.labelMaterial.opacity += (want - node.labelMaterial.opacity) * k;
+      // A suppressed or hidden label must not leave its leader hairline behind.
+      if (node.labelMaterial.opacity < 0.02) node.leaderMaterial.opacity = 0;
     }
 
-    if (camera && this.blend > 0.6 && this.declutterTick++ % 6 === 0) this.declutter(camera);
+    if (camera && this.declutterTick++ % 6 === 0) this.declutter(camera);
   }
 
   /**
@@ -521,49 +589,69 @@ export class TradeArcs {
    * the association stays unambiguous.
    */
   private declutter(camera: THREE.Camera): void {
-    const placed: { x: number; y: number }[] = [];
+    /** Placed boxes in NDC: x spans [x0,x1], y is a band of ±DECLUTTER_PAD_Y. */
+    const placed: { x0: number; x1: number; y: number }[] = [];
     const ndc = new THREE.Vector3();
+    const edge = new THREE.Vector3();
+    const centre = new THREE.Vector3();
+    // Camera-right in world space, for measuring a label's projected width: the
+    // sprite always faces the camera, so its width lies along this axis.
+    const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
 
-    const order = [...this.nodes].sort((a, b) => {
-      if (a.city.origin) return -1;
-      if (b.city.origin) return 1;
-      // Then by arrival, so settled labels hold their position as later ones appear.
-      return b.arrived - a.arrived;
-    });
+    // The globe's centre in NDC — anything behind it is on the far hemisphere.
+    this.group.getWorldPosition(centre);
+    centre.project(camera);
+
+    // Priority is the reveal ordinal: the origin first, then each city in the
+    // order it lit up. A label that has held a slot keeps it as later cities
+    // arrive, which is what stops the layout reshuffling under the reader.
+    const order = [...this.nodes].sort((a, b) => a.order - b.order);
 
     for (const node of order) {
       node.labelOffset.set(0, 0);
-      if (!this.labelVisible(node) || node.labelMaterial.opacity < 0.02) continue;
+      node.label.position.set(0, 0, 0);
+
+      if (!this.labelVisible(node)) {
+        node.suppressed = true;
+        continue;
+      }
 
       node.group.getWorldPosition(ndc);
+      edge.copy(ndc).addScaledVector(right, node.labelWorldW * this.group.scale.x);
       ndc.project(camera);
-      let y = ndc.y;
-      let step = 0;
-      // Alternate up/down in increasing increments until the slot is free.
-      while (
-        placed.some((p) => Math.abs(p.x - ndc.x) < DECLUTTER_PAD_X && Math.abs(p.y - y) < DECLUTTER_PAD_Y) &&
-        step < 8
-      ) {
-        step++;
-        const dir = step % 2 === 0 ? 1 : -1;
-        y = ndc.y + dir * Math.ceil(step / 2) * DECLUTTER_PAD_Y;
-      }
-      placed.push({ x: ndc.x, y });
+      edge.project(camera);
 
-      // NDC delta → world offset on the node's own local axes. The sprite is
-      // parented to the node group, so a local y shift is enough.
-      const shift = (y - ndc.y) * this.radius * 1.4;
-      node.labelOffset.set(0, shift);
-      node.label.position.set(0, shift, 0);
-
-      const moved = Math.abs(shift) > 1e-4;
-      node.leaderMaterial.opacity = moved ? 0.35 * node.labelMaterial.opacity : 0;
-      if (moved) {
-        const pos = node.leader.geometry.getAttribute("position") as THREE.BufferAttribute;
-        pos.setXYZ(0, 0, 0, 0);
-        pos.setXYZ(1, 0, shift, 0);
-        pos.needsUpdate = true;
+      // Far hemisphere: the label would read through the body of the globe.
+      // Nothing else culled these, which is most of why the network looked like
+      // every city was shouting at once.
+      if (ndc.z > centre.z) {
+        node.suppressed = true;
+        continue;
       }
+
+      // The label's own measured box. `center` is (0, 0.5), so the sprite grows
+      // to the RIGHT of the node — the box is [x, x + width].
+      const halfW = Math.abs(edge.x - ndc.x);
+      const x0 = ndc.x - DECLUTTER_GUTTER_X;
+      const x1 = ndc.x + halfW + DECLUTTER_GUTTER_X;
+
+      // Directive §5: SKIP a label whose projected box intersects one already
+      // placed this frame, rather than nudging it. Nudging is what produced
+      // "SURAT" sitting a centimetre above a dot it no longer appears to
+      // belong to; on a sphere carrying fourteen cities there is frequently no
+      // free slot within reach, and eight failed nudges still ends in an
+      // overlap. A missing label is recoverable — the globe turns, and it takes
+      // its slot on the next pass. An unreadable one is not.
+      const clash = placed.some((p) => x0 < p.x1 && x1 > p.x0 && Math.abs(p.y - ndc.y) < DECLUTTER_PAD_Y);
+      if (clash) {
+        node.suppressed = true;
+        continue;
+      }
+
+      placed.push({ x0, x1, y: ndc.y });
+      node.suppressed = false;
+      // Nothing is offset any more, so the leader hairline has nothing to draw.
+      node.leaderMaterial.opacity = 0;
     }
   }
 

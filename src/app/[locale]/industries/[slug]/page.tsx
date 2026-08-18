@@ -119,7 +119,6 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
         title={t("cta.titleTemplate", { name })}
         description={t("cta.description")}
         actions={[{ label: t("cta.ctaSendRfq"), href: `/rfq/?category=${industry.slug}` }]}
-        eagle={false}
       />
     </TrivoxaShell>
   );

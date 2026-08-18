@@ -112,6 +112,23 @@ const PARALLAX_MAX = (4 * Math.PI) / 180; // max ±4° mouse parallax offset
 const FORMATION_SCALE = 1.6;
 const PORTS_SCALE = 1.22;
 
+/**
+ * THE size of the closing eagle, on every route, at every scroll depth.
+ *
+ * The mark is the one form that is genuinely shared: the same silhouette
+ * sampled from the same asset, arrived at by six different choreographies. It
+ * is a logo, and a logo that renders at one size on Home and at half that on
+ * the five inner pages is two logos.
+ *
+ * Held here rather than left to each page's `formationScale`, which is what
+ * produced the drift — that value is a COMPOSITION control (how much of the
+ * frame this page's lattice or globe is allowed to occupy) and pages are right
+ * to differ on it. The mark is not a composition decision, so it is taken out
+ * of that value's reach entirely: no page can override it, because no page is
+ * consulted.
+ */
+const EAGLE_SCALE = 0.82;
+
 /** One trade lane on the ports globe: a bulging arc from Surat to a hub plus a
  * light "packet" sprite that travels along it, looping. */
 interface ArcAnim {
@@ -120,7 +137,21 @@ interface ArcAnim {
   curve: THREE.QuadraticBezierCurve3;
   speed: number;
   off: number;
+  /**
+   * Ordinal of this lane's DESTINATION port. The origin is index 0 and is
+   * always revealed first, so gating on the destination alone is enough to
+   * guarantee a lane is only drawn once both its ends exist.
+   */
+  portIndex: number;
 }
+
+/**
+ * Screen-space box used to keep port labels off each other, in NDC. The
+ * horizontal extent is measured per label from its own sprite; only the
+ * vertical band and the side gutter are fixed.
+ */
+const PORT_LABEL_PAD_Y = 0.036;
+const PORT_LABEL_GUTTER = 0.012;
 
 export interface ParticleScene {
   domElement: HTMLCanvasElement;
@@ -1009,7 +1040,15 @@ ${
     ? `        // The map converges into the shared eagle finale. Blending the
         // analytic position toward a sampled target keeps geo mode's one-float
         // cost intact through the closing morph too.
-        vec3 transformed = mix(unwrap(aGeo, uBend), aEagle, uEagleBlend);
+        vec3 geoForm = mix(unwrap(aGeo, uBend), aEagle, uEagleBlend);
+        // THE GEO ASSEMBLE. Geo mode derives every position analytically and so
+        // had no opening at all — the globe simply faded up already built, which
+        // is the one route that could never satisfy "begins at the unformed
+        // state". \`position\` is otherwise unused here (the analytic path never
+        // reads it), so it carries the scatter shell and the same staggered t
+        // that the stage-buffer pages assemble on. Once t reaches 1 this is
+        // exactly the previous expression, so nothing downstream changes.
+        vec3 transformed = mix(position, geoForm, t);
         // Regional illumination. The active cluster lifts and everything else —
         // including the ocean shell, which carries region 0 — drops well back, so
         // even a small region (the Middle East box is ~2% of the land points)
@@ -1561,6 +1600,16 @@ ${
   let paused = false;
   let currentFlat = false; // hero starts on the spinning globe
   let currentIsGlobe = true; // drives axial tilt, parallax and depth cueing
+  /**
+   * How far the field has become the shared eagle, 0..1, interpolated across
+   * the closing morph exactly like `drift`.
+   *
+   * Drives the mark's size (EAGLE_SCALE) so the logo is identical on every
+   * route regardless of what that page's own formationScale is, and eases in
+   * rather than switching, so the mark grows or shrinks into its fixed size as
+   * it forms instead of snapping at the stage boundary.
+   */
+  let eagleMix = 0;
   // Name of the shape the field is currently on (or travelling toward). Makes
   // morphTo idempotent, so re-applying the state already on screen — which
   // happens constantly now that beats restore each other on scroll-up — never
@@ -1624,9 +1673,28 @@ ${
   let portGroup: THREE.Group | null = null;
   let portsMode = false; // true only while the ports globe is the active field
   const portSprites: THREE.Sprite[] = [];
+  /**
+   * How many ports have been revealed — a FLOAT, scrubbed from the reader's
+   * position through the section that shows them, not a boolean.
+   *
+   * `ports: true` on a beat used to switch on every marker, every label and
+   * every lane in one frame. One flag for fourteen cities meant the network
+   * could only ever arrive as a wall, and because the beat's own trigger was
+   * satisfied early it arrived before the reader had asked for anything. A
+   * port is drawn only once this passes its ordinal (index 0 is Surat, the
+   * origin, so the network always grows outward from its source), which is the
+   * CPU-side equivalent of the `step(aPortIndex, uPortsRevealed)` the directive
+   * calls for — there are at most fourteen sprites, so a per-sprite compare
+   * costs less than the attribute it would replace.
+   */
+  let portsRevealed = 0;
   const arcs: ArcAnim[] = []; // Surat → hub trade lanes on the ports globe
   const _wp = new THREE.Vector3();
   const _cp = new THREE.Vector3();
+  const _edge = new THREE.Vector3();
+  const _right = new THREE.Vector3();
+  /** Screen-space label boxes claimed this frame — see the ports render block. */
+  const _portBoxes: { x0: number; x1: number; y: number }[] = [];
   // Pointer parallax — the globe subtly leans toward the cursor.
   const pointer = { x: 0, y: 0 };
   const pointerTarget = { x: 0, y: 0 };
@@ -1953,29 +2021,53 @@ ${
       uGlobeUniform.value = uBend.value;
       // 90°·bend aligns the unwrap's axes with latLonToVec3 at bend 1 and leaves
       // the flat map unrotated at bend 0.
-      points.rotation.y = (Math.PI / 2) * uBend.value;
+      //
+      // It is unwound as the eagle forms. That 90° is a GLOBE correction, but it
+      // is applied to the whole Points object, so it was also being applied to
+      // the sampled eagle buffer the analytic position blends into — turning
+      // the closing mark, a flat XY silhouette, a quarter turn about its own
+      // vertical axis. On this page the shared logo was rendering nearly
+      // edge-on, at a completely different orientation from the same mark on
+      // the five stage routes.
+      points.rotation.y = (Math.PI / 2) * uBend.value * (1 - uEagleBlend.value);
 
+      // THE MARK LOCKS. Everything below is a globe read — idle spin, drag,
+      // axial tilt, cursor parallax — and every one of them kept running once
+      // the globe had converged into the eagle, because the eagle finale on
+      // this page is a shader blend rather than a stage swap and so never
+      // reached the `currentFlat` branch that locks the mark on every other
+      // route. The result was the closing logo slowly revolving on Y, at a
+      // different angle in every screenshot, on the one page that shows it
+      // largest. `locked` eases all of it out on the same blend that forms the
+      // mark, so the eagle arrives already still.
+      const locked = 1 - uEagleBlend.value;
       if (!reducedMotion) {
-        // Idle spin fades out with the bend — a spinning flat map is nonsense.
-        // Drag coasts down on release instead of stopping dead. The two are kept
-        // in separate accumulators so a drag never fights the idle rotation.
-        idleSpin += IDLE_OMEGA * uBend.value * delta;
+        // Idle spin fades out with the bend — a spinning flat map is nonsense —
+        // and with the eagle blend, for the same reason: a spinning logo is not
+        // a logo.
+        idleSpin += IDLE_OMEGA * uBend.value * locked * delta;
         if (!dragging) {
           dragOffset += dragVel * dt60;
           dragVel *= Math.pow(0.94, dt60);
         }
+        // The accumulated drag unwinds to zero as the mark forms, so a reader
+        // who spun the globe on the way down still gets the mark square.
+        dragOffset += (0 - dragOffset) * kSettle * uEagleBlend.value;
         spin.rotation.y = idleSpin + dragOffset;
         // Axial tilt and cursor parallax are also sphere reads; both ease away
         // as it flattens so the map ends up square to the camera.
-        holder.rotation.z += (AXIAL_TILT * uBend.value - holder.rotation.z) * kSettle;
+        holder.rotation.z += (AXIAL_TILT * uBend.value * locked - holder.rotation.z) * kSettle;
         holder.rotation.x +=
-          (pointer.y * PARALLAX_MAX * uBend.value - holder.rotation.x) * kParallax;
+          (pointer.y * PARALLAX_MAX * uBend.value * locked - holder.rotation.x) * kParallax;
+        holder.rotation.y += (0 - holder.rotation.y) * kSettle * uEagleBlend.value;
       } else {
         holder.rotation.set(0, 0, 0);
       }
 
       // Uniform scale down as it flattens, so the ~2π·R-wide map frames cleanly.
-      const geoScale = formationScale * (GEO_FLAT_SCALE + (1 - GEO_FLAT_SCALE) * uBend.value);
+      // The mark then takes its own fixed size — see EAGLE_SCALE.
+      const bendScale = formationScale * (GEO_FLAT_SCALE + (1 - GEO_FLAT_SCALE) * uBend.value);
+      const geoScale = bendScale + (EAGLE_SCALE - bendScale) * uEagleBlend.value;
       if (reducedMotion) spin.scale.setScalar(geoScale);
       else spin.scale.setScalar(spin.scale.x + (geoScale - spin.scale.x) * kSettle);
       points.scale.setScalar(1);
@@ -2047,6 +2139,9 @@ ${
     // flat shapes render at FORMATION_SCALE; the ports globe holds at the
     // smaller PORTS_SCALE so it stays clear of the global-presence copy.
     let targetScale = currentIsGlobe && portsMode ? PORTS_SCALE : formationScale;
+    // The mark takes its OWN size, not the page's. Blended on eagleMix so it
+    // arrives at that size rather than jumping to it at the stage boundary.
+    if (eagleMix > 0) targetScale = targetScale + (EAGLE_SCALE - targetScale) * eagleMix;
     // Subtle breathing on the planar lattice — ±1.8%, slow enough to read as
     // respiration rather than a pulse. Suppressed once locked onto a flat:
     // true stage (the eagle finale) — that mark holds fully still.
@@ -2104,26 +2199,45 @@ ${
     // that GSAP or the scroll scrub already set.
 
     // Port labels: fade each toward its target only when it faces the camera
-    // (front hemisphere), so labels on the far side of the globe don't show
-    // through. Cheap — at most ~7 sprites. Hides the group once fully faded.
+    // (front hemisphere) AND its ordinal has been reached by the scrubbed
+    // reveal, so the network grows outward from Surat under the reader's own
+    // scroll instead of arriving whole. Cheap — at most fourteen sprites.
+    // Hides the group once fully faded.
     if (portGroup && portGroup.visible) {
       points.getWorldPosition(_cp);
       _cp.project(camera);
       let anyVisible = false;
-      for (const s of portSprites) {
+      // Screen-space boxes claimed so far this frame; a label that would land on
+      // one is dropped rather than drawn over it. Priority is ordinal order,
+      // which is the order the array is already in — Surat at index 0.
+      _portBoxes.length = 0;
+      const camRight = _right.setFromMatrixColumn(camera.matrixWorld, 0);
+      portSprites.forEach((s, i) => {
         s.getWorldPosition(_wp);
+        _edge.copy(_wp).addScaledVector(camRight, s.scale.x);
         _wp.project(camera);
+        _edge.project(camera);
         const front = _wp.z < _cp.z; // nearer to camera than the globe centre
-        const want = portsMode && front ? 1 : 0;
+        // step(index, revealed) — the ordinal gate.
+        const revealed = i < portsRevealed;
+        const x0 = _wp.x - PORT_LABEL_GUTTER;
+        const x1 = _wp.x + Math.abs(_edge.x - _wp.x) + PORT_LABEL_GUTTER;
+        const clash =
+          front &&
+          revealed &&
+          _portBoxes.some((b) => x0 < b.x1 && x1 > b.x0 && Math.abs(b.y - _wp.y) < PORT_LABEL_PAD_Y);
+        const want = portsMode && front && revealed && !clash ? 1 : 0;
+        if (want) _portBoxes.push({ x0, x1, y: _wp.y });
         const m = s.material as THREE.SpriteMaterial;
         m.opacity += (want - m.opacity) * kSettle;
         if (m.opacity > 0.01) anyVisible = true;
-      }
-      // Trade-lane arcs + travelling packets. Arcs fade in with the globe; each
-      // packet advances along its curve and fades by hemisphere so back-of-globe
-      // dots don't show through.
-      const arcTarget = portsMode ? 1 : 0;
+      });
+      // Trade-lane arcs + travelling packets. A lane is drawn only once BOTH its
+      // ends exist — the origin is index 0 and a lane inherits its destination's
+      // ordinal — so the network is never shown reaching a city that has not
+      // arrived yet.
       for (const a of arcs) {
+        const arcTarget = portsMode && a.portIndex < portsRevealed ? 1 : 0;
         const lm = a.line.material as THREE.LineBasicMaterial;
         lm.opacity += (arcTarget * 0.42 - lm.opacity) * kSettle;
         a.off = (a.off + delta * a.speed) % 1;
@@ -2468,8 +2582,13 @@ ${
     // arc bulges off the sphere (higher for longer lanes) and a gold "packet"
     // sprite runs Surat → hub along it, looping — the trade flowing outward.
     const surat = cityVecs["Surat"];
-    for (const c of CITIES) {
-      if (c.origin) continue;
+    // Bound outside the callback: TypeScript cannot carry the enclosing
+    // null-narrowing of the mutable `portGroup` into a closure.
+    const group = portGroup;
+    // Indexed, so each lane can carry its destination's ordinal — the same
+    // index the label sprites were pushed at, since both walk CITIES in order.
+    CITIES.forEach((c, portIndex) => {
+      if (c.origin) return;
       const dest = cityVecs[c.name];
       const mid = surat.clone().add(dest).multiplyScalar(0.5);
       const lift = globeRadius * (1.1 + surat.distanceTo(dest) / (globeRadius * 4.2));
@@ -2486,7 +2605,7 @@ ${
       });
       const line = new THREE.Line(lineGeo, lineMat);
       line.renderOrder = 1;
-      portGroup.add(line);
+      group.add(line);
       const packetMat = new THREE.SpriteMaterial({
         map: texture,
         color: tokenColor("--gold-packet"),
@@ -2499,9 +2618,16 @@ ${
       const packet = new THREE.Sprite(packetMat);
       packet.scale.setScalar(globeRadius * 0.05); // small flowing dots
       packet.renderOrder = 2;
-      portGroup.add(packet);
-      arcs.push({ line, packet, curve, speed: 0.16 + Math.random() * 0.12, off: Math.random() });
-    }
+      group.add(packet);
+      arcs.push({
+        line,
+        packet,
+        curve,
+        speed: 0.16 + Math.random() * 0.12,
+        off: Math.random(),
+        portIndex,
+      });
+    });
     points.add(portGroup);
   }
 
@@ -2511,7 +2637,17 @@ ${
   };
   const hidePorts = () => {
     portsMode = false; // render loop fades the sprites out, then hides the group
+    // Rewind the reveal, so scrolling back down replays it rather than
+    // returning to a network that is already complete.
+    portsRevealed = 0;
+    gsap.killTweensOf(portsRevealedProxy);
+    portsRevealedProxy.value = 0;
   };
+  /**
+   * The scrubbed reveal driver. A plain object rather than a bare number so
+   * ScrollTrigger can tween it; `portsRevealed` mirrors it for the render loop.
+   */
+  const portsRevealedProxy = { value: 0 };
 
   function morphTo(shape: Shape, onProgress?: (eased: number) => void) {
     if (shape.name === currentShapeName && !onProgress) return;
@@ -2695,6 +2831,47 @@ ${
   // up is symmetric for free.
   let activeSegment = -1;
 
+  /**
+   * True from the moment the opening pose is authored until the 2.1s assemble
+   * has finished (or the reader has scrolled far enough to take the playhead
+   * off stage zero, whichever comes first).
+   *
+   * The assemble and the scrubbed timeline both drive uProgress and both own
+   * the position buffers, so exactly one of them may be live at a time. Without
+   * this the timeline won its first frame unconditionally: `loadSegment(0)`
+   * overwrites the scatter shell with stage zero's settled positions, zeroes
+   * uStagger and kills the assemble tween — so the assemble was authored,
+   * armed, and then destroyed before the compile gate ever let it run. Nothing
+   * about it was visible on any route.
+   */
+  let assembling = false;
+  /** The playhead the timeline asked for while the assemble held the field. */
+  let deferredPlayhead = 0;
+
+  /**
+   * Hand the field from the assemble to the scrubbed timeline, once.
+   *
+   * `activeSegment` is reset so the first post-assemble setTimelinePos reloads
+   * the buffers the assemble has been holding, rather than short-circuiting on
+   * a segment index it never actually loaded.
+   */
+  function endAssemble() {
+    if (!assembling) return;
+    assembling = false;
+    gsap.killTweensOf(morphProgress);
+    uStagger.value = 0;
+    if (geoStages) {
+      // Geo mode has no stage timeline to take uProgress over — it is the
+      // assemble's uniform and nothing else ever writes it. A reader who
+      // scrolls part-way through the settle hands the field over early, so
+      // without this the globe would hold at whatever fraction of scattered it
+      // had reached, for the life of the page.
+      uProgress.value = 1;
+    }
+    activeSegment = -1;
+    setTimelinePos(deferredPlayhead);
+  }
+
   function loadSegment(i: number) {
     if (!stages || i === activeSegment) return;
     activeSegment = i;
@@ -2776,7 +2953,22 @@ ${
     }
   }
 
+  /** Playhead past this and the reader has genuinely left stage zero. */
+  const ASSEMBLE_YIELD = 0.02;
+
   function setTimelinePos(t: number) {
+    // While the opening assemble holds the field, the timeline records where it
+    // wants to be but writes nothing. At scroll 0 that is 0 anyway — this only
+    // matters when a refresh fires mid-assemble, or when the reader starts
+    // scrolling during it. Past a couple of percent they have made a real
+    // choice, so the assemble yields immediately rather than making them wait
+    // out an animation they have already scrolled away from.
+    if (assembling) {
+      deferredPlayhead = t;
+      if (t <= ASSEMBLE_YIELD) return;
+      endAssemble();
+      return;
+    }
     if (geoStages) {
       setGeoTimeline(t);
       return;
@@ -2812,6 +3004,12 @@ ${
     const sB = stages[i + 1].spinY ?? 0;
     spinYTarget = sA + (sB - sA) * uProgress.value;
 
+    // The shared mark's size, interpolated on the same fraction as drift and
+    // spin — see EAGLE_SCALE.
+    const eA = stages[i].name === "eagle" ? 1 : 0;
+    const eB = stages[i + 1].name === "eagle" ? 1 : 0;
+    eagleMix = eA + (eB - eA) * uProgress.value;
+
     // Connections draw in across the final third of the morph that completes the
     // mesh, hold at full through that stage, then fade as the next morph pulls
     // the lattice apart.
@@ -2846,20 +3044,21 @@ ${
    */
   let startIntro: (() => void) | null = null;
 
-  function assembleInto(shape: Shape) {
-    currentShapeName = shape.name;
-    currentFlat = !!shape.flat;
-    currentIsGlobe = shape.name === "globe";
-    // The opening form never passes through morphTo, so it would otherwise
-    // assemble in the page's token spectrum and only find its own colour at the
-    // first scroll beat. Set instantly — there is nothing on screen yet to
-    // cross-fade from.
-    applySpectrum(shape, 0);
-    if (reducedMotion) {
-      snapTo(shape.data);
-      material.opacity = heroOpacity;
-      return;
-    }
+  /**
+   * Author the unformed pose: a random shell in the FROM buffer, one arrival
+   * delay per grain, every progress uniform at zero and the field invisible.
+   *
+   * Every synchronous write, no tweens — the caller hands the motion to the
+   * compile gate. Shared by the stage-buffer assemble and the geo one, which is
+   * the point: the invariant "every route opens unformed" is now one function
+   * two call sites use, not a behaviour one mode happened to implement.
+   */
+  function authorUnformedPose() {
+    // Claim the field. Until endAssemble() runs, the scrubbed timeline records
+    // its playhead but writes neither uProgress nor the position buffers.
+    assembling = true;
+    deferredPlayhead = 0;
+    activeSegment = -1;
 
     // Scatter shell — written straight into the FROM buffer, with each grain
     // given its own arrival delay in aDelay. uStagger=1 makes the shader honour
@@ -2874,9 +3073,7 @@ ${
       positions[idx + 2] = r * Math.cos(ph);
       delays[i] = Math.random() * 0.4; // 0–400ms per-particle stagger
     }
-    targets.set(shape.data);
     posAttr.needsUpdate = true;
-    toAttr.needsUpdate = true;
     delayAttr.needsUpdate = true;
     uStagger.value = 1;
     // §7.2 — the opening `.set()` of every animated property to stage zero.
@@ -2893,6 +3090,60 @@ ${
 
     material.opacity = INTRO_STATE_INITIAL.opacity;
     if (ambient) ambient.material.opacity = INTRO_STATE_INITIAL.opacity;
+  }
+
+  /**
+   * The assemble tween itself — the one piece of motion the gate owns.
+   *
+   * Split out for the same reason as the pose above: geo mode runs the
+   * identical 2.1s settle, and "identical" has to mean one tween definition.
+   */
+  function armAssemble() {
+    gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
+    // Backdrop fades up behind the assemble, a beat later and slower, so the
+    // depth is established after the form rather than competing with its arrival.
+    if (ambient) {
+      gsap.to(ambient.material, {
+        opacity: capOpacity(AMBIENT.opacity),
+        duration: DURATION.long * 1.5,
+        delay: DURATION.standard,
+        ease: EASE.entry,
+      });
+    }
+    gsap.killTweensOf(morphProgress);
+    // PERIOD.assemble — the per-particle settling window, not a transition.
+    // Unchanged: §1.3 locks the choreography, and this is the same tween with
+    // the same duration and the same ease. Only its start is now gated.
+    //
+    // onComplete hands the field to the scrubbed timeline at whatever playhead
+    // the reader's scroll has reached in the meantime. Without the handover the
+    // timeline would stay muted for the life of the page.
+    gsap.to(morphProgress, {
+      value: 1,
+      duration: PERIOD.assemble,
+      ease: EASE.scrub,
+      onComplete: endAssemble,
+    });
+  }
+
+  function assembleInto(shape: Shape) {
+    currentShapeName = shape.name;
+    currentFlat = !!shape.flat;
+    currentIsGlobe = shape.name === "globe";
+    // The opening form never passes through morphTo, so it would otherwise
+    // assemble in the page's token spectrum and only find its own colour at the
+    // first scroll beat. Set instantly — there is nothing on screen yet to
+    // cross-fade from.
+    applySpectrum(shape, 0);
+    if (reducedMotion) {
+      snapTo(shape.data);
+      material.opacity = heroOpacity;
+      return;
+    }
+
+    authorUnformedPose();
+    targets.set(shape.data);
+    toAttr.needsUpdate = true;
 
     // The pose is authored. NOTHING above started a tween — every line of it is
     // a synchronous write, so the scene can be rendered, compiled and measured
@@ -2900,22 +3151,27 @@ ${
     // begun. The motion is handed to the gate instead.
     startIntro = () => {
       startIntro = null;
-      gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
-      // Backdrop fades up behind the assemble, a beat later and slower, so the
-      // depth is established after the form rather than competing with its arrival.
-      if (ambient) {
-        gsap.to(ambient.material, {
-          opacity: capOpacity(AMBIENT.opacity),
-          duration: DURATION.long * 1.5,
-          delay: DURATION.standard,
-          ease: EASE.entry,
-        });
-      }
-      gsap.killTweensOf(morphProgress);
-      // PERIOD.assemble — the per-particle settling window, not a transition.
-      // Unchanged: §1.3 locks the choreography, and this is the same tween with
-      // the same duration and the same ease. Only its start is now gated.
-      gsap.to(morphProgress, { value: 1, duration: PERIOD.assemble, ease: EASE.scrub });
+      armAssemble();
+    };
+  }
+
+  /**
+   * The geo-mode assemble.
+   *
+   * Geo mode has no stage buffers to morph between — every position is derived
+   * in the vertex shader from aGeo and uBend — so it is the one mode that could
+   * not use assembleInto. It previously had no opening at all: the globe was
+   * authored complete at construction and the gate simply faded it up, which is
+   * why /global-presence was the route that most obviously "loaded in final
+   * form". The shader now blends the scatter shell in `position` toward the
+   * analytic form on the same staggered t, so this is the same 2.1s settle the
+   * other five routes run, on the same tween, at the same cost.
+   */
+  function assembleGeo() {
+    authorUnformedPose();
+    startIntro = () => {
+      startIntro = null;
+      armAssemble();
     };
   }
 
@@ -2942,6 +3198,13 @@ ${
       uEagleBlend.value = 0;
       driftTarget = 0;
       setRoutes(true);
+      // The geo assemble blends `position` (the scatter shell) toward the
+      // analytic form on uProgress, so a reduced-motion reader must be handed
+      // the finished end of that blend explicitly. Left at 0 the entire field
+      // would collapse onto the origin — the assemble's own start state, which
+      // is exactly the frame reduced motion must never see.
+      uProgress.value = 1;
+      uStagger.value = 0;
       // §7.3 — the reduced-motion path is an EXPLICIT branch and it renders a
       // finished state immediately. It is never reached as a side effect of a
       // stalled or skipped timeline, and it does not wait on the gate.
@@ -2953,14 +3216,11 @@ ${
       uEagleBlend.value = INTRO_STATE_INITIAL.eagleBlend;
       driftTarget = geoStages[0].drift ?? 0;
       setRoutes(!!geoStages[0].routes);
-      // Held at stage zero, invisible, until the gate opens — §6.5. The pose is
-      // correct the whole time, so the reveal is a fade onto an already-formed
-      // stage zero rather than a pop.
+      // Held at stage zero, invisible, until the gate opens — §6.5. The reveal
+      // is now a 2.1s assemble out of a scatter shell rather than a fade onto
+      // an already-formed globe: see assembleGeo.
       revealDelayMs = 900;
-      startIntro = () => {
-        startIntro = null;
-        gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
-      };
+      assembleGeo();
     }
     currentIsGlobe = false; // geo mode drives uGlobe from bend directly
     currentFlat = false;
@@ -3237,11 +3497,7 @@ ${
       uBend.value = geoStages[0].bend;
       uEagleBlend.value = INTRO_STATE_INITIAL.eagleBlend;
       setRoutes(!!geoStages[0].routes);
-      material.opacity = INTRO_STATE_INITIAL.opacity;
-      startIntro = () => {
-        startIntro = null;
-        gsap.to(material, { opacity: heroOpacity, duration: DURATION.long, ease: EASE.entry });
-      };
+      assembleGeo();
     }
     requestRender();
     requestAnimationFrame(() => openGate());
@@ -3325,9 +3581,32 @@ ${
     // the same binding machinery — only what a stage MEANS differs.
     const stageCount = stages?.length ?? geoStages?.length ?? 0;
     if (stageCount > 1 && !reducedMotion) {
+      // THE playhead is the SUM of every binding's own 0→1 progress, not the
+      // absolute position of whichever binding last fired.
+      //
+      // Each binding used to write `i + t` directly. Every binding's onUpdate
+      // fires during ScrollTrigger.refresh() regardless of whether its range has
+      // been reached, so at scroll 0 the LAST binding wrote its own index — a
+      // four-stage page opened on stage 3, fully formed, with its links drawn
+      // and its assemble already killed. That is the "loads in final form"
+      // defect, and it fired on every route on every cold load, refresh and soft
+      // navigation, because a refresh is not a scroll event and no amount of
+      // scroll-restoration work could reach it.
+      //
+      // Summing is not a workaround for the refresh: it is the correct model.
+      // Binding i owns the timeline interval [i, i+1], so a binding the reader
+      // has not reached contributes 0 and one they have scrolled past
+      // contributes 1. Inside binding i the sum is exactly `i + t` — identical
+      // to the old behaviour while scrolling — and at scroll 0 it is exactly 0,
+      // which is what the assemble needs to exist at all.
+      const stageT = new Array<number>(stageCount - 1).fill(0);
+      const playhead = () => stageT.reduce((a, b) => a + b, 0);
       stageBindings.slice(0, stageCount - 1).forEach((binding, i) => {
         const proxy = { t: 0 };
-        const settle = (t: number) => setTimelinePos(i + t);
+        const settle = (t: number) => {
+          stageT[i] = t;
+          setTimelinePos(playhead());
+        };
         const tween = gsap.to(proxy, {
           t: 1,
           ease: EASE.scrub,
@@ -3558,6 +3837,28 @@ ${
         onEnterBack: () => applyState(states[i]),
         onLeaveBack: () => applyState(backState),
       });
+
+      // The port network's own reveal. SCRUBBED across the section that shows
+      // it, so the cities light one at a time under the reader's scroll — the
+      // beat above only decides that the overlay is up, never how much of it.
+      if (beat.ports && portSprites.length) {
+        const tween = gsap.to(portsRevealedProxy, {
+          value: portSprites.length,
+          ease: EASE.scrub,
+          scrollTrigger: {
+            trigger: beat.trigger,
+            start: "top 85%",
+            end: "bottom center",
+            scrub: SCRUB,
+            invalidateOnRefresh: true,
+          },
+          onUpdate: () => {
+            portsRevealed = portsRevealedProxy.value;
+          },
+        });
+        instanceTweens.push(tween);
+        if (tween.scrollTrigger) instanceScrollTriggers.push(tween.scrollTrigger);
+      }
     });
 
     ScrollTrigger.refresh();

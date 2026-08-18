@@ -14,13 +14,18 @@
    ============================================================ */
 
 :root {
-  /* Masthead lockup height — default state (ORDER 03). */
+  /* Masthead lockup height. ONE value — there is no scrolled variant.
+     `--logo-h-nav-scrolled: 34px` used to shrink the mark once the header
+     condensed, in the same moment Header.tsx swapped it from the full lockup to
+     the eagle-only variant. Between them the navbar carried two different marks
+     at two different sizes, chosen by scroll position. A trading corporation
+     has one logo. */
   --logo-h-nav: 42px;
-  /* Condensed/scrolled state — Header.tsx toggles `.header--scrolled`. */
-  --logo-h-nav-scrolled: 34px;
 
   /* Footer lockup height — one token, matching the brand column's previous
-     200px footprint. */
+     200px footprint. The MARK is identical to the navbar's (both `full`); only
+     the height differs, which is a placement decision the footer is entitled
+     to make. */
   --logo-h-footer: 98px;
 }
 
@@ -46,14 +51,11 @@
 /* ---------- Slots ----------
    Height-driven so every variant shares one baseline; width follows the
    viewBox's intrinsic ratio. */
+/* No transition and no `.header--scrolled` override: the height never changes,
+   so there is nothing to animate between. */
 .tvx-logo--nav {
   height: var(--logo-h-nav);
   width: auto;
-  transition: height var(--dur-base) var(--ease-entry);
-}
-
-.header--scrolled .tvx-logo--nav {
-  height: var(--logo-h-nav-scrolled);
 }
 
 .tvx-logo--footer {

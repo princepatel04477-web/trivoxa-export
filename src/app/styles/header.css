@@ -280,14 +280,35 @@
   margin-top: -14px;
   padding: 14px 0;
   border-radius: 10px;
-  background: var(--bg-card);
-  border: 1px solid color-mix(in srgb, var(--gold) 14%, transparent);
-  box-shadow: 0 18px 44px rgba(4, 9, 20, 0.55);
+  /* REAL elevation.
+   *
+   * `--bg-card` alone is a near-black on a near-black page, so the panel read
+   * as tangled into whatever it covered rather than as floating above it —
+   * screenshot 1 catches it sitting flush on the "01 CURIOSITY" row with
+   * nothing separating the two. Three things fix that and all three are
+   * needed: an opaque-enough ground, a blur that visibly disturbs what is
+   * behind it, and a shadow deep enough to read on a dark page.
+   *
+   * The blur is what does most of the work here — on a dark UI a drop shadow
+   * has very little contrast to spend, so the separation has to come from the
+   * backdrop being demonstrably out of focus. */
+  background: color-mix(in srgb, var(--bg-card) 88%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--gold) 22%, transparent);
+  /* Two drop shadows for depth plus an inset hairline along the top edge — the
+     standard cue that a surface is nearer the viewer than what it covers.
+     Written on one line per shadow with NO comments inside the value: a comment
+     between the components makes the build's CSS minifier drop the whole
+     declaration, which is silent and leaves the panel flat. */
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), 0 4px 14px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
   transition: opacity var(--dur-base) var(--ease-entry), transform var(--dur-base) var(--ease-entry);
-  z-index: 5;
+  /* Above the header's own condensed backdrop (`.header::before`, z-index -1)
+     and clear of every in-page sticky rail. The header itself is already at
+     10001, so this only orders within it. */
+  z-index: 20;
 }
 
 .header .nav-drop.is-open {

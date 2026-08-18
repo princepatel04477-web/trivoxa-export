@@ -149,7 +149,6 @@ export default async function ExportCategoryPage(props: PageProps<"/[locale]/bus
         title={`Ready to source ${cat.name}?`}
         description="Send us your RFQ and our sourcing team responds within 24 business hours (IST)."
         actions={[{ label: "Send Us Your RFQ →", href: industry ? `/rfq/?category=${industry.slug}` : "/rfq/" }]}
-        eagle={false}
       />
 
       <StickyCategoryCta category={cat.name} categorySlug={industry?.slug} />

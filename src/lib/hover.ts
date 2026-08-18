@@ -162,10 +162,10 @@ function applyLabel(el: HTMLElement): void {
     "--hv-justify",
     align === "center" ? "center" : align === "right" || align === "end" ? "flex-end" : "flex-start"
   );
-  // The visual text is `visibility: hidden` from here on, which also removes it
-  // from the accessibility tree — and pseudo-element `content` is not reliably
-  // exposed to assistive technology. Naming the element explicitly is what keeps
-  // the link announced, so the treatment costs nothing to a screen reader.
+  // The visual text is painted transparent from here on (see hover.css), and
+  // pseudo-element `content` is not reliably exposed to assistive technology.
+  // Naming the element explicitly keeps the link announced regardless of which
+  // layer a given AT reads, so the treatment costs nothing to a screen reader.
   if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", label);
 }
 

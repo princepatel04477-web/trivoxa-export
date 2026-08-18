@@ -7,9 +7,11 @@ import EditorialPanel from "@/components/patterns/EditorialPanel";
 import NumberedList from "@/components/patterns/NumberedList";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import IndustryManifest from "@/components/industries/IndustryManifest";
+import IndustriesField from "@/components/industries/IndustriesField";
 import { industries } from "@/lib/data/industries";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
+import "@/app/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Industries | Trivoxa Group",
@@ -49,8 +51,18 @@ export default async function IndustriesPage({ params }: { params: Promise<{ loc
     { title: t("why.strengths.s6Title"), description: t("why.strengths.s6Desc") },
   ];
 
+  // TrivoxaShell takes no `film` here: this route runs its own particle field,
+  // and a GLSL shader background would fight it for the same fixed z-index:-1
+  // layer and a second WebGL context.
   return (
-    <TrivoxaShell film="footer-drift">
+    <TrivoxaShell>
+      {/* Signature animation: one persistent canvas behind every section. Eight
+          scattered sectors resolve into an ordered manifest, thread together,
+          then converge on a single spine and finally the shared eagle. */}
+      <div className="gp-canvas" aria-hidden="true">
+        <IndustriesField />
+      </div>
+
       {/* 1. HERO */}
       <PageHero
         eyebrow={t("hero.eyebrow")}
@@ -87,7 +99,7 @@ export default async function IndustriesPage({ params }: { params: Promise<{ loc
       />
 
       {/* 5. OUR INDUSTRY SOLUTIONS — numbered list */}
-      <Section eyebrow={t("solutions.eyebrow")} title={t("solutions.title")} lead={t("solutions.lead")}>
+      <Section id="solutions" eyebrow={t("solutions.eyebrow")} title={t("solutions.title")} lead={t("solutions.lead")}>
         <NumberedList items={solutions} />
       </Section>
 
@@ -97,7 +109,7 @@ export default async function IndustriesPage({ params }: { params: Promise<{ loc
       </Section>
 
       {/* 7. WHY INDUSTRIES CHOOSE TRIVOXA — numbered list */}
-      <Section eyebrow={t("why.eyebrow")} title={t("why.title")} lead={t("why.lead")}>
+      <Section id="why" eyebrow={t("why.eyebrow")} title={t("why.title")} lead={t("why.lead")}>
         <NumberedList items={strengths} />
       </Section>
 

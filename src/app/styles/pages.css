@@ -349,16 +349,6 @@
   padding: 110px 0 120px;
   position: relative;
 }
-/* Watermark behind the CTA copy — the logo's mark variant, dimmed. Colour
-   still comes from the mark's own tone, so only the opacity is set here. */
-.tvx-cta__eagle {
-  width: 220px;
-  height: auto;
-  max-width: 60%;
-  opacity: 0.1;
-  margin: 0 auto 26px;
-  display: block;
-}
 .tvx-cta h2 {
   font-family: var(--font-heading, sans-serif);
   font-weight: 600;
