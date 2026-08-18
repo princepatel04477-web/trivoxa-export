@@ -284,6 +284,36 @@ export const CAMERA_FOV = 55;
  */
 export const FRAMING_MARGIN = 1.4306;
 
+/**
+ * COMPACT-DISPLAY RELIEF — how much smaller the formation sits on a short
+ * viewport.
+ *
+ * `fitScale` derives apparent size from the frustum, so in landscape the
+ * binding constraint is the camera's fixed vertical FOV and the subject
+ * occupies the SAME fraction of the frame at 1366x768 as at 2560x1440. That is
+ * correct as optics and wrong as design: on a 13-14" laptop that fraction
+ * leaves almost no dark margin around the form, and a particle field with no
+ * space around it has nothing to move against — so a 34,000-point cloud that is
+ * genuinely animating reads as a static image. The motion is there; the frame
+ * is too tight to show it.
+ *
+ * Relief is taken from viewport HEIGHT rather than width or area, because
+ * height is what the vertical FOV maps onto and it is what actually separates a
+ * compact laptop (768-900) from a desktop panel (1080+). Below `reference` the
+ * form is scaled down toward `floor`; at or above it nothing changes, so no
+ * large display is touched.
+ *
+ * TO TUNE: lower `floor` for a smaller form on compact screens, raise
+ * `reference` to start the reduction on taller viewports. Nothing else needs
+ * to change — every consumer reads this through fitScale().
+ */
+export const COMPACT_DISPLAY = {
+  /** Viewport height (CSS px) at and above which the framing is unchanged. */
+  reference: 1000,
+  /** Smallest multiplier applied, however short the viewport gets. */
+  floor: 0.70,
+} as const;
+
 /* ── Point size ─────────────────────────────────────────────────────────────
  *
  * gl_PointSize is in DEVICE pixels. These are CSS pixels and are multiplied by

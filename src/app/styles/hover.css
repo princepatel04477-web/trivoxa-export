@@ -129,17 +129,26 @@
   justify-content: var(--hv-justify, flex-start);
   white-space: nowrap;
   transition: transform var(--dur-fast) var(--ease-entry);
-  /* MUST be auto, not none.
+  /* NO `pointer-events: auto` HERE. It is not needed and it is actively
+   * harmful.
    *
-   * Kept from when the host was `visibility: hidden` and therefore out of hit
-   * testing: if the pseudo-elements ALSO declined pointer events the link had
-   * no clickable area at all — the label rendered and nothing on the page could
-   * be clicked to follow it, which broke navigation site-wide. The host is now
-   * hidden by transparent glyph fill instead and takes its own hits again, so
-   * this is no longer load-bearing; it stays because a hit on a pseudo-element
-   * is attributed to its originating element either way, and reverting it buys
-   * nothing while risking that regression a second time. */
-  pointer-events: auto;
+   * It existed because the host used to be `visibility: hidden`, which takes an
+   * element out of hit testing — so without it a tagged link had no clickable
+   * area at all. The host is now hidden by transparent glyph fill instead and
+   * takes its own hits normally, so the opt-in buys nothing.
+   *
+   * What it COST is the bug it caused: `pointer-events` is not inherited, and a
+   * descendant that declares `auto` re-enables hit testing even when an
+   * ancestor has declared `none`. Every closed dropdown panel
+   * (`.nav-drop { pointer-events: none }`) therefore kept capturing clicks
+   * through its tagged links — two invisible 248x215px rectangles hanging under
+   * "The Group" and "Businesses", over the top of every page on the site.
+   * Clicking anything beneath them did not press what the reader could see; it
+   * navigated to a Group anchor. On /businesses at 1366x768 that lands squarely
+   * on the hero, which is why the page read as "not clickable".
+   *
+   * Leaving it off means `pointer-events` behaves the way the panel's own
+   * open/closed rule already assumes it does. */
 }
 
 [data-hv~="label"]::before {

@@ -49,6 +49,7 @@ import {
   FRAGMENT_BUDGET,
   FRAME_BUDGET_MS,
   FIELD_GAIN,
+  COMPACT_DISPLAY,
   FRAMING_MARGIN,
   INTRO,
   MEAN_SIZE_JITTER,
@@ -1369,13 +1370,29 @@ ${
    * stopped being a fit. FRAMING_MARGIN is calibrated so this reproduces the
    * approved framing exactly at 1440×900 — a re-expression, not a retune.
    */
+  /**
+   * How much the compact-display relief shrinks the form on this viewport.
+   * 1 on any display 950px tall or more — see COMPACT_DISPLAY.
+   */
+  const compactRelief = () =>
+    THREE.MathUtils.clamp(
+      canvasHeight() / COMPACT_DISPLAY.reference,
+      COMPACT_DISPLAY.floor,
+      1
+    );
+
   const fitScale = () => {
     const vFov = THREE.MathUtils.degToRad(camera.fov);
     const aspect = canvasWidth() / Math.max(1, canvasHeight());
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
     const radius = globeRadius * formationScale;
     const fitDist = radius / Math.sin(Math.min(vFov, hFov) / 2);
-    return CAMERA_BASE_Z / (fitDist * FRAMING_MARGIN);
+    // The relief multiplies the fit rather than the formation, so it reaches
+    // every consumer of fitScale() at once — the holder's scale AND the
+    // on-screen radius computeSide() uses to park the form beside a copy
+    // column. Applying it to formationScale instead would have moved the form
+    // without telling the layout it had shrunk.
+    return (CAMERA_BASE_Z / (fitDist * FRAMING_MARGIN)) * compactRelief();
   };
   holder.scale.setScalar(fitScale());
   // Start at the formation size so the hero globe doesn't visibly grow in from

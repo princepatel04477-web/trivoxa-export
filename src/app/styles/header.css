@@ -704,3 +704,25 @@
     display: none;
   }
 }
+
+/* A CLOSED dropdown must never capture a click. Belt and braces alongside
+   `.nav-drop { pointer-events: none }`.
+ *
+ * `pointer-events` is not inherited: any descendant declaring `auto` re-enables
+ * hit testing even though the panel declared `none`. That is precisely what the
+ * hover primitive's pseudo-elements used to do, leaving two invisible clickable
+ * rectangles hanging over the top of every page — a reader clicking the hero on
+ * /businesses was silently navigated to /group#our-story instead.
+ *
+ * The primitive no longer opts in (see hover.css), so this is redundant today.
+ * It stays because the failure is invisible: nothing looks wrong, the panel is
+ * transparent, and the only symptom is that the page beneath stops responding.
+ * The next component that reaches for `pointer-events: auto` should not be able
+ * to reintroduce it. Pseudo-elements are named explicitly because `*` does not
+ * match them. */
+.header .nav-drop:not(.is-open),
+.header .nav-drop:not(.is-open) *,
+.header .nav-drop:not(.is-open) *::before,
+.header .nav-drop:not(.is-open) *::after {
+  pointer-events: none !important;
+}
