@@ -452,7 +452,10 @@ body {
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: 0.01em;
+  /* See globals.css: `clip` instead of `hidden` so `position: sticky`
+     descendants are not silently disabled. `hidden` first as the fallback. */
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -411,7 +411,16 @@ html[lang="ru"] {
   body {
     @apply bg-background text-foreground font-sans;
     font-weight: 300;
+    /* `clip`, not `hidden`. Both stop horizontal overflow, but `hidden` makes
+       this element a SCROLL CONTAINER — and every `position: sticky` descendant
+       then sticks to body's scrollport, which never scrolls, so it silently does
+       nothing. That is what stopped the Industries rail sticking (it sat 1769px
+       above the viewport mid-section). `clip` has no scrollport, so sticky keeps
+       resolving against the viewport.
+       The `hidden` line is left above it as the fallback: a browser that does not
+       know `clip` ignores the second declaration and keeps today's behaviour. */
     overflow-x: hidden;
+    overflow-x: clip;
   }
   h1, h2, h3, h4, h5, h6 {
     text-rendering: optimizeLegibility;
