@@ -156,7 +156,17 @@ export function CtaBand({
 }) {
   return (
     <section className="tvx-cta">
-      <div className="container">
+      {/* copy-scrim: every page's particle sequence CLOSES on this band — the
+          field converges into the brand mark directly behind it, at full
+          strength, which is the one place on an inner page where a dense form
+          and the most important copy occupy the same pixels. On /global-presence
+          the mark was landing across the headline and the two buttons.
+
+          A scrim rather than dimming the field: the field is the page's closing
+          gesture and dropping it here would throw that away, while a radial
+          darkening local to this block costs nothing anywhere else. This is the
+          lever lib/choreography.ts already points at for exactly this case. */}
+      <div className="container copy-scrim">
         <h2>{title}</h2>
         {description && <p>{description}</p>}
         <ActionButtons actions={actions} />
