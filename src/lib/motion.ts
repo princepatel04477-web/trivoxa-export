@@ -485,7 +485,9 @@ export const POINT_SIZE: Record<
 > = {
   mobile: { base: 1.6, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 12, count: 1 },
   tablet: { base: 1.95, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 16, count: 1 },
-  desktop: { base: 2.3, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: POINT_SIZE_MAX_CSS_PX, count: 1 },
+  // maxPx pulled off the 22px ceiling: the clamp is what a NEAR grain draws at,
+  // and at 22 a single foreground particle is a visible disc rather than grain.
+  desktop: { base: 2.3, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 14, count: 1 },
 };
 
 /**
@@ -512,7 +514,11 @@ export const POINT_SIZE: Record<
  * render height normalises against 1080), so a change here moves DPR 1, 2 and 3
  * by the same perceptual amount rather than pulling them apart.
  */
-export const PARTICLE_SCALE = 0.45;
+// Scaled down from 0.45 — the grains read as chunky dots rather than as a fine
+// field, which is most visible on the ivory end of the ramp where each one is
+// at full brightness. This is the documented single lever: it moves DPR 1, 2
+// and 3 by the same perceptual amount instead of pulling them apart.
+export const PARTICLE_SCALE = 0.3;
 
 /**
  * Point diameter in WORLD units before PARTICLE_SCALE, per ground.
@@ -691,7 +697,12 @@ export const BURST = {
    * grains thin and fade at the peak (below), so the frame reads as dispersal
    * rather than as the field switching off.
    */
-  radial: 5.0,
+  // OFF. Was 5.0 (the reference's own figure — a 6x swell). On this site the
+  // form is fitted to the frustum and sits beside live copy, so at that
+  // amplitude it inflated across the text and, on scrubbed pages, parked there.
+  // Zero here neutralises the effect without removing the machinery, so
+  // INTRO_STATE_INITIAL and everything else that reads these still compiles.
+  radial: 0,
   /**
    * Per-grain scatter along its own direction at peak, in world units.
    *
@@ -701,7 +712,7 @@ export const BURST = {
    * distance keeps the silhouette legible the whole way out, which is precisely
    * what makes it read as a scale animation.
    */
-  scatter: 6.0,
+  scatter: 0,
   /** Point-size thinning at peak, as a fraction. */
   thin: 0.45,
   /** Alpha dip at peak, as a fraction. */

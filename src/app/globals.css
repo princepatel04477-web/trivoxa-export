@@ -72,9 +72,36 @@
 
 :root {
   /* ============================================================
-     OPERATION MIDNIGHT NAVY — canonical token system.
+     TRIVOXA BRAND PALETTE — canonical token system.
      Every surface/text/accent color in the app resolves through
      these. Do NOT hardcode hex in components or page CSS.
+
+     Source of truth: trivoxa-colours.md
+       Espresso       #241C18  main brand / dark-site background
+       Ivory          #F4EFE6  main light background / text on dark
+       Deep Espresso  #171210  deep sections
+       Soft Ivory     #FAF8F3  light cream
+       Bronze         #A88B68  accents ONLY — sparingly
+       White          #FFFFFF
+
+     Two tokens below are DERIVED, because the brand sheet does not
+     supply them and the system cannot work without them:
+
+     --bg-card  The sheet gives one dark ground. Cards painted in it
+                would be invisible against the page, so this is
+                Espresso lifted just enough to read as raised.
+     --line     The sheet nominates Bronze for lines, but also says
+                Bronze is for tiny accents used SPARINGLY. Every
+                border on the site in Bronze is not sparing, and it
+                would spend the accent before it reaches a CTA. So
+                hairlines are a neutral in-family brown and Bronze is
+                kept for accent rules, hovers and icons.
+
+     Contrast, measured, worst pairing in each row:
+       --text    on card 12.96:1     --text-2 on card 7.79:1
+       --text-3  on card  4.88:1     --gold   on card 4.64:1
+       Espresso ink on a Bronze button 5.23:1
+     All clear WCAG AA. --text-3 is the tightest and must not darken.
      ============================================================ */
   /* GROUND — pure black, neutral ramp.
      Was Midnight Navy (#0B1325 / #121D36 / #16233E / #223251). The ramp above
@@ -83,24 +110,24 @@
      because separation on black comes from the hairline, not from surface
      lightness. Every --advida-* alias and every color-mix() that references
      these migrates automatically. */
-  --bg:            #000000;  /* page background, hero, canvas ground */
-  --bg-elev:       #0B0B0C;  /* alternating sections, scrolled navbar */
-  --bg-card:       #121214;  /* cards, panels, insight tiles, compliance chips */
-  --line:          #232326;  /* borders, dividers, ticker rules */
-  --text:          #EDF1F8;  /* headlines + body — never pure #FFFFFF */
-  --text-2:        #9FACC4;  /* supporting copy */
-  --text-3:        #7E8CA8;  /* captions, footer meta (lightened from spec #64738F to clear WCAG AA on --bg-card) */
-  --gold:          #C9A24B;  /* CTAs, labels, links, active states */
-  --gold-hover:    #E0BC6A;  /* hover/focus on gold */
-  --gold-particle: #D4AF5E;  /* ALL particle rendering: globe, plane, map, compass */
-  --gold-packet:   #FFE3A6;  /* travelling shipment packets on the trade-route arcs */
+  --bg:            #241C18;  /* Espresso — page background, hero, canvas ground */
+  --bg-elev:       #171210;  /* Deep Espresso — alternating/deep sections, scrolled navbar */
+  --bg-card:       #2E2620;  /* DERIVED: cards, panels, tiles (see note above) */
+  --line:          #3A2F28;  /* DERIVED: borders, dividers, ticker rules (see note above) */
+  --text:          #F4EFE6;  /* Ivory — headlines + body. 14.6:1 on Espresso */
+  --text-2:        #C6BAAC;  /* DERIVED: supporting copy. 8.8:1 on Espresso */
+  --text-3:        #9E9285;  /* DERIVED: captions, footer meta. 4.9:1 on --bg-card — the tightest pairing in the set, held above AA */
+  --gold:          #A88B68;  /* Bronze — CTAs, labels, links, active states. 5.2:1 on Espresso */
+  --gold-hover:    #C2A582;  /* DERIVED: hover/focus lift on bronze */
+  --gold-particle: #A88B68;  /* Bronze — ALL particle rendering: globe, plane, map, compass */
+  --gold-packet:   #E8D5BC;  /* DERIVED: travelling shipment packets — brightest point on the arcs */
   /* Named-port labels on the particle globe. Exact prior values, exported so the
      particle system can reference tokens instead of carrying its own hex. */
-  --port-origin-dot:  #F2C24A;
-  --port-origin-text: #F3D488;
-  --port-dest-dot:    #8894AC;
-  --port-dest-text:   #9BA6BC;
-  --route:         #8FB4E8;  /* trade-route arc lines ONLY */
+  --port-origin-dot:  #C9A87F;
+  --port-origin-text: #E0CDB4;
+  --port-dest-dot:    #8A7C6C;
+  --port-dest-text:   #A99C8C;
+  --route:         #8A7460;  /* trade-route arc lines ONLY */
 
   /* PARTICLE SPECTRUM — the field's four colour stops, cool to warm.
      The field was two-tone gold, which is why it read as a watermark rather
@@ -108,10 +135,10 @@
      The warm end is deliberately the brand gold family, so the spectrum
      resolves INTO the identity instead of away from it. Revert the field to
      two-tone by pointing all four at --gold-particle. */
-  --particle-a:    #4B7BD4;  /* cool anchor  */
-  --particle-b:    #8A5FA8;  /* violet       */
-  --particle-c:    #D8556E;  /* rose         */
-  --particle-d:    #E8A24B;  /* amber — the gold family */
+  --particle-a:    #7A6650;  /* deep taupe — the cool anchor, within the brown family */
+  --particle-b:    #A88B68;  /* Bronze — the identity stop */
+  --particle-c:    #D9C4A6;  /* warm sand */
+  --particle-d:    #F4EFE6;  /* Ivory — the highlight */
   --success:       #5FA97C;  /* DELIVERED ticker state */
 
   /* Hallmark System Variables — repointed onto Midnight Navy */
