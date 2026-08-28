@@ -644,8 +644,15 @@ export const CURSOR = {
    * than as merely displaced: grains swell toward the pointer, so on the dark
    * ground the additive accumulation brightens under the cursor and the reader
    * appears to be carrying a light across the field.
+   *
+   * OFF — ADVIDA ROLLBACK. This had no pre-directive equivalent: the old field
+   * displaced grains slightly and did nothing else. A bright bloom tracking the
+   * pointer is the single most attention-grabbing thing the field did, and it
+   * pulls the eye off the copy it sits behind. `radius` and `push` above are
+   * back at their original figures, so the interaction is a faint nudge again
+   * rather than a travelling light.
    */
-  sizeGain: 9,
+  sizeGain: 0,
   /**
    * Pointer-follow coefficient per 60fps frame for the FIELD's copy of the
    * cursor — deliberately looser than the custom cursor element's own tracking.
