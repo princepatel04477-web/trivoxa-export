@@ -239,7 +239,12 @@ export default async function GroupPage({ params }: { params: Promise<{ locale: 
           </div>
           <div className="partners-grid">
             <div className="partners-grid__founding">
-              <figure className="foundation-photo__frame" />
+              {/* An empty <figure className="foundation-photo__frame" /> sat here.
+                  The frame class carries a 4/3 box, a fill and a border, so with
+                  no <img> inside it painted a 704x528 blank panel above the
+                  heading — a photo wall with no photo. Removed rather than
+                  filled: the section's argument is carried by its copy, and a
+                  placeholder frame reads as a missing asset, not as design. */}
               <h3>{t("partners.foundingTitle", { name: SHIVESHWAR_NAME })}</h3>
               <p>{t("partners.p1", { relationship, name: SHIVESHWAR_NAME })}</p>
               <p>{t("partners.p2", { name: SHIVESHWAR_NAME })}</p>

@@ -66,7 +66,12 @@ export default function InsightsMagazine() {
             listing page, and is labelled accordingly. */}
         <div className="magazine-grid copy-scrim" data-reveal-body>
           <div className="magazine-feature magazine-feature--pending">
-            <div className="magazine-feature__image" data-reveal-image />
+            {/* An empty <div className="magazine-feature__image"/> sat here. The
+                class is a 16/9 box with a gradient fill and nothing inside, so
+                it painted a blank panel above a card that already says "Coming
+                soon" — two separate ways of announcing the same absence, one of
+                which looks like a broken image. The card's own copy does the
+                job. */}
             <span className="magazine-feature__tag">{featured.tag}</span>
             <h3 className="magazine-feature__title">{featured.title}</h3>
             <p className="magazine-feature__dek">{featured.dek}</p>
