@@ -179,14 +179,19 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
     { trigger: ".hp-trust", sweep: 0.8 },
     // About ("A Vision Beyond Business").
     { trigger: ".hp-about", sweep: 0.7 },
-    // Business Arms + Industries — content-dense, so the field recedes. To the
-    // FLOOR, not to 0.28: at 0.28 these two sections rendered as a black
-    // rectangle with copy on it, and a backdrop that disappears for a fifth of
-    // the page reads as broken rather than as restrained. Where a specific
-    // paragraph needs more contrast than 0.62 allows, it gets a local scrim
-    // (`.copy-scrim`, globals.css) — dimming the whole canvas to fix one
-    // paragraph costs every other element on the screen its background.
-    { trigger: ".hp-sec-4", opacity: FIELD_OPACITY_FLOOR },
+    // Business Arms + Industries — the field LEAVES.
+    //
+    // Not the floor. The floor (0.62) exists so a section never reads as an
+    // empty black rectangle, and that argument holds where the field is a
+    // backdrop. It does not hold here: the form on screen at this point is the
+    // container, and a recognisable OBJECT held at 62% behind two image-led
+    // card sections does not read as a backdrop — it reads as a leftover, and
+    // it was showing as a bright sliver in the gap between the two cards.
+    //
+    // The sequence is meant to be container → globe → mark, so the container
+    // has to be gone before the globe arrives rather than fading under it.
+    // These two sections carry their own photography and need no field.
+    { trigger: ".hp-sec-4", opacity: 0 },
     // Global Presence ("Connecting Opportunities Across Borders") — the ports
     // globe with named markers, parked on the RIGHT so the section's copy
     // (left-aligned in CSS) sits clear of it.
@@ -194,10 +199,12 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
       trigger: ".hp-global",
       sweep: 1,
       ports: true,
-      onLeaveBack: { opacity: FIELD_OPACITY_FLOOR }, // scrolling up into the industries index
+      onLeaveBack: { opacity: 0 }, // scrolling up into the industries index — match the beat above
     },
-    // Values / Insights / Careers — recede, same floor.
-    { trigger: ".hp-values", opacity: FIELD_OPACITY_FLOOR },
+    // Values / Insights / Careers — the field leaves again, so the globe does
+    // not trail through three text sections on its way to the mark. Same
+    // reasoning as .hp-sec-4: globe → (nothing) → mark.
+    { trigger: ".hp-values", opacity: 0 },
     // Final CTA — the Trivoxa eagle, in grains, behind the copy.
     { trigger: ".hp-cta", sweep: 0 },
     // Footer — hold the mark but drop it back so footer copy stays legible;

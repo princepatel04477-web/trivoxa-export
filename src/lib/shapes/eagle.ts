@@ -28,8 +28,16 @@ const EAGLE_ASSET = "/images/trivoxa-eagle.png";
  */
 const EAGLE_WIDTH = 17;
 
-/** Faint ambient drift once settled, as a fraction of the nominal radius. */
-const EAGLE_DRIFT = 0.03;
+/**
+ * Ambient drift once settled, as a fraction of the nominal radius.
+ *
+ * ZERO — the closing mark is STATIC. It is the brand mark, and a logo that
+ * keeps breathing after it has arrived reads as an effect rather than as a
+ * signature; every other form on the page is in motion precisely so this one
+ * can stop. The field still fades in and the grains still settle into it — what
+ * is removed is the perpetual wander AFTER arrival.
+ */
+const EAGLE_DRIFT = 0;
 
 const cache = new Map<string, Promise<Shape>>();
 
