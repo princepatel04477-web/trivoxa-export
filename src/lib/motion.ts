@@ -153,7 +153,7 @@ export const STAGGER_CHAR = 0.025;
  * the weight the reader feels on the morph itself, and 0.6 lets the field snap
  * to the scroll position hard enough to read as a jump-cut on a flung scroll.
  */
-export const SCRUB = 1.0;
+export const SCRUB = 0.6;  /* ADVIDA ROLLBACK: was 0.6 pre-directive */
 
 /**
  * Lenis's own smoothing. Properties of the SCROLL SURFACE, not of any tween —
@@ -216,8 +216,8 @@ export type DeviceTier = "mobile" | "tablet" | "desktop";
  * roughly flat, and FRAGMENT_BUDGET still trims the backing store above it.
  */
 export const DPR_CEILING: Record<DeviceTier, number> = {
-  mobile: 1.75,
-  tablet: 2,
+  mobile: 1.25,
+  tablet: 1.5,
   desktop: 2,
 };
 
@@ -263,7 +263,7 @@ export const CHROME_HEIGHT_TOLERANCE_PX = 120;
  * inside, short of the barrel distortion that would read as a fisheye gimmick
  * on a credibility-led brand.
  */
-export const CAMERA_FOV = 55;
+export const CAMERA_FOV = 35;  /* ADVIDA ROLLBACK: the pre-directive hardcoded value */
 
 /**
  * Calibrated so the fit holds the subject at the SAME fraction of frame the
@@ -282,7 +282,7 @@ export const CAMERA_FOV = 55;
  * The subject therefore occupies exactly as much of the frame as before. What
  * changed is the depth inside it, which is the entire point of the wider lens.
  */
-export const FRAMING_MARGIN = 1.4306;
+export const FRAMING_MARGIN = 1.5382;  /* ADVIDA ROLLBACK: the figure calibrated for a 35° FOV */
 
 /**
  * COMPACT-DISPLAY RELIEF — how much smaller the formation sits on a short
@@ -338,8 +338,8 @@ export const COMPACT_DISPLAY = {
  * (rung 1) long before it touches count (rung 2), and it never touches size at
  * all. Solving a fill problem by shrinking the grain would undo the change.
  */
-export const POINT_SIZE_MIN_CSS_PX = 1.2;
-export const POINT_SIZE_MAX_CSS_PX = 22;
+export const POINT_SIZE_MIN_CSS_PX = 0.5;
+export const POINT_SIZE_MAX_CSS_PX = 6;
 
 /**
  * Per-particle size variance, applied as a MULTIPLIER on the computed point
@@ -391,7 +391,7 @@ export const MEAN_SIZE_JITTER = SIZE_JITTER.min + SIZE_JITTER.span * 0.5;
  * would be half the base size again. A fraction is the same shimmer at every
  * tier, every ratio and every depth.
  */
-export const SIZE_SHIMMER = 0.5;
+export const SIZE_SHIMMER = 0.15;
 
 /**
  * Per-grain alpha gain. THE control that decides whether a bright core is a
@@ -483,11 +483,11 @@ export const POINT_SIZE: Record<
   DeviceTier,
   { base: number; minPx: number; maxPx: number; count: number }
 > = {
-  mobile: { base: 1.6, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 12, count: 1 },
-  tablet: { base: 1.95, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 16, count: 1 },
+  mobile: { base: 1.6, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 4, count: 1 },
+  tablet: { base: 1.95, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 5, count: 1 },
   // maxPx pulled off the 22px ceiling: the clamp is what a NEAR grain draws at,
   // and at 22 a single foreground particle is a visible disc rather than grain.
-  desktop: { base: 2.3, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: 14, count: 1 },
+  desktop: { base: 2.3, minPx: POINT_SIZE_MIN_CSS_PX, maxPx: POINT_SIZE_MAX_CSS_PX, count: 1 },
 };
 
 /**
@@ -518,7 +518,7 @@ export const POINT_SIZE: Record<
 // field, which is most visible on the ivory end of the ramp where each one is
 // at full brightness. This is the documented single lever: it moves DPR 1, 2
 // and 3 by the same perceptual amount instead of pulling them apart.
-export const PARTICLE_SCALE = 0.3;
+export const PARTICLE_SCALE = 1;
 
 /**
  * Point diameter in WORLD units before PARTICLE_SCALE, per ground.
@@ -574,9 +574,9 @@ export const BLOOM = {
    * glow is meant to come from the accumulation itself; this pass is there to
    * soften its edge, not to supply it.
    */
-  intensity: 0.26,
+  intensity: 0.32,
   /** Raised with the intensity trim, for the same reason: more of the field now clears any given bar. */
-  threshold: 0.82,
+  threshold: 0.75,
   radius: 0.6,
   /** Caps the mip chain's working resolution — halves the cost, looks identical. */
   height: 360,
@@ -626,7 +626,7 @@ export const CURSOR = {
    * is the screen-space equivalent of the reference's 4-world-unit radius at
    * its camera distance.
    */
-  radius: 0.85,
+  radius: 0.35,
   /**
    * Displacement at the centre of the falloff, in NDC. Negative attracts.
    *
@@ -636,7 +636,7 @@ export const CURSOR = {
    * burst term in the vertex shader multiplies it during a morph so the field
    * is most responsive exactly when it is already in motion.
    */
-  push: 0.22,
+  push: 0.055,
   /**
    * Point-size gain at the centre of the falloff, in device pixels.
    *
@@ -786,8 +786,14 @@ export const AMBIENT = {
    * effect pass, so it is out of the bloom path by construction, not by tuning.
    * The figures below are also pulled well in from the first attempt, so even a
    * future refactor that re-bloomed it could not blow out the frame the same way.
+   *
+   * OFF — ADVIDA ROLLBACK. This shell was added while matching the usta
+   * reference, which runs a second point system behind its morph cloud. The
+   * advida-era field is ONE system: the form, and nothing behind it. Kept
+   * (rather than deleted) because the code is sound and DEEP_FIELD below still
+   * documents its failure mode; flip to true to bring the backdrop back.
    */
-  enabled: true,
+  enabled: false,
   /** Grains as a fraction of the main pool. 0.05 × 18000 ≈ 900 desktop. */
   countRatio: 0.16,
   /**
@@ -828,7 +834,10 @@ export const AMBIENT = {
  * with no per-frame CPU and no attributes beyond position and phase.
  */
 export const DEEP_FIELD = {
-  enabled: true,
+  /* OFF — ADVIDA ROLLBACK. Added under the amplitude directive as a frustum-
+     bound bed behind everything. Same reasoning as AMBIENT: the advida-era
+     field has nothing behind the form. */
+  enabled: false,
   /** Grain count. Fixed, not a ratio — it is a property of the frame, not of the form. */
   count: 900,
   /** Box half-extents as a multiple of the visible half-width / half-height at the form's depth. */
